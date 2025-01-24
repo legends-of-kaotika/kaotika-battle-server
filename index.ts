@@ -18,9 +18,14 @@ const io = new Server(server, {
     }
 });
 
+//Handlers requires
+const userHandlers = require('./src/sockets/user')
+
 const onConnection = (socket: Socket): void => {
     console.log(socket.id, " joined the server.")
+
     //ADD SOCKET HANDLERS HERE
+    userHandlers(io, socket)
 }
 
 async function start() {
