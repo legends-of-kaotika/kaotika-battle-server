@@ -7,18 +7,20 @@ const diseases = [
 ];
 
 const applyEffect = () => {
-  console.log("Effect applied");
+  console.log('\x1b[33m Normal Effect applied! \x1b[0m\n');
 
 };
 
 const applyRandomEffect = () => {
-    const disease = diseases[Math.floor(Math.random() * diseases.length)];
-    console.log(`User affected by ${disease.name}`);
+  const disease = diseases[Math.floor(Math.random() * diseases.length)];
+  console.log(`\x1b[31m User affected by ${disease.name} \x1b[0m\n`);
+
 };
 
 const startCronJob = () => {
   cron.schedule('*/10 * * * * * ', async () => {
-    console.log("Running Cron Job: Applying Effects");
+
+    console.log("\n\x1b[37m Running Cron Job: Applying Effects & Applying Diseases \x1b[0m\n")
 
     try {
 
@@ -27,13 +29,15 @@ const startCronJob = () => {
       if (Math.random() < 0.3) {
         applyRandomEffect();
       }
-      console.log("Cron Completed Successfully");
+      console.log('\x1b[32m Cron Completed Successfully! \n');
+
     } catch (error) {
       console.error("Error in Cron Job:", error);
     }
   });
 
-  console.log("Cron Job Initialized");
+  console.log("Cron Job Initialized\n");
+
 };
 
 module.exports = { startCronJob };

@@ -3,6 +3,7 @@ import { Socket } from "socket.io";
 const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000
+const { startCronJob } = require("./src/cron/cron.ts");
 
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file 
@@ -30,6 +31,7 @@ async function start() {
             io.on("connection", onConnection);
 
         });
+        startCronJob();
     }
     catch (error) {
         console.log(`Error starting the server: ${error.message}`);
