@@ -13,10 +13,10 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const server = createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: "*",  // Allows all origins, for testing purposes
-        methods: ["GET", "POST"]
-    }
+  cors: {
+    origin: "*",  // Allows all origins, for testing purposes
+    methods: ["GET", "POST"]
+  }
 });
 
 app.use(bodyParser.json());
@@ -24,26 +24,30 @@ app.use(router);
 
 //Handlers requires
 const userHandlers = require('./src/sockets/user')
+const webHandlers = require('./src/sockets/WebHandlers')
+const mobileHandlers = require('./src/sockets/MobileHandlers')
 
 const onConnection = (socket: Socket): void => {
-    console.log(socket.id, " joined the server.")
+  console.log(socket.id, " joined the server.")
 
-    //ADD SOCKET HANDLERS HERE
-    userHandlers(io, socket)
+  //ADD SOCKET HANDLERS HERE
+  userHandlers(io, socket)
+  webHandlers(io, socket)
+  mobileHandlers(io, socket)
 }
 
 async function start() {
-    try {
+  try {
 
-        server.listen(PORT, () => {
-            console.log(`Socket is listening on port ${PORT}`);
-            io.on("connection", onConnection);
+    server.listen(PORT, () => {
+      console.log(`Socket is listening on port ${PORT}`);
+      io.on("connection", onConnection);
 
-        });
-    }
-    catch (error) {
-        console.log(`Error starting the server: ${error.message}`);
-    }
+    });
+  }
+  catch (error) {
+    console.log(`Error starting the server: ${error.message}`);
+  }
 }
 
 start();
