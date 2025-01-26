@@ -1,8 +1,10 @@
 import { Socket } from "socket.io";
 
 const express = require('express')
+const bodyParser = require("body-parser"); 
 const app = express()
 const PORT = process.env.PORT || 3000
+const router = require("./src/routes/routes");
 
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file 
@@ -16,6 +18,9 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
+
+app.use(bodyParser.json());
+app.use(router);
 
 //Handlers requires
 const userHandlers = require('./src/sockets/user')
