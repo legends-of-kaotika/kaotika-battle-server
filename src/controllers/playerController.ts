@@ -1,7 +1,7 @@
 const playerService = require('../services/playerService');
 
 
-const initFecthPlayer = async (req: { params: { email: string; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message?: string; status?: string; data?: { error: string; }; }): void; new(): any; }; }; send: (arg0: { status: string; data: any; }) => void; }) => {
+const initFetchPlayer = async (req: { params: { email: string; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message?: string; status?: string; data?: { error: string; }; }): void; new(): any; }; }; send: (arg0: { status: string; data: any; }) => void; }) => {
 
   const { params: { email } } = req;
 
@@ -16,7 +16,7 @@ const initFecthPlayer = async (req: { params: { email: string; }; }, res: { stat
   }
 
   try {
-    const playerData = await playerService.initFecthPlayer();
+    const playerData = await playerService.initFetchPlayer();
     if (!playerData) {
       return res.status(404).send({ message: "Does not exist any player with this email" });
     }
@@ -35,6 +35,6 @@ const initFecthPlayer = async (req: { params: { email: string; }; }, res: { stat
 
 
 module.exports = {
-  initFecthPlayer,
+  initFetchPlayer,
 }
 
