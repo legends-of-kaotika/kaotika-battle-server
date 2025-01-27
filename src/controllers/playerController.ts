@@ -1,7 +1,9 @@
+import { Request, Response } from "express";
+
 const playerService = require('../services/playerService');
 
 
-const initFetchPlayer = async (req: { params: { email: string; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message?: string; status?: string; data?: { error: string; }; }): void; new(): any; }; }; send: (arg0: { status: string; data: any; }) => void; }) => {
+const initFetchPlayer = async (req: Request, res: Response) => {
 
   const { params: { email } } = req;
 
@@ -16,7 +18,7 @@ const initFetchPlayer = async (req: { params: { email: string; }; }, res: { stat
   }
 
   try {
-    const playerData = await playerService.initFetchPlayer();
+    const playerData = await playerService.initFetchPlayer(email);
     if (!playerData) {
       return res.status(404).send({ message: "Does not exist any player with this email" });
     }

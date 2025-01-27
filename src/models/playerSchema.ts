@@ -40,9 +40,6 @@ const playerSchema = new mongoose.Schema({
     profile: {
       _id: { type: 'ObjectId' },
       name: { type: 'String' },
-      description: { type: 'String' },
-      image: { type: 'String' },
-      attributes: { type: [Array] }
     },
     role: { type: 'String' },
     resistance: { type: 'Number', default: 100 }

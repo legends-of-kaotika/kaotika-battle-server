@@ -10,8 +10,6 @@ import { Shield } from "./Shield";
 import { Boot } from "./Boot";
 import { Ring } from "./Ring";
 import { Modifier } from "./Modifier";
-import { Task } from "./Task";
-import { Ingredient } from "./Ingredients";
 
 export interface Player {
   _id: string;
@@ -19,14 +17,11 @@ export interface Player {
   nickname: string;
   avatar: string;
   email: string;
-  experience: number;
   level: number;
-  gold: number;
-  is_active: boolean;
-  created_date: string;
+  role: String;
+  deviceToken: String;
   profile: Profile | null;
   attributes: Modifier;
-  classroom_id: string | null;
   equipment:{
     helmet: Helmet | null,
     weapon: Weapon,
@@ -40,17 +35,8 @@ export interface Player {
     enhancer_potion: EnhancerPotion,
   },
   inventory: {
-    helmets: Helmet[],
-    weapons: Weapon[],
-    armors: Armor[],
-    shields: Shield[],
-    artifacts: Artifact[],
-    boots: Boot[],
-    rings: Ring[],
-    ingredients: Ingredient[],
     healing_potions: HealingPotion[],
     antidote_potions: AntidotePotion[],
     enhancer_potions: EnhancerPotion[],
   },
-  tasks: Task[]
 }
