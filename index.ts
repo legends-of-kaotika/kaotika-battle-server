@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+const mongoose = require('mongoose');
 
 const express = require('express')
 const bodyParser = require("body-parser"); 
@@ -8,6 +9,9 @@ const router = require("./src/routes/routes");
 
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file 
+
+//Mongo route 
+const mongodbRoute = process.env.MONGO_URI;
 
 const { createServer } = require("http");
 const { Server } = require("socket.io");
@@ -39,8 +43,12 @@ async function start() {
     server.listen(PORT, () => {
       console.log(`Socket is listening on port ${PORT}`);
       io.on("connection", onConnection);
-
     });
+
+    // Connect to mongoose
+    await mongoose.connect(mongodbRoute, {});
+    console.log('Conexion con Mongo correcta');
+
   }
   catch (error) {
     console.log(`Error starting the server: ${error.message}`);
