@@ -11,7 +11,7 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
     email: data.email || '',
     level: data.level || 0,
     role: assignRole(data.email) || '',
-    deviceToken: '',
+    socketId: '',
     profile: data.profile
       ? {
         name: data.profile.name || '',

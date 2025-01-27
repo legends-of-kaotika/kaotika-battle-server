@@ -12,4 +12,6 @@ export interface Curse {
 		charisma: number,
 		strength: number
 	}
+	antidote_effects: string[],
+	poison_effects: string[],
 }

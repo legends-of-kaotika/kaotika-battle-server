@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ONLINE_USERS } from "../game";
 
 const playerService = require('../services/playerService');
 
@@ -23,6 +24,7 @@ const initFetchPlayer = async (req: Request, res: Response) => {
       return res.status(404).send({ message: "Does not exist any player with this email" });
     }
     // Return the player data 
+    ONLINE_USERS.push(playerData)
     res.send({ status: "OK", data: playerData })
   } catch (error) {
     res

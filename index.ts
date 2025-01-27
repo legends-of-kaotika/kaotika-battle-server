@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-
+import { ONLINE_USERS } from "./src/game";
 const mongoose = require('mongoose');
 
 const express = require('express')
@@ -33,9 +33,11 @@ app.use("/api/player", router);
 const webHandlers = require('./src/sockets/WebHandlers')
 const mobileHandlers = require('./src/sockets/MobileHandlers')
 
-const onConnection = (socket: Socket): void => {
+const onConnection = (socket: Socket): void => {  
   console.log(socket.id, " joined the server.")
-
+  ONLINE_USERS[0].socketId = socket.id
+  console.log(ONLINE_USERS);
+  
   webHandlers(io, socket)
   mobileHandlers(io, socket)
 }
