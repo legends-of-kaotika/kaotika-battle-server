@@ -1,3 +1,3 @@
 import { Player } from "./interfaces/Player";
 
-export const ONLINE_USERS: Player[] = []
+export let ONLINE_USERS: any[] = [{email: 'eneko'}, {email: 'polo'}]
