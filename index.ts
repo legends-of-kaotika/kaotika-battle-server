@@ -24,7 +24,7 @@ const io = new Server(server, {
 });
 
 app.use(bodyParser.json());
-app.use(router);
+app.use("/api/player", router);
 
 //Handlers requires
 const webHandlers = require('./src/sockets/WebHandlers')
