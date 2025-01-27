@@ -10,6 +10,7 @@ import { Shield } from "./Shield";
 import { Boot } from "./Boot";
 import { Ring } from "./Ring";
 import { Modifier } from "./Modifier";
+import { Status } from "./Status";
 
 export interface Player {
   _id: string;
@@ -18,7 +19,6 @@ export interface Player {
   avatar: string;
   email: string;
   level: number;
-  role: String;
   deviceToken: String;
   profile: Profile | null;
   attributes: Modifier;
@@ -39,4 +39,7 @@ export interface Player {
     antidote_potions: AntidotePotion[],
     enhancer_potions: EnhancerPotion[],
   },
+  status: Status,
+  role: string,
+  resistance: number
 }

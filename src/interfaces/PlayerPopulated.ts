@@ -9,6 +9,9 @@ import { Ring } from "./Ring";
 import { Modifier } from "./Modifier";
 import { Task } from "./Task";
 import { Ingredient } from "./Ingredients";
+import { HealingPotion } from "./HealingPotion";
+import { AntidotePotion } from "./AntidotePotion";
+import { EnhancerPotion } from "./EnhancerPotion";
 
 export interface PlayerPopulated {
   _id: string;
@@ -32,6 +35,9 @@ export interface PlayerPopulated {
     artifact: Artifact,
     boot: Boot | null,
     ring: Ring | null,
+    healing_potion: HealingPotion,
+    antidote_potion: AntidotePotion,
+    enhancer_potion: EnhancerPotion,
   },
   inventory: {
     helmets: Helmet[],
@@ -42,6 +48,9 @@ export interface PlayerPopulated {
     boots: Boot[],
     rings: Ring[],
     ingredients: Ingredient[],
+    healing_potions: HealingPotion[],
+    antidote_potions: AntidotePotion[],
+    enhancer_potions: EnhancerPotion[],
   },
   tasks: Task[]
 }
