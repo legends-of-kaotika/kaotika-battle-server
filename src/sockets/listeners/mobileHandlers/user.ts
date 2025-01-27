@@ -28,7 +28,7 @@ module.exports = (io: Server, socket: Socket) => {
     //calculate damage
     let totalDmg = 0;
 
-    
+
     //return players to web
     sendConnectedUsersArray(io)
   })
