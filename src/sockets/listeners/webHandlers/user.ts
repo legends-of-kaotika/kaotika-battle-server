@@ -7,7 +7,7 @@ module.exports = (io: Server, socket: Socket) => {
     socket.emit("Web-UserTest", "User for Web");
   });
   socket.on("Web-send-dudes", async () => {
-    sendConnectedUsersArrayToWeb(io, socket);
+    sendConnectedUsersArrayToWeb(io);
   });
   socket.on('disconnect', async () => {
     console.log(ONLINE_USERS);
@@ -19,6 +19,6 @@ module.exports = (io: Server, socket: Socket) => {
       }
     }
     console.log(ONLINE_USERS);
-    sendConnectedUsersArrayToWeb(io,socket)
+    sendConnectedUsersArrayToWeb(io)
   })
 };
