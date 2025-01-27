@@ -9,10 +9,7 @@ export interface Weapon {
   die_faces: number,
   die_modifier: number,
   die_num: number,
-  value: number,
   base_percentage: number,
   modifiers: Modifier,
   min_lvl: number,
-  isUnique: boolean,
-  isActive: boolean
 }

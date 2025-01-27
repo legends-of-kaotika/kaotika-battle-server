@@ -1,7 +1,8 @@
 import { Player } from "../interfaces/Player";
 
-const playersMock:Player[] = [{
+export const playersMock:Player[] = [{
     "_id": "66dec0786301a115d494bdb6",
+    "socketId": "hhwfgeihgiweiu",
     "attributes": {
       "intelligence": 17,
       "dexterity": 37,
@@ -49,7 +50,7 @@ const playersMock:Player[] = [{
         "min_lvl": 1,
         "die_faces": 6,
         "die_modifier": 1,
-        "die_num": 2
+        "die_num": 2,
       },
       "armor": {
         "modifiers": {
@@ -145,7 +146,7 @@ const playersMock:Player[] = [{
         "type": "ring",
         "image": "/images/equipment/rings/ring_1.png",
         "value": 10,
-        "min_lvl": 1
+        "min_lvl": 1,
       },
       "antidote_potion": {
         "modifiers": {
@@ -245,12 +246,10 @@ const playersMock:Player[] = [{
     },
     "role": "acolyte",
     "resistance": 100,
-    "__v": 0
   },
   {
-    "_id": {
-      "$oid": "66dec0006301a115d494bd0d"
-    },
+    "_id": "66dec0006301a115d494bd0d",
+    "socketId": "wefjkgew",
     "attributes": {
       "intelligence": 16,
       "dexterity": 66,
@@ -294,14 +293,11 @@ const playersMock:Player[] = [{
         "description": "A sword infused with pure arcane energy.",
         "type": "weapon",
         "image": "/images/equipment/weapons/sword_31.png",
-        "value": 6000,
         "base_percentage": 15,
         "min_lvl": 20,
         "die_faces": 20,
         "die_modifier": 5,
         "die_num": 10,
-        "isUnique": true,
-        "isActive": false
       },
       "armor": {
         "modifiers": {
@@ -497,5 +493,4 @@ const playersMock:Player[] = [{
     },
     "role": "acolyte",
     "resistance": 100,
-    "__v": 0
   }]
