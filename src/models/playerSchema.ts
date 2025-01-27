@@ -31,18 +31,13 @@ const playerSchema = new mongoose.Schema({
         common_diseases:[],
         tired: { type: 'Boolean', default: false },
     },
-    _id: { type: 'ObjectId' },
     name: { type: 'String' },
     nickname: { type: 'String' },
     email: { type: 'String' },
     avatar: { type: 'String' },
     level: { type: 'Number' },
     profile: {
-      _id: { type: 'ObjectId' },
       name: { type: 'String' },
-      description: { type: 'String' },
-      image: { type: 'String' },
-      attributes: { type: [Array] }
     },
     role: { type: 'String' },
     resistance: { type: 'Number', default: 100 }

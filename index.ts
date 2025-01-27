@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const app = express()
 const PORT = process.env.PORT || 3000
 const router = require("./src/routes/routes");
-
+const playerService = require("./src/controllers/playerController");
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file 
 
@@ -31,9 +31,7 @@ app.use("/api/player", router);
 const webHandlers = require('./src/sockets/WebHandlers')
 const mobileHandlers = require('./src/sockets/MobileHandlers')
 
-const onConnection = (socket: Socket): void => {
-  console.log(ONLINE_USERS);
-  
+const onConnection = (socket: Socket): void => {  
   console.log(socket.id, " joined the server.")
   ONLINE_USERS[0].socketId = socket.id
   console.log(ONLINE_USERS);
