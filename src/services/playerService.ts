@@ -1,16 +1,17 @@
 const Player = require("../models/playerSchema");
-import {Player} from "../interfaces/Player"; 
+import { Player } from "../interfaces/Player";
+import {PlayerPopulated} from "../interfaces/PlayerPopulated"; 
 
-const filterPlayerData = (data: any): Player => {
-  return {
+const filterPlayerData = (data: PlayerPopulated): Player => {
+  const player: Player  = {
     _id: data._id,
     name: data.name || '',
     nickname: data.nickname || '',
     avatar: data.avatar || '',
     email: data.email || '',
     level: data.level || 0,
-    role: data.role || '',
-    deviceToken: data.deviceToken || '',
+    role: assignRole(data.email) || '',
+    deviceToken: '',
     profile: data.profile
       ? {
         name: data.profile.name || '',
@@ -41,7 +42,14 @@ const filterPlayerData = (data: any): Player => {
       antidote_potions: data.inventory?.antidote_potions || [],
       enhancer_potions: data.inventory?.enhancer_potions || [],
     },
+      status: {
+        ethaziumCurse: false,
+        common_diseases: [],
+        tired: false
+      },
+      resistance: 100,
   };
+  return player;
 };
 
 const assignRole = (email: String) => {
