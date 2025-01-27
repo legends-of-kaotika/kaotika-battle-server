@@ -6,9 +6,13 @@ module.exports = (io: Server, socket: Socket) => {
   socket.on("Web-UserTest", async () => {
     socket.emit("Web-UserTest", "User for Web");
   });
+
+  //sends current online players
   socket.on("Web-send-dudes", async () => {
     sendConnectedUsersArrayToWeb(io);
   });
+
+  //sends the new array of players on disconnect
   socket.on('disconnect', async () => {
     console.log(ONLINE_USERS);
     
