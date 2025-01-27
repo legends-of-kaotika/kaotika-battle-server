@@ -19,7 +19,7 @@ export interface Player {
   avatar: string;
   email: string;
   level: number;
-  deviceToken: String;
+  socketId: String;
   profile: Profile | null;
   attributes: Modifier;
   equipment:{
