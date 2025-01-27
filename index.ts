@@ -23,15 +23,12 @@ app.use(bodyParser.json());
 app.use(router);
 
 //Handlers requires
-const userHandlers = require('./src/sockets/user')
 const webHandlers = require('./src/sockets/WebHandlers')
 const mobileHandlers = require('./src/sockets/MobileHandlers')
 
 const onConnection = (socket: Socket): void => {
   console.log(socket.id, " joined the server.")
 
-  //ADD SOCKET HANDLERS HERE
-  userHandlers(io, socket)
   webHandlers(io, socket)
   mobileHandlers(io, socket)
 }
