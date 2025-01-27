@@ -13,7 +13,7 @@ import { Ring } from "./Ring";
 import { Modifier } from "./Modifier";
 import { Status } from "./Status";
 
-export interface Player {
+export interface PlayerDB {
   _id: string;
   name: string;
   nickname: string;
