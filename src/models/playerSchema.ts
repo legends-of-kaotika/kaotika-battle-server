@@ -22,17 +22,9 @@ const playerSchema = new mongoose.Schema({
       enhancer_potion: {}
     },
     inventory: {
-      helmets: [],
-      weapons: [],
-      armors: [],
-      shields: [],
-      artifacts: [],
-      boots: [],
-      rings: [],
       antidote_potions: [],
       healing_potions: [],
       enhancer_potions: [],
-      ingredients: []
     },
     status:{
         ethaziumCurse: { type: 'Boolean', default: false },
@@ -48,9 +40,6 @@ const playerSchema = new mongoose.Schema({
     profile: {
       _id: { type: 'ObjectId' },
       name: { type: 'String' },
-      description: { type: 'String' },
-      image: { type: 'String' },
-      attributes: { type: [Array] }
     },
     role: { type: 'String' },
     resistance: { type: 'Number', default: 100 }

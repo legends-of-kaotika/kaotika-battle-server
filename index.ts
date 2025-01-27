@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+
 const mongoose = require('mongoose');
 
 const express = require('express')
@@ -6,7 +7,7 @@ const bodyParser = require("body-parser");
 const app = express()
 const PORT = process.env.PORT || 3000
 const router = require("./src/routes/routes");
-
+const playerService = require("./src/controllers/playerController");
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file 
 
@@ -24,7 +25,7 @@ const io = new Server(server, {
 });
 
 app.use(bodyParser.json());
-app.use(router);
+app.use("/api/player", router);
 
 //Handlers requires
 const webHandlers = require('./src/sockets/WebHandlers')
