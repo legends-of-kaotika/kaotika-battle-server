@@ -1,8 +1,13 @@
 import { Server, Socket } from "socket.io";
+import { sendConnectedUsersArray } from "../../emits/user";
 
 module.exports = (io: Server, socket: Socket) => {
 
-  socket.on("Mobile-UserTest", async () => {
-    socket.emit("Mobile-UserTest", 'User for Mobile');
+  socket.on("mobile-userTest", async () => {
+    socket.emit("mobile-userTest", 'User for mobile');
   });
+
+  socket.on('mobile-gameStart', async () => {
+    sendConnectedUsersArray(io)
+  })
 }

@@ -1,15 +1,18 @@
 import { Server, Socket } from "socket.io";
-import { sendConnectedUsersArrayToWeb } from "../../emits/user";
+import { sendConnectedUsersArray } from "../../emits/user";
 import { ONLINE_USERS } from "../../../game";
 
 module.exports = (io: Server, socket: Socket) => {
-  socket.on("Web-UserTest", async () => {
-    socket.emit("Web-UserTest", "User for Web");
+  socket.on("web-UserTest", async () => {
+    socket.emit("web-UserTest", "user for Web");
+  });
+  socket.on("web-sendUsers", async () => {
+    sendConnectedUsersArray(io);
   });
 
   //sends current online players
-  socket.on("Web-send-dudes", async () => {
-    sendConnectedUsersArrayToWeb(io);
+  socket.on("Web-sendUsers", async () => {
+    sendConnectedUsersArray(io);
   });
 
   //sends the new array of players on disconnect
@@ -23,6 +26,6 @@ module.exports = (io: Server, socket: Socket) => {
       }
     }
     console.log(ONLINE_USERS);
-    sendConnectedUsersArrayToWeb(io)
+    sendConnectedUsersArray(io)
   })
 };
