@@ -20,7 +20,9 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",  // Allows all origins, for testing purposes
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200,
   }
 });
 
