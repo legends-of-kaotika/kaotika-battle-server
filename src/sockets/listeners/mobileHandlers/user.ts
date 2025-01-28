@@ -3,58 +3,50 @@ import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWe
 import { ONLINE_USERS } from "../../../game";
 import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConnected } from "../../../helpers/helper";
 import { Player } from "../../../interfaces/Player";
+import { MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
 
 module.exports = (io: Server, socket: Socket) => {
-  //////////////////////////////////////////////////
+
   //receive socketId + email from clientMobile
-  socket.on("mobile-sendSocketId", async (email: string) => {
+  socket.on(MOBILE_SEND_SOCKET_ID, async (email: string) => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if(newPlayerConnected){
       sendUserDataToWeb(io, newPlayerConnected);
     }    
   })
-  ///////////////////////////////////////////////////
-  // //when player disconnects
-  // socket.on("disconnect", async () => {
-  //   console.log(`player with socketId ${socket.id} disconnected`);
-  //   removePlayerConnected(socket.id);
-  //   console.log("quitado victor: " + JSON.stringify(ONLINE_USERS));
-  //   socket.broadcast.emit("playerDisconnected", {playerSocketId: socket.id});
-  // })
 
-  ////////////////////////////////////////////////////
-
-  socket.on('mobile-gameStart', async () => {
+  // When Mortimer presses the START Button
+  socket.on(MOBILE_GAME_START, async () => {
     console.log('mobile-gameStart socket message listened. Sending Online users to everyone.')
     sendConnectedUsersArray(io)
   })
 
   // When a player selects that is going to make an attack
-  socket.on("mobile-selectAttack", async () => {
+  socket.on(MOBILE_SELECT_ATTACK, async () => {
     console.log('mobile-selectAttack socket message listened. Performing attack.')
     sendAttackSelectedToWeb(io);
   });
 
   // When a player selects that is going to heal
-  socket.on("mobile-selectHeal", async () => {
+  socket.on(MOBILE_SELECT_HEAL, async () => {
     console.log('mobile-selectHeal socket message listened. Performing heal.')
     sendHealSelectedToWeb(io);
   });
 
   // When a player selects that is going to curse
-  socket.on("mobile-selectCurse", async () => {
+  socket.on(MOBILE_SELECT_CURSE, async () => {
     console.log('mobile-selectCurse socket message listened. Performing curse.')
     sendCurseSelectedToWeb(io);
   });
 
   // When a player selects that is going to use a potion
-  socket.on("mobile-selectUsePotion", async () => {
+  socket.on(MOBILE_SELECT_USE_POTION, async () => {
     console.log('mobile-selectUsePotion socket message listened. Using potion.')
     sendUsePotionSelectedToWeb(io);
   });  
 
-  socket.on('mobile-attack', async (data) => {
+  socket.on(MOBILE_ATTACK, async (data) => {
     const { _id } = data;
     let attacker = findPlayerById(_id);
     let defender = findPlayerBySocketId(socket.id);
