@@ -5,11 +5,6 @@ import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConne
 import { Player } from "../../../interfaces/Player";
 
 module.exports = (io: Server, socket: Socket) => {
-
-  socket.on("mobile-userTest", async () => {
-    socket.emit("mobile-userTest", 'User for mobile');
-  });
-
   //////////////////////////////////////////////////
   //receive socketId + email from clientMobile
   socket.on("mobile-sendSocketId", async (email: string) => {
@@ -31,40 +26,31 @@ module.exports = (io: Server, socket: Socket) => {
   ////////////////////////////////////////////////////
 
   socket.on('mobile-gameStart', async () => {
+    console.log('mobile-gameStart socket message listened. Sending Online users to everyone.')
     sendConnectedUsersArray(io)
   })
 
   // When a player selects that is going to make an attack
   socket.on("mobile-selectAttack", async () => {
+    console.log('mobile-selectAttack socket message listened. Performing attack.')
     sendAttackSelectedToWeb(io);
   });
 
   // When a player selects that is going to heal
   socket.on("mobile-selectHeal", async () => {
+    console.log('mobile-selectHeal socket message listened. Performing heal.')
     sendHealSelectedToWeb(io);
   });
 
   // When a player selects that is going to curse
   socket.on("mobile-selectCurse", async () => {
+    console.log('mobile-selectCurse socket message listened. Performing curse.')
     sendCurseSelectedToWeb(io);
   });
 
   // When a player selects that is going to use a potion
   socket.on("mobile-selectUsePotion", async () => {
+    console.log('mobile-selectUsePotion socket message listened. Using potion.')
     sendUsePotionSelectedToWeb(io);
-  });
-  
-  socket.on('mobile-attack', async (data) => {
-    const { _id } = data;
-    let attacker = findPlayerById(_id);
-    let defender = findPlayerBySocketId(socket.id);
-    
-    //calculate damage
-    let totalDmg = 0;
-
-
-    //return players to web
-    sendConnectedUsersArray(io)
-  })
-  
+  });  
 }
