@@ -12,8 +12,4 @@ export interface Modifier {
   CFP: number; //INS
   BCFA: number; //STR + INS
   resistance: number;
-  die_faces: number,
-  die_modifier: number,
-  die_num: number,
-  base_percentage: number,
 }
