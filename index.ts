@@ -17,14 +17,17 @@ const mongodbRoute = process.env.MONGO_URI;
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const server = createServer(app);
+const cors=require("cors");
 const io = new Server(server, {
   cors: {
-    origin: "*",  // Allows all origins, for testing purposes
+    origin: "*", 
     methods: ["GET", "POST"],
-    credentials:true,            //access-control-allow-credentials:true
+    credentials:true,           
     optionSuccessStatus:200,
   }
 });
+
+app.use(cors())
 
 app.use(bodyParser.json());
 app.use("/api/player", router);
