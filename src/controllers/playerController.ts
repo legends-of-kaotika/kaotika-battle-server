@@ -27,7 +27,7 @@ const initFetchPlayer = async (req: Request, res: Response) => {
     // Return the player data
     if (returnIfPlayerIsConnected(playerData.email)) {
       console.log(playerData.email, 'is already connected');
-      res.send({ status: "ERROR", error: "Player is already logged in" })
+      res.send({ status: "OK", data: playerData })
     } else {
       ONLINE_USERS.push(playerData)
       res.send({ status: "OK", data: playerData })
