@@ -34,7 +34,8 @@ export const insertSocketId = (email: string, socketId: string): Player | undefi
 //removes the player that got disconnected from playerConnected[] global variable
 export const removePlayerConnected = (socketId: string): void => {
   const userIndex = ONLINE_USERS.findIndex((user)=> user.socketId === socketId);
-  if (userIndex != -1) {
+  if (userIndex != -1) {    
+    console.log('Player with email',ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId ,'disconnected');
     ONLINE_USERS.splice(userIndex, 1);
   }
 }
