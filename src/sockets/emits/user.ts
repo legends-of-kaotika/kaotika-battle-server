@@ -7,4 +7,23 @@ export const sendConnectedUsersArray = (io: Server):void => {
 }
 
 
+// Sends tho the web that tha actual turn player selected to attack
+export const sendAttackSelectedToWeb = (io: Server):void => {
+    io.emit("web-selectAttack");
+}
+
+// Sends tho the web that tha actual turn player selected to heal
+export const sendHealSelectedToWeb = (io: Server):void => {
+    io.emit("web-selectCurse");
+}
+
+// Sends tho the web that tha actual turn player selected to heal
+export const sendCurseSelectedToWeb = (io: Server):void => {
+    io.emit("web-selectCurse");
+}
+
+// Sends tho the web that tha actual turn player selected to use a potion
+export const sendUsePotionSelectedToWeb = (io: Server):void => {
+    io.emit("web-selectUsePotion");
+}
 
