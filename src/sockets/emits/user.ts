@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { ONLINE_USERS } from "../../game";
+import { ONLINE_USERS, webSocketId } from "../../game";
 import { Player } from "../../interfaces/Player";
 
 //sends an array with the connected users to web client on user connection
@@ -32,5 +32,5 @@ export const sendUsePotionSelectedToWeb = (io: Server):void => {
 // Sends the player data to server
 export const sendUserDataToWeb = (io: Server, player:Player):void => {
     console.log(`Emitting web-sendUser socket message with ${player.name}'s player data to web.`)
-    io.emit("web-sendUser", player);
+    io.to(webSocketId).emit("web-sendUser", player);
 }
