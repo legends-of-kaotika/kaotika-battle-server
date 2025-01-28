@@ -37,10 +37,7 @@ const webHandlers = require('./src/sockets/WebHandlers')
 const mobileHandlers = require('./src/sockets/MobileHandlers')
 
 const onConnection = (socket: Socket): void => {  
-  console.log(socket.id, " joined the server.")
-  ONLINE_USERS[0].socketId = socket.id
-  console.log(ONLINE_USERS);
-  
+  console.log(socket.id, " joined the server.")  
   webHandlers(io, socket)
   mobileHandlers(io, socket)
 }
