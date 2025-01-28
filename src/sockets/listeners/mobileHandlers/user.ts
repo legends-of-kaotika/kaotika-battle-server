@@ -1,7 +1,8 @@
 import { Server, Socket } from "socket.io";
-import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb } from "../../emits/user";
+import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
 import { ONLINE_USERS } from "../../../game";
 import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConnected } from "../../../helpers/helper";
+import { Player } from "../../../interfaces/Player";
 
 module.exports = (io: Server, socket: Socket) => {
 
@@ -14,7 +15,9 @@ module.exports = (io: Server, socket: Socket) => {
   socket.on("mobile-sendSocketId", async (email: string) => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
-    //send to web the new player connected
+    if(newPlayerConnected){
+      sendUserDataToWeb(io, newPlayerConnected);
+    }    
   })
   ///////////////////////////////////////////////////
   // //when player disconnects
