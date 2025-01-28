@@ -1,9 +1,84 @@
 const Player = require("../models/playerSchema");
 import { Player } from "../interfaces/Player";
-import {PlayerPopulated} from "../interfaces/PlayerPopulated"; 
+import { PlayerPopulated } from "../interfaces/PlayerPopulated";
+import { Modifier } from "../interfaces/Modifier";
+
+const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
+
+  const equipmentModifiers: Modifier[] = [
+    data.equipment.helmet?.modifiers,
+    data.equipment.weapon?.modifiers,
+    data.equipment.armor?.modifiers,
+    data.equipment.shield?.modifiers,
+    data.equipment.artifact?.modifiers,
+    data.equipment.boot?.modifiers,
+    data.equipment.ring?.modifiers,
+  ].filter((modifier): modifier is Modifier => modifier !== undefined);
+
+
+  const calculateAttribute = (attribute: keyof Modifier): number => {
+    const baseValue = data.attributes[attribute] || 0;
+    const equipmentValue = equipmentModifiers.reduce((sum, modifier) => 
+      sum + (modifier[attribute] || 0), 0);
+    return baseValue + equipmentValue;
+  };
+
+  return {
+    charisma: calculateAttribute('charisma'),
+    constitution: calculateAttribute('constitution'),
+    dexterity: calculateAttribute('dexterity'),
+    insanity: calculateAttribute('insanity'),
+    intelligence: calculateAttribute('intelligence'),
+    strength: calculateAttribute('strength'),
+    resistance: 100,
+    attack: 0,
+    hit_points: 0,
+    defense: 0,
+    magic_resistance: 0,
+    CFP: 0,
+    BCFA: 0,
+  };
+};
+
+export const calculateHitPoints = (attributes: Modifier): number => {
+  return Math.floor(attributes.constitution + attributes.dexterity - attributes.insanity / 2);
+};
+
+export const calculateAttack = (attributes: Modifier): number => {
+  return Math.floor(attributes.strength - attributes.insanity / 2);
+};
+
+export const calculateDefense = (attributes: Modifier): number => {
+  return Math.floor(attributes.dexterity + attributes.constitution + attributes.intelligence / 2);
+};
+
+export const calculateMagicResistance = (attributes: Modifier): number => {
+  return Math.floor(attributes.intelligence + attributes.charisma);
+};
+
+export const calculateCFP = (attributes: Modifier): number => {
+  return attributes.insanity;
+};
+
+export const calculateBCFA = (attributes: Modifier): number => {
+  return Math.floor(attributes.strength + attributes.insanity);
+};
 
 const filterPlayerData = (data: PlayerPopulated): Player => {
-  const player: Player  = {
+
+  const baseAttributes = calculateBaseAttributes(data);
+
+  const calculatedAttributes = {
+    ...baseAttributes,
+    hit_points: calculateHitPoints(baseAttributes),
+    attack: calculateAttack(baseAttributes),
+    defense: calculateDefense(baseAttributes),
+    magic_resistance: calculateMagicResistance(baseAttributes),
+    CFP: calculateCFP(baseAttributes),
+    BCFA: calculateBCFA(baseAttributes),
+  };
+
+  const player: Player = {
     _id: data._id,
     name: data.name || '',
     nickname: data.nickname || '',
@@ -12,27 +87,29 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
     level: data.level || 0,
     role: assignRole(data.email) || '',
     socketId: '',
+    isBetrayer: data.isBetrayer,
     profile: data.profile
       ? {
         name: data.profile.name || '',
       }
       : null,
-    attributes: data.attributes || {
+    attributes: calculatedAttributes,
+    base_attributes: data.attributes || {
       intelligence: 0,
       dexterity: 0,
       insanity: 0,
       charisma: 0,
       constitution: 0,
       strength: 0,
+      resistance: 100,
+      attack: 0,
+      hit_points: 0,
+      defense: 0,
+      magic_resistance: 0,
+      CFP: 0,
+      BCFA: 0,
     },
     equipment: {
-      helmet: data.equipment?.helmet || null,
-      weapon: data.equipment?.weapon || {},
-      armor: data.equipment?.armor || {},
-      shield: data.equipment?.shield || null,
-      artifact: data.equipment?.artifact || {},
-      boot: data.equipment?.boot || null,
-      ring: data.equipment?.ring || null,
       healing_potion: data.equipment?.healing_potion || {},
       antidote_potion: data.equipment?.antidote_potion || {},
       enhancer_potion: data.equipment?.enhancer_potion || {},
@@ -42,12 +119,11 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
       antidote_potions: data.inventory?.antidote_potions || [],
       enhancer_potions: data.inventory?.enhancer_potions || [],
     },
-      status: {
-        ethaziumCurse: false,
-        common_diseases: [],
-        tired: false
-      },
-      resistance: 100,
+    status: {
+      ethaziumCurse: false,
+      common_diseases: [],
+      tired: false
+    },
   };
   return player;
 };
@@ -100,4 +176,3 @@ const initFetchPlayer = async (email: String) => {
 
 
 module.exports = { initFetchPlayer };
-
