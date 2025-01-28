@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ONLINE_USERS } from "../game";
+import { returnIfPlayerIsConnected } from "../helpers/helper";
 
 const playerService = require('../services/playerService');
 
@@ -23,9 +24,15 @@ const initFetchPlayer = async (req: Request, res: Response) => {
     if (!playerData) {
       return res.status(404).send({ message: "Does not exist any player with this email" });
     }
-    // Return the player data 
-    ONLINE_USERS.push(playerData)
-    res.send({ status: "OK", data: playerData })
+    // Return the player data
+    if (returnIfPlayerIsConnected(playerData.email)) {
+      console.log(playerData.email, 'is already connected');
+      res.send({ status: "ERROR", error: "Player is already logged in" })
+    } else {
+      ONLINE_USERS.push(playerData)
+      res.send({ status: "OK", data: playerData })
+    }
+    
   } catch (error) {
     res
       .status(error?.status || 500)
