@@ -32,16 +32,15 @@ const playerSchema = new mongoose.Schema({
     resistance: { type: 'Number' },
   },
   equipment: {
-    helmet: {},
-    weapon: {},
-    armor: {},
-    shield: {},
-    artifact: {},
-    boot: {},
-    ring: {},
     antidote_potion: {},
     healing_potion: {},
-    enhancer_potion: {}
+    enhancer_potion: {},
+    weapon: {
+      die_faces: { type: 'Number' },
+      die_num: { type: 'Number' },
+      die_modifier: { type: 'Number' },
+      base_percentage: { type: 'Number' },
+    }
   },
   inventory: {
     antidote_potions: [],

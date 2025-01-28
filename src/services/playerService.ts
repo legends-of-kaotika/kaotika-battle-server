@@ -113,6 +113,7 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
       healing_potion: data.equipment?.healing_potion || {},
       antidote_potion: data.equipment?.antidote_potion || {},
       enhancer_potion: data.equipment?.enhancer_potion || {},
+      weapon: data.equipment?.weapon || {}
     },
     inventory: {
       healing_potions: data.inventory?.healing_potions || [],
