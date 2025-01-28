@@ -16,7 +16,7 @@ export const sendAttackSelectedToWeb = (io: Server):void => {
 
 // Sends tho the web that tha actual turn player selected to heal
 export const sendHealSelectedToWeb = (io: Server):void => {
-    io.emit("web-selectCurse");
+    io.emit("web-selectHeal");
 }
 
 // Sends tho the web that tha actual turn player selected to heal

@@ -49,5 +49,15 @@ export const findPlayerByEmail = (email: string): Player | string => {
   return "No players found";
 };
 
+//returns a boolean if a player is connected. searched by email
+export const returnIfPlayerIsConnected = (email: string): boolean => {
+  for (let i = 0; i < ONLINE_USERS.length; i++) {
+    if (ONLINE_USERS[i].email === email) {
+      return true;
+    }
+  }
+  return false
+};
+
 
   
