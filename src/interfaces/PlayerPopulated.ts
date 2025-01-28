@@ -27,6 +27,7 @@ export interface PlayerPopulated {
   profile: Profile | null;
   attributes: Modifier;
   classroom_id: string | null;
+  isBetrayer: boolean;
   equipment:{
     helmet: Helmet | null,
     weapon: Weapon,

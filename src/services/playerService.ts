@@ -1,6 +1,8 @@
 const Player = require("../models/playerSchema");
 import { Player } from "../interfaces/Player";
-import {PlayerPopulated} from "../interfaces/PlayerPopulated"; 
+import {PlayerPopulated} from "../interfaces/PlayerPopulated";
+import { Modifier } from "../interfaces/Modifier";
+
 
 const filterPlayerData = (data: PlayerPopulated): Player => {
   const player: Player  = {
@@ -12,6 +14,7 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
     level: data.level || 0,
     role: assignRole(data.email) || '',
     socketId: '',
+    isBetrayer: data.isBetrayer,
     profile: data.profile
       ? {
         name: data.profile.name || '',
@@ -24,15 +27,38 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
       charisma: 0,
       constitution: 0,
       strength: 0,
+      resistance: 100,
+      attack: 0,
+      hit_points: 0,
+      defense: 0,
+      magic_resistance: 0,
+      CFP: 0,
+      BCFA: 0,
+      die_faces: 0,
+      die_modifier: 0,
+      die_num: 0,
+      base_percentage: 0,
+    },
+    base_attributes: data.attributes || {
+      intelligence: 0,
+      dexterity: 0,
+      insanity: 0,
+      charisma: 0,
+      constitution: 0,
+      strength: 0,
+      resistance: 100,
+      attack: 0,
+      hit_points: 0,
+      defense: 0,
+      magic_resistance: 0,
+      CFP: 0,
+      BCFA: 0,
+      die_faces: 0,
+      die_modifier: 0,
+      die_num: 0,
+      base_percentage: 0,
     },
     equipment: {
-      helmet: data.equipment?.helmet || null,
-      weapon: data.equipment?.weapon || {},
-      armor: data.equipment?.armor || {},
-      shield: data.equipment?.shield || null,
-      artifact: data.equipment?.artifact || {},
-      boot: data.equipment?.boot || null,
-      ring: data.equipment?.ring || null,
       healing_potion: data.equipment?.healing_potion || {},
       antidote_potion: data.equipment?.antidote_potion || {},
       enhancer_potion: data.equipment?.enhancer_potion || {},
@@ -47,7 +73,6 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
         common_diseases: [],
         tired: false
       },
-      resistance: 100,
   };
   return player;
 };

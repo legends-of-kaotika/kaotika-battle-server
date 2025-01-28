@@ -35,6 +35,7 @@ const playerSchema = new mongoose.Schema({
     nickname: { type: 'String' },
     email: { type: 'String' },
     avatar: { type: 'String' },
+    isBetrayer: { type: 'Boolean' },
     level: { type: 'Number' },
     profile: {
       name: { type: 'String' },
