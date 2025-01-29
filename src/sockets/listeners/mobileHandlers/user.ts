@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
-import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
+import { sendAttackSelectedToWeb, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
 import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../helpers/helper";
-import { MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
+import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
 
 module.exports = (io: Server, socket: Socket) => {
 
@@ -10,6 +10,7 @@ module.exports = (io: Server, socket: Socket) => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if(newPlayerConnected){
+      socket.join(MOBILE)
       sendUserDataToWeb(io, newPlayerConnected);
     }    
   })
@@ -17,7 +18,7 @@ module.exports = (io: Server, socket: Socket) => {
   // When Mortimer presses the START Button
   socket.on(MOBILE_GAME_START, async () => {
     console.log('mobile-gameStart socket message listened. Sending Online users to everyone.')
-    sendConnectedUsersArray(io)
+    sendConnectedUsersArrayToAll(io)
   })
 
   // When a player selects that is going to make an attack
@@ -53,6 +54,6 @@ module.exports = (io: Server, socket: Socket) => {
 
 
     //return players to web
-    sendConnectedUsersArray(io)
+    sendConnectedUsersArrayToAll(io)
   })
 }
