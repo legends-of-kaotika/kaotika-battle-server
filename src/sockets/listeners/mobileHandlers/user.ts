@@ -1,8 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { sendAttackSelectedToWeb, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
-import { ONLINE_USERS } from "../../../game";
-import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConnected } from "../../../helpers/helper";
-import { Player } from "../../../interfaces/Player";
+import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../helpers/helper";
 import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
 
 module.exports = (io: Server, socket: Socket) => {
@@ -48,8 +46,8 @@ module.exports = (io: Server, socket: Socket) => {
   });  
 
   socket.on(MOBILE_ATTACK, async (_id) => {
-    let attacker = findPlayerById(_id);
-    let defender = findPlayerBySocketId(socket.id);
+    let defender = findPlayerById(_id);
+    let attacker = findPlayerBySocketId(socket.id);
     
     //calculate damage
     let totalDmg = 0;
