@@ -47,8 +47,7 @@ module.exports = (io: Server, socket: Socket) => {
     sendUsePotionSelectedToWeb(io);
   });  
 
-  socket.on(MOBILE_ATTACK, async (data) => {
-    const { _id } = data;
+  socket.on(MOBILE_ATTACK, async (_id) => {
     let attacker = findPlayerById(_id);
     let defender = findPlayerBySocketId(socket.id);
     
