@@ -18,13 +18,16 @@ jobs:
           cd "/home/daw1/Documentos/KBS/kaotika-battle-server" &&
           git config pull.rebase false &&
           git pull origin KBS-50
+          echo "Latest changes received"
 
       - name: Install dependencies
         run: |
           cd "/home/daw1/Documentos/KBS/kaotika-battle-server" &&
           npm install
+          echo "Latest dependencies installed"
 
       - name: Restart PM2
         run: |
           cd "/home/daw1/Documentos/KBS/kaotika-battle-server" &&
           pm2 reload ecosystem.config.js --watch -i max
+          echo "Server Reloaded"
