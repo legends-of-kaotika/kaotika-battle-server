@@ -1,5 +1,7 @@
 
 {/* SOCKET CONSTANTS */ }
+// GROUPS
+export const MOBILE = "mobile"
 
 //EMITS
 

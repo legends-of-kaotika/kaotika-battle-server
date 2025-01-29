@@ -18,12 +18,4 @@ module.exports = (io: Server, socket: Socket) => {
     console.log('web-sendUsers socket message listened. Sending Online Users to everyone.')
     sendConnectedUsersArray(io);
   });
-
-  //sends the new array of players on disconnect
-  socket.on(DISCONNECT, async () => {
-    console.log('disconnect socket message listened. Deleting user from online users list.')
-    console.log('trying to remove player with the following socket: ', socket.id)
-    removePlayerConnected(socket.id);
-    sendConnectedUsersArray(io)
-  })
 };
