@@ -40,3 +40,5 @@ export const MOBILE_ATTACK = "mobile-attack"
 export const WEB_SEND_USERS = "web-sendUsers"
 
 export const DISCONNECT = "disconnect"
+
+export const WEB_SEND_SOCKET_ID = "web-sendSocketId"

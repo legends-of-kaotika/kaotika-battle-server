@@ -2,12 +2,12 @@ import { Server, Socket } from "socket.io";
 import { sendConnectedUsersArray } from "../../emits/user";
 import { ONLINE_USERS, setWebSocket, webSocketId } from "../../../game";
 import { removePlayerConnected } from "../../../helpers/helper";
-import { DISCONNECT, WEB_SEND_USERS } from "../../../constants/constants";
+import { DISCONNECT, WEB_SEND_SOCKET_ID, WEB_SEND_USERS } from "../../../constants/constants";
 
 module.exports = (io: Server, socket: Socket) => { 
 
   //gets web client socketId
-  socket.on("web-sendSocketId", async () => {
+  socket.on(WEB_SEND_SOCKET_ID, async () => {
     console.log('web-sendSocketId socket message listened. Getting web-client socket and saving it in webSocketId Variable.')
     setWebSocket(socket.id);
     console.log(webSocketId);
