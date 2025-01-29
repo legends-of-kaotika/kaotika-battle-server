@@ -1,5 +1,4 @@
 import { Socket } from "socket.io";
-import { ONLINE_USERS } from "./src/game";
 const mongoose = require('mongoose');
 
 const express = require('express')
