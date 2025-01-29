@@ -1,9 +1,8 @@
 import { Server, Socket } from "socket.io";
-import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
-import { ONLINE_USERS } from "../../../game";
-import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConnected } from "../../../helpers/helper";
-import { Player } from "../../../interfaces/Player";
-import { MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
+import { sendAttackSelectedToWeb, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
+import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../helpers/helper";
+import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, TURN_START } from "../../../constants/constants";
+import { startTimer } from "../../../timer/timer";
 
 module.exports = (io: Server, socket: Socket) => {
 
@@ -12,6 +11,7 @@ module.exports = (io: Server, socket: Socket) => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if(newPlayerConnected){
+      socket.join(MOBILE)
       sendUserDataToWeb(io, newPlayerConnected);
     }    
   })
@@ -19,7 +19,7 @@ module.exports = (io: Server, socket: Socket) => {
   // When Mortimer presses the START Button
   socket.on(MOBILE_GAME_START, async () => {
     console.log('mobile-gameStart socket message listened. Sending Online users to everyone.')
-    sendConnectedUsersArray(io)
+    sendConnectedUsersArrayToAll(io)
   })
 
   // When a player selects that is going to make an attack
@@ -46,16 +46,18 @@ module.exports = (io: Server, socket: Socket) => {
     sendUsePotionSelectedToWeb(io);
   });  
 
-  socket.on(MOBILE_ATTACK, async (data) => {
-    const { _id } = data;
-    let attacker = findPlayerById(_id);
-    let defender = findPlayerBySocketId(socket.id);
+  socket.on(MOBILE_ATTACK, async (_id) => {
+    let defender = findPlayerById(_id);
+    let attacker = findPlayerBySocketId(socket.id);
     
     //calculate damage
     let totalDmg = 0;
 
 
     //return players to web
-    sendConnectedUsersArray(io)
+    sendConnectedUsersArrayToAll(io)
+  })
+  socket.on(TURN_START, async () => {
+    startTimer();
   })
 }

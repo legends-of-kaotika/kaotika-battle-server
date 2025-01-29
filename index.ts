@@ -17,7 +17,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const server = createServer(app);
 const cors=require("cors");
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: "*", 
     methods: ["GET", "POST"],
@@ -31,15 +31,11 @@ app.use(cors())
 app.use(bodyParser.json());
 app.use("/api/player", router);
 
-//Handlers requires
-const webHandlers = require('./src/sockets/WebHandlers')
-const mobileHandlers = require('./src/sockets/MobileHandlers')
+const socketHandlers = require('./src/sockets/handlers')
 
 const onConnection = (socket: Socket): void => {  
   console.log(socket.id, " joined the server.")
-  
-  webHandlers(io, socket)
-  mobileHandlers(io, socket)
+  socketHandlers(io, socket)
 }
 
 async function start() {
