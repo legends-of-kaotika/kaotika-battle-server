@@ -94,7 +94,7 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
       }
       : null,
     attributes: calculatedAttributes,
-    base_attributes: data.attributes || {
+    base_attributes: calculatedAttributes || {
       intelligence: 0,
       dexterity: 0,
       insanity: 0,
