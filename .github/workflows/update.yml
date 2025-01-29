@@ -15,16 +15,16 @@ jobs:
         
       - name: Get latest changes
         run: |
-          cd /home/daw1/Documentos/Kaotika Battle Server/kaotika-battle-server && \
-          git config pull.rebase false && \
+          cd "/home/daw1/Documentos/Kaotika Battle Server/kaotika-battle-server" &&
+          git config pull.rebase false &&
           git pull origin KBS-50
 
       - name: Install dependencies
         run: |
-          cd /home/daw1/Documentos/Kaotika Battle Server/kaotika-battle-server && \
+          cd "/home/daw1/Documentos/Kaotika Battle Server/kaotika-battle-server" &&
           npm install
 
       - name: Restart PM2
         run: |
-          cd /home/daw1/Documentos/Kaotika Battle Server/kaotika-battle-server && \
+          cd "/home/daw1/Documentos/Kaotika Battle Server/kaotika-battle-server" &&
           pm2 reload ecosystem.config.js --watch -i max
