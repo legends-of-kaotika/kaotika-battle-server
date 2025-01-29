@@ -3,7 +3,7 @@ import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWe
 import { ONLINE_USERS } from "../../../game";
 import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConnected } from "../../../helpers/helper";
 import { Player } from "../../../interfaces/Player";
-import { MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
+import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
 
 module.exports = (io: Server, socket: Socket) => {
 
@@ -12,6 +12,7 @@ module.exports = (io: Server, socket: Socket) => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if(newPlayerConnected){
+      socket.join(MOBILE)
       sendUserDataToWeb(io, newPlayerConnected);
     }    
   })

@@ -1,5 +1,7 @@
+import { Socket } from "socket.io";
 import { ONLINE_USERS } from "../game";
 import { Player } from "../interfaces/Player";
+import { MOBILE } from "../constants/constants";
 
 //returns a player searched by id
 export const findPlayerById = (_id: string): Player | string => {
@@ -32,10 +34,11 @@ export const insertSocketId = (email: string, socketId: string): Player | undefi
 }
 
 //removes the player that got disconnected from playerConnected[] global variable
-export const removePlayerConnected = (socketId: string): void => {
+export const removePlayerConnected = (socket: Socket, socketId: string): void => {
   const userIndex = ONLINE_USERS.findIndex((user)=> user.socketId === socketId);
   if (userIndex != -1) {    
     console.log('Player with email',ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId ,'disconnected');
+    socket.leave(MOBILE)
     ONLINE_USERS.splice(userIndex, 1);
   }
 }
