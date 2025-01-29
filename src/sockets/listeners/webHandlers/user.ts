@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { sendConnectedUsersArray } from "../../emits/user";
+import { sendConnectedUsersArrayToWeb } from "../../emits/user";
 import { ONLINE_USERS, setWebSocket, webSocketId } from "../../../game";
 import { removePlayerConnected } from "../../../helpers/helper";
 import { DISCONNECT, WEB_SEND_USERS } from "../../../constants/constants";
@@ -16,6 +16,6 @@ module.exports = (io: Server, socket: Socket) => {
   //sends current online players
   socket.on(WEB_SEND_USERS, async () => {
     console.log('web-sendUsers socket message listened. Sending Online Users to everyone.')
-    sendConnectedUsersArray(io);
+    sendConnectedUsersArrayToWeb(io);
   });
 };

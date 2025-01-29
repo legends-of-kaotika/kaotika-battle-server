@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { sendAttackSelectedToWeb, sendConnectedUsersArray, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
+import { sendAttackSelectedToWeb, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
 import { ONLINE_USERS } from "../../../game";
 import { findPlayerById, findPlayerBySocketId, insertSocketId, removePlayerConnected } from "../../../helpers/helper";
 import { Player } from "../../../interfaces/Player";
@@ -20,7 +20,7 @@ module.exports = (io: Server, socket: Socket) => {
   // When Mortimer presses the START Button
   socket.on(MOBILE_GAME_START, async () => {
     console.log('mobile-gameStart socket message listened. Sending Online users to everyone.')
-    sendConnectedUsersArray(io)
+    sendConnectedUsersArrayToAll(io)
   })
 
   // When a player selects that is going to make an attack
@@ -57,6 +57,6 @@ module.exports = (io: Server, socket: Socket) => {
 
 
     //return players to web
-    sendConnectedUsersArray(io)
+    sendConnectedUsersArrayToAll(io)
   })
 }
