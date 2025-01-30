@@ -4,11 +4,9 @@ import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../h
 import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, MOBILE_SET_SELECTED_PLAYER, TURN_START } from "../../../constants/constants";
 import { startTimer } from "../../../timer/timer";
 import { sortPlayersByCharisma } from "../../../helpers/sort";
-import { ONLINE_USERS } from "../../../game";
+import { ONLINE_USERS, currentPlayer, setCurrentPlayer, setTarget, target } from "../../../game";
 import { Player } from "../../../interfaces/Player";
 
-let target: Player | undefined;
-let currentPlayer: Player | undefined;
 
 module.exports = (io: Server, socket: Socket) => {
 
@@ -29,20 +27,22 @@ module.exports = (io: Server, socket: Socket) => {
     sortPlayersByCharisma(ONLINE_USERS);
 
     //assign the first player
-    currentPlayer = ONLINE_USERS[0];
+    setCurrentPlayer(ONLINE_USERS[0]);
 
     //divide players by loyalty
     sendConnectedUsersArrayToAll(io)
 
     //emit first turn player id
-    assingTurn(io, currentPlayer);
+    assingTurn(io, currentPlayer!);
     startTimer();
   })
 
   // When the current turn player selects a player
   socket.on(MOBILE_SET_SELECTED_PLAYER, async (_id:string) => {
     console.log('mobile-setSelectedPlayer socket message listened.')
-    target = findPlayerById(_id)
+
+    setTarget(findPlayerById(_id)!)
+    
     sendSelectedPlayerIdToWeb(io, target);
   });
 
