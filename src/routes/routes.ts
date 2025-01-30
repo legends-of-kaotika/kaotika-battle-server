@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
-const playerController = require("../controllers/playerController")
+import express, { Request, Response } from "express";
+import { initFetchPlayerController } from "../controllers/playerController";
 
-const express = require("express");
-const router = express.Router();
-module.exports = router;
+const router: express.Router = express.Router();
+export default router;
 
-router.get("/:email", playerController.initFetchPlayer );
+router.get("/:email", (req:Request, res:Response)=> {initFetchPlayerController(req, res)});

@@ -4,7 +4,7 @@ import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../h
 import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, TURN_START } from "../../../constants/constants";
 import { startTimer } from "../../../timer/timer";
 
-module.exports = (io: Server, socket: Socket) => {
+export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
   //receive socketId + email from clientMobile
   socket.on(MOBILE_SEND_SOCKET_ID, async (email: string) => {

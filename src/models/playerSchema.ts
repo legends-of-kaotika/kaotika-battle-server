@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose"
 
 const playerSchema = new mongoose.Schema({
   attributes: {
@@ -65,6 +65,4 @@ const playerSchema = new mongoose.Schema({
   resistance: { type: 'Number', default: 100 }
 });
 
-const Player = mongoose.model('Player', playerSchema);
-
-module.exports = Player;
+export const PlayerModel = mongoose.model('Player', playerSchema);
