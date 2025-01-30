@@ -2,11 +2,14 @@ import { Server, Socket } from "socket.io";
 import { ONLINE_USERS, webSocketId } from "../../game";
 import { Player } from "../../interfaces/Player";
 import { CONNECTED_USERS, SEND_TIMER, WEB_SELECT_ATTACK, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER } from "../../constants/constants";
+import { returnLoyalsAndBetrayers } from "../../helpers/helper";
+import { DividedPlayers } from "../../interfaces/DividedPlayers";
 
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = (io: Server):void => {
     console.log('Emitting connectedUsers socket message with online user list to everyone.')
-    io.to(webSocketId).emit(CONNECTED_USERS, ONLINE_USERS);
+    const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();
+    io.to(webSocketId).emit(CONNECTED_USERS, dividedPlayers);
 }
 
 export const sendConnectedUsersArrayToAll = (io: Server):void => {
