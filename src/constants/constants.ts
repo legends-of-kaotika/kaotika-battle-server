@@ -23,6 +23,8 @@ export const TURN_START = "turn-start"
 
 export const ASSING_TURN = "assing-turn"
 
+export const UPDATE_PLAYER = "updatePlayer"
+
 
 
 //LISTENERS

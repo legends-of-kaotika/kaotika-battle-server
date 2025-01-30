@@ -1,9 +1,10 @@
 import { Server, Socket } from "socket.io";
 import { ONLINE_USERS, webSocketId } from "../../game";
 import { Player } from "../../interfaces/Player";
-import { ASSING_TURN, CONNECTED_USERS, SEND_TIMER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from "../../constants/constants";
+import { ASSING_TURN, CONNECTED_USERS, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from "../../constants/constants";
 import { returnLoyalsAndBetrayers } from "../../helpers/helper";
 import { DividedPlayers } from "../../interfaces/DividedPlayers";
+import { Modifier } from "../../interfaces/Modifier";
 
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = (io: Server):void => {
@@ -56,4 +57,10 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 export const assingTurn = (io: Server, player:Player):void => {
     console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`)
     io.emit(ASSING_TURN, player._id);
+}
+
+// Sends the target players(id) with the attributes updated and the total damage
+export const sendUpdatedPlayer = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number): void => {
+    console.log(`Emitting updatePlayer socket message with ${id} id, the total damage and updated attributes`);
+    io.emit(UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage})
 }
