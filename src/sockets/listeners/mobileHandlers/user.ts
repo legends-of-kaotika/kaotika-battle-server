@@ -4,7 +4,7 @@ import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../h
 import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, MOBILE_SET_SELECTED_PLAYER, TURN_START } from "../../../constants/constants";
 import { startTimer } from "../../../timer/timer";
 import { sortPlayersByCharisma } from "../../../helpers/sort";
-import { ONLINE_USERS, currentPlayer, setCurrentPlayer, setTarget, target } from "../../../game";
+import { ONLINE_USERS, currentPlayer, round, setCurrentPlayer, setTarget, target, turn } from "../../../game";
 import { Player } from "../../../interfaces/Player";
 
 
@@ -27,7 +27,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sortPlayersByCharisma(ONLINE_USERS);
 
     //assign the first player
-    setCurrentPlayer(ONLINE_USERS[0]);
+    console.log('Round: ', round);
+    setCurrentPlayer(ONLINE_USERS[turn]);
 
     //divide players by loyalty
     sendConnectedUsersArrayToAll(io)

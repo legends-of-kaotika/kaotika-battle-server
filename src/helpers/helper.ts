@@ -1,8 +1,11 @@
 import { Socket } from "socket.io";
-import { ONLINE_USERS } from "../game";
+import { ONLINE_USERS, currentPlayer, increaseTurn, setCurrentPlayer, setTarget, target, turn } from "../game";
 import { Player } from "../interfaces/Player";
 import { MOBILE } from "../constants/constants";
 import { DividedPlayers } from "../interfaces/DividedPlayers";
+import { assingTurn } from "../sockets/emits/user";
+import { io } from "../..";
+import { startTimer } from "../timer/timer";
 
 //returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -66,7 +69,7 @@ export const returnIfPlayerIsConnected = (email: string): boolean => {
 };
 
 //returns a object of loyals and betrayers
-export const returnLoyalsAndBetrayers = (): any => {
+export const returnLoyalsAndBetrayers = (): DividedPlayers => {
   let obj: DividedPlayers = {
     loyals: [],
     betrayers: [],
@@ -79,5 +82,16 @@ export const returnLoyalsAndBetrayers = (): any => {
     }
   })
   return obj
+};
+
+//changes the turn players
+export const changeTurn = () => {
+  increaseTurn();
+  const nextPlayer = ONLINE_USERS[turn]
+  setCurrentPlayer(nextPlayer)
+  console.log(currentPlayer?.name);
+  
+  assingTurn(io,currentPlayer!);
+  startTimer();
 };
 
