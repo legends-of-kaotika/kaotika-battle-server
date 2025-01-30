@@ -5,23 +5,24 @@ import { MOBILE } from "../constants/constants";
 import { DividedPlayers } from "../interfaces/DividedPlayers";
 
 //returns a player searched by id
-export const findPlayerById = (_id: string): Player | string => {
-  for (let i = 0; i < ONLINE_USERS.length; i++) {
-    if (ONLINE_USERS[i]._id === _id) {
-      return ONLINE_USERS[i];
-    }
-  }
-  return "No players found";
+export const findPlayerById = (_id: string): Player | undefined => {
+  ONLINE_USERS.map( player => {
+    if (player._id === _id) {
+      return player
+    } 
+  })
+  return undefined
 };
 
 //returns a player searched by socketid
-export const findPlayerBySocketId = (id: string): Player | string => {
-    for (let i = 0; i < ONLINE_USERS.length; i++) {
-      if (ONLINE_USERS[i].socketId === id) {
-        return ONLINE_USERS[i];
-      }
-    }
-    return 'No players found'
+export const findPlayerBySocketId = (id: string): Player | undefined => {
+
+  ONLINE_USERS.map( player => {
+    if (player.socketId === id) {
+      return player
+    } 
+  })
+  return undefined
   };
 
 //inserts socketId in the specific player of playerConnected[] global variable
@@ -45,22 +46,22 @@ export const removePlayerConnected = (socket: Socket, socketId: string): void =>
 }
 
 //returns a player searched by email
-export const findPlayerByEmail = (email: string): Player | string => {
-  for (let i = 0; i < ONLINE_USERS.length; i++) {
-    if (ONLINE_USERS[i].email === email) {
-      return ONLINE_USERS[i];
-    }
-  }
-  return "No players found";
+export const findPlayerByEmail = (email: string): Player | undefined => {
+  ONLINE_USERS.map( player => {
+    if (player.email === email) {
+      return player
+    } 
+  })
+  return undefined
 };
 
 //returns a boolean if a player is connected. searched by email
 export const returnIfPlayerIsConnected = (email: string): boolean => {
-  for (let i = 0; i < ONLINE_USERS.length; i++) {
-    if (ONLINE_USERS[i].email === email) {
-      return true;
-    }
-  }
+  ONLINE_USERS.map( player => {
+    if (player.email === email) {
+      return true
+    } 
+  })
   return false
 };
 
