@@ -1,15 +1,13 @@
 import { Server, Socket } from "socket.io";
-import { assingTurn, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendSelectedPlayerIdToWeb, sendUpdatedPlayer, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
+import { assingTurn, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendSelectedPlayerIdToWeb, sendUpdatedPlayerToAll, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
 import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../helpers/helper";
 import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, MOBILE_SET_SELECTED_PLAYER, TURN_START } from "../../../constants/constants";
 import { startTimer } from "../../../timer/timer";
 import { sortPlayersByCharisma } from "../../../helpers/sort";
-import { ONLINE_USERS } from "../../../game";
+import { ONLINE_USERS, currentPlayer, round, setCurrentPlayer, setTarget, target, turn } from "../../../game";
 import { Player } from "../../../interfaces/Player";
 import { calculateAttack, calculateDefense } from "../../../services/playerService";
 
-let target: Player | undefined;
-let currentPlayer: Player | undefined;
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
@@ -30,20 +28,22 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sortPlayersByCharisma(ONLINE_USERS);
 
     //assign the first player
-    currentPlayer = ONLINE_USERS[0];
+    console.log('Round: ', round);
+    setCurrentPlayer(ONLINE_USERS[turn]);
 
     //divide players by loyalty
     sendConnectedUsersArrayToAll(io)
 
     //emit first turn player id
-    assingTurn(io, currentPlayer);
+    assingTurn(io, currentPlayer!);
     startTimer();
   })
 
   // When the current turn player selects a player
   socket.on(MOBILE_SET_SELECTED_PLAYER, async (_id:string) => {
     console.log('mobile-setSelectedPlayer socket message listened.')
-    target = findPlayerById(_id)
+    const newTarget = findPlayerById(_id);
+    setTarget(newTarget!)
     sendSelectedPlayerIdToWeb(io, target);
   });
 
@@ -90,13 +90,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     //   totalDmg = Math.floor(totalDmg * ?); //The attackers total damage is reduced by % [TIRED]
     // }
 
-    //Emits the attack results to mobile clients
-    sendUpdatedPlayer(io, attacker._id, target.attributes, totalDmg)
-
-    //Updates the target's hit points
+   //Updates the target's hit points
     target.attributes.hit_points = Math.max(0, target.attributes.hit_points - totalDmg);
 
-    //return updated players to web
-    sendConnectedUsersArrayToAll(io)
+    //Emits the attack results to mobile clients
+    sendUpdatedPlayerToAll(io, attacker._id, target.attributes, totalDmg)
   })
 }
