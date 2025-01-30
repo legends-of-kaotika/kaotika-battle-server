@@ -5,7 +5,7 @@ import { MOBILE } from "../constants/constants";
 import { DividedPlayers } from "../interfaces/DividedPlayers";
 import { assingTurn } from "../sockets/emits/user";
 import { io } from "../..";
-import { startTimer } from "../timer/timer";
+import { clearTimer, startTimer } from "../timer/timer";
 
 //returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -89,9 +89,8 @@ export const changeTurn = () => {
   increaseTurn();
   const nextPlayer = ONLINE_USERS[turn]
   setCurrentPlayer(nextPlayer)
-  console.log(currentPlayer?.name);
-  
   assingTurn(io,currentPlayer!);
+  clearTimer();
   startTimer();
 };
 
