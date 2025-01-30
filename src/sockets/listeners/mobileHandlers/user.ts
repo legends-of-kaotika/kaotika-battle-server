@@ -8,7 +8,7 @@ import { ONLINE_USERS, currentPlayer, setCurrentPlayer, setTarget, target } from
 import { Player } from "../../../interfaces/Player";
 
 
-module.exports = (io: Server, socket: Socket) => {
+export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
   //receive socketId + email from clientMobile
   socket.on(MOBILE_SEND_SOCKET_ID, async (email: string) => {

@@ -3,7 +3,7 @@ import { sendConnectedUsersArrayToAll } from "../emits/user";
 import { removePlayerConnected } from "../../helpers/helper";
 import { DISCONNECT } from "../../constants/constants";
 
-module.exports = (io: Server, socket: Socket) => { 
+export const globalHandlers = (io: Server, socket: Socket): void => { 
   //sends the new array of players on disconnect
   socket.on(DISCONNECT, async () => {
     console.log('disconnect socket message listened. Deleting user from online users list.')

@@ -4,7 +4,7 @@ import { ONLINE_USERS, setWebSocket, webSocketId } from "../../../game";
 import { removePlayerConnected } from "../../../helpers/helper";
 import { DISCONNECT, WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END } from "../../../constants/constants";
 
-module.exports = (io: Server, socket: Socket) => { 
+export const webUserHandlers = (io: Server, socket: Socket): void => { 
 
   //gets web client socketId
   socket.on(WEB_SEND_SOCKET_ID, async () => {
