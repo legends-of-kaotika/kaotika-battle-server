@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { ONLINE_USERS, webSocketId } from "../../game";
 import { Player } from "../../interfaces/Player";
-import { CONNECTED_USERS, SEND_TIMER, WEB_SELECT_ATTACK, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER } from "../../constants/constants";
+import { ASSING_TURN, CONNECTED_USERS, SEND_TIMER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from "../../constants/constants";
 import { returnLoyalsAndBetrayers } from "../../helpers/helper";
 import { DividedPlayers } from "../../interfaces/DividedPlayers";
 
@@ -14,13 +14,15 @@ export const sendConnectedUsersArrayToWeb = (io: Server):void => {
 
 export const sendConnectedUsersArrayToAll = (io: Server):void => {
     console.log('Emitting connectedUsers socket message with online user list to everyone.')
-    io.emit(CONNECTED_USERS, ONLINE_USERS);
+    const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();    
+    io.emit(CONNECTED_USERS, dividedPlayers);
 }
 
-// Sends tho the web that tha actual turn player selected to attack
-export const sendAttackSelectedToWeb = (io: Server):void => {
-
-    io.to(webSocketId).emit(WEB_SELECT_ATTACK);
+// Sends tho the web that tha actual turn player has selected a player
+export const sendSelectedPlayerIdToWeb = (io: Server, player: Player | undefined):void => {
+    if (player) {
+        io.to(webSocketId).emit(WEB_SET_SELECTED_PLAYER, player._id );
+    }
 }
 
 // Sends tho the web that tha actual turn player selected to heal
@@ -48,4 +50,10 @@ export const sendUserDataToWeb = (io: Server, player:Player):void => {
 export const sendTimerDataToAll = (io: Server, timer:number):void => {
     console.log(`Emitting send-timer socket message with turn time: ${timer} to all clients.`)
     io.emit(SEND_TIMER, timer);
+}
+
+// Sends the player data to server
+export const assingTurn = (io: Server, player:Player):void => {
+    console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`)
+    io.emit(ASSING_TURN, player._id);
 }

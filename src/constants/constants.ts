@@ -7,7 +7,7 @@ export const MOBILE = "mobile"
 
 export const CONNECTED_USERS = "connectedUsers"
 
-export const WEB_SELECT_ATTACK = "web-selectAttack"
+export const WEB_SET_SELECTED_PLAYER = "web-setSelectedPlayer"
 
 export const WEB_SELECT_HEAL = "web-selectHeal"
 
@@ -21,6 +21,9 @@ export const SEND_TIMER = "send-timer"
 
 export const TURN_START = "turn-start"
 
+export const ASSING_TURN = "assing-turn"
+
+
 
 //LISTENERS
 
@@ -30,7 +33,7 @@ export const MOBILE_SEND_SOCKET_ID = "mobile-sendSocketId"
 
 export const MOBILE_GAME_START = "mobile-gameStart"
 
-export const MOBILE_SELECT_ATTACK = "mobile-selectAttack"
+export const MOBILE_SET_SELECTED_PLAYER = "mobile-setSelectedPlayer"
 
 export const MOBILE_SELECT_HEAL = "mobile-selectHeal"
 
