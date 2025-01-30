@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { ONLINE_USERS } from "../game";
 import { returnIfPlayerIsConnected } from "../helpers/helper";
 
-const playerService = require('../services/playerService');
+import { initFetchPlayer } from "../services/playerService";
+import { Player } from "../interfaces/Player";
 
 
-const initFetchPlayer = async (req: Request, res: Response) => {
+export const initFetchPlayerController = async (req: Request, res: Response) => {
 
   const { params: { email } } = req;
 
@@ -20,7 +21,7 @@ const initFetchPlayer = async (req: Request, res: Response) => {
   }
 
   try {
-    const playerData = await playerService.initFetchPlayer(email);
+    const playerData : Player = await initFetchPlayer(email);
     if (!playerData) {
       return res.status(404).send({ message: "Does not exist any player with this email" });
     }
@@ -42,10 +43,5 @@ const initFetchPlayer = async (req: Request, res: Response) => {
         data: { error: error?.message || error }
       });
   }
-}
-
-
-module.exports = {
-  initFetchPlayer,
 }
 

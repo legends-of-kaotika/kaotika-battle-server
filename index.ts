@@ -1,29 +1,27 @@
 import { Socket } from "socket.io";
-import { ONLINE_USERS } from "./src/game";
-const mongoose = require('mongoose');
-
-const express = require('express')
-const bodyParser = require("body-parser"); 
+import mongoose from "mongoose"
+import express from "express";
+import bodyParser from "body-parser";
 const app = express()
 const PORT = process.env.PORT || 3000
-const router = require("./src/routes/routes");
-const playerService = require("./src/controllers/playerController");
-const dotenv = require('dotenv');
+// const playerService = require("./src/controllers/playerController");
+import router from "./src/routes/routes"
+import dotenv from "dotenv";
 dotenv.config();  // Load environment variables from .env file 
 
 //Mongo route 
 const mongodbRoute = process.env.MONGO_URI;
 
-const { createServer } = require("http");
-const { Server } = require("socket.io");
+import {createServer} from "http";
+import {Server} from "socket.io"
 const server = createServer(app);
-const cors=require("cors");
+import cors from "cors";
 export const io = new Server(server, {
   cors: {
     origin: "*", 
     methods: ["GET", "POST"],
     credentials:true,           
-    optionSuccessStatus:200,
+    optionsSuccessStatus:200,
   }
 });
 
@@ -32,7 +30,7 @@ app.use(cors())
 app.use(bodyParser.json());
 app.use("/api/player", router);
 
-const socketHandlers = require('./src/sockets/handlers')
+import { socketHandlers } from "./src/sockets/handlers";
 
 const onConnection = (socket: Socket): void => {  
   console.log(socket.id, " joined the server.")
@@ -48,8 +46,10 @@ async function start() {
     });
 
     // Connect to mongoose
-    await mongoose.connect(mongodbRoute, {});
-    console.log('Conexion con Mongo correcta');
+    if(mongodbRoute) {
+      await mongoose.connect(mongodbRoute, {});
+      console.log('Conexion con Mongo correcta');
+    }
 
   }
   catch (error) {

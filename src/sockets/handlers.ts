@@ -1,10 +1,10 @@
 import { Server, Socket } from "socket.io";
 
-const mobileUserHandlers = require("./listeners/mobileHandlers/user");
-const webUserHandlers = require("./listeners/webHandlers/user");
-const globalHandlers =  require('./listeners/globalHandlers')
+import { mobileUserHandlers } from "./listeners/mobileHandlers/user";
+import { webUserHandlers } from "./listeners/webHandlers/user";
+import { globalHandlers } from "./listeners/globalHandlers";
 
-module.exports = (io: Server, socket: Socket) => {
+export const socketHandlers = (io: Server, socket: Socket): void => {
     //Sockets used for BOTH parties: WEB & MOBILE
     globalHandlers(io, socket);
 
