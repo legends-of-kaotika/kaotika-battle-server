@@ -48,3 +48,5 @@ export const WEB_SEND_USERS = "web-sendUsers"
 export const DISCONNECT = "disconnect"
 
 export const WEB_SEND_SOCKET_ID = "web-sendSocketId"
+
+export const WEB_TURN_END = "web-turnEnd"
