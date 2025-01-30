@@ -5,7 +5,7 @@ import { changeTurn } from "../helpers/helper";
 import { TURN_TIMER } from "../constants/constants";
 
 export let turnTime: number = TURN_TIMER;
-
+let intervalId: NodeJS.Timeout;
 const decreaseTimer = (intervalId: NodeJS.Timeout): void => {
   turnTime--;
   console.log('Time:' , turnTime);
@@ -22,11 +22,11 @@ export const startTimer = () => {
   turnTime = TURN_TIMER;
   console.log("turn time", turnTime);
   // set an interval to decrease timer every second
-  const intervalId = setInterval(() => {
+  intervalId = setInterval(() => {
     decreaseTimer(intervalId);
   }, 1000);
 };
 
-export const clearTimer = (intervalId: any) => {
+export const clearTimer = () => {
   clearInterval(intervalId);
 };
