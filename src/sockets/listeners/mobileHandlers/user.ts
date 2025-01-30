@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { assingTurn, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendSelectedPlayerIdToWeb, sendUpdatedPlayer, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
+import { assingTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendSelectedPlayerIdToWeb, sendUpdatedPlayer, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
 import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../helpers/helper";
 import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, MOBILE_SET_SELECTED_PLAYER, TURN_START } from "../../../constants/constants";
 import { startTimer } from "../../../timer/timer";
@@ -36,6 +36,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     //emit first turn player id
     assingTurn(io, currentPlayer!);
+    gameStartToAll(io)
     startTimer();
   })
 
