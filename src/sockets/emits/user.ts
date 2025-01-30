@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { ONLINE_USERS, webSocketId } from "../../game";
 import { Player } from "../../interfaces/Player";
-import { ASSING_TURN, CONNECTED_USERS, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from "../../constants/constants";
+import { ASSING_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from "../../constants/constants";
 import { returnLoyalsAndBetrayers } from "../../helpers/helper";
 import { DividedPlayers } from "../../interfaces/DividedPlayers";
 import { Modifier } from "../../interfaces/Modifier";
@@ -57,6 +57,11 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 export const assingTurn = (io: Server, player:Player):void => {
     console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`)
     io.emit(ASSING_TURN, player._id);
+}
+
+export const gameStartToAll = (io: Server):void => {
+    console.log(`Emitting gameStart socket message to all devices.`)
+    io.emit(GAME_START);
 }
 
 // Sends the target players(id) with the attributes updated and the total damage
