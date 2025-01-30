@@ -1,7 +1,8 @@
 import { Server, Socket } from "socket.io";
 import { sendAttackSelectedToWeb, sendConnectedUsersArrayToAll, sendCurseSelectedToWeb, sendHealSelectedToWeb, sendUsePotionSelectedToWeb, sendUserDataToWeb } from "../../emits/user";
 import { findPlayerById, findPlayerBySocketId, insertSocketId } from "../../../helpers/helper";
-import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID } from "../../../constants/constants";
+import { MOBILE, MOBILE_ATTACK, MOBILE_GAME_START, MOBILE_SELECT_ATTACK, MOBILE_SELECT_CURSE, MOBILE_SELECT_HEAL, MOBILE_SELECT_USE_POTION, MOBILE_SEND_SOCKET_ID, TURN_START } from "../../../constants/constants";
+import { startTimer } from "../../../timer/timer";
 
 module.exports = (io: Server, socket: Socket) => {
 
@@ -55,5 +56,8 @@ module.exports = (io: Server, socket: Socket) => {
 
     //return players to web
     sendConnectedUsersArrayToAll(io)
+  })
+  socket.on(TURN_START, async () => {
+    startTimer();
   })
 }
