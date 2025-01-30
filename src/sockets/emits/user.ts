@@ -60,7 +60,7 @@ export const assingTurn = (io: Server, player:Player):void => {
 }
 
 // Sends the target players(id) with the attributes updated and the total damage
-export const sendUpdatedPlayer = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number): void => {
+export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number): void => {
     console.log(`Emitting updatePlayer socket message with ${id} id, the total damage and updated attributes`);
     io.emit(UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage})
 }
