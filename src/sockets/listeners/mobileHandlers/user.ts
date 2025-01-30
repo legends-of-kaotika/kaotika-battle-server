@@ -6,6 +6,7 @@ import { startTimer } from "../../../timer/timer";
 import { sortPlayersByCharisma } from "../../../helpers/sort";
 import { ONLINE_USERS } from "../../../game";
 import { Player } from "../../../interfaces/Player";
+import { calculateAttack, calculateDefense } from "../../../services/playerService";
 
 let target: Player | undefined;
 let currentPlayer: Player | undefined;
@@ -64,13 +65,37 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sendUsePotionSelectedToWeb(io);
   });  
 
-  socket.on(MOBILE_ATTACK, async () => {
+  socket.on(MOBILE_ATTACK, async (_id) => {
+    //Find the the players currently fighting
     let attacker = findPlayerBySocketId(socket.id);
-    
-    //calculate damage
-    let totalDmg = 10;
 
-    //return players to web
+      if(!target || !attacker){
+        console.error('Either attacker or target not found');
+      } 
+    
+    //Calculate the damage dealt by the attacker
+    let totalDmg = calculateAttack(attacker.attributes);
+
+    //Calculate the target's defense attribute and by how much it reduces the total damage dealt 
+    const targetDefense = calculateDefense(target.attributes);
+    totalDmg = Math.max(0, totalDmg - targetDefense);
+
+    // //Applies any status effects or modifiers currently in effect to the damage dealt
+    // if(attacker?.status.ethaziumCurse){
+    //   totalDmg = Math.floor(totalDmg * ?); //The attackers total damage is reduced by % [ETHAZIUM CURSE]
+    // }
+
+    // if(attacker?.status.tired){
+    //   totalDmg = Math.floor(totalDmg * ?); //The attackers total damage is reduced by % [TIRED]
+    // }
+
+    //Emits the attack results to mobile clients
+
+    //Updates the target's hit points
+    target.attributes.hit_points = Math.max(0, target.attributes.hit_points - totalDmg
+    );
+
+    //return updated players to web
     sendConnectedUsersArrayToAll(io)
   })
 }
