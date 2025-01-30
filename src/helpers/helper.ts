@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { ONLINE_USERS } from "../game";
 import { Player } from "../interfaces/Player";
 import { MOBILE } from "../constants/constants";
+import { DividedPlayers } from "../interfaces/DividedPlayers";
 
 //returns a player searched by id
 export const findPlayerById = (_id: string): Player | string => {
@@ -63,5 +64,19 @@ export const returnIfPlayerIsConnected = (email: string): boolean => {
   return false
 };
 
+//returns a object of loyals and betrayers
+export const returnLoyalsAndBetrayers = (): any => {
+  let obj: DividedPlayers = {
+    loyals: [],
+    betrayers: [],
+  }
+  ONLINE_USERS.map( player => {
+    if (player.isBetrayer) {
+      obj.betrayers.push(player)
+    } else {
+      obj.loyals.push(player)
+    }
+  })
+  return obj
+};
 
-  
