@@ -1,5 +1,5 @@
-import { Server, Socket } from 'socket.io';
-import { ONLINE_USERS, webSocketId } from '../../game';
+import { Server } from 'socket.io';
+import { webSocketId } from '../../game';
 import { Player } from '../../interfaces/Player';
 import { ASSING_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
 import { returnLoyalsAndBetrayers } from '../../helpers/helper';
