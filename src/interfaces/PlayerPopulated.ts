@@ -1,17 +1,17 @@
-import { Artifact } from "./Artifact";
-import { Armor } from "./Armor";
-import { Weapon } from "./Weapon";
-import { Profile } from "./Profile";
-import { Helmet } from "./Helmet";
-import { Shield } from "./Shield";
-import { Boot } from "./Boot";
-import { Ring } from "./Ring";
-import { Modifier } from "./Modifier";
-import { Task } from "./Task";
-import { Ingredient } from "./Ingredients";
-import { HealingPotion } from "./HealingPotion";
-import { AntidotePotion } from "./AntidotePotion";
-import { EnhancerPotion } from "./EnhancerPotion";
+import { Artifact } from './Artifact';
+import { Armor } from './Armor';
+import { Weapon } from './Weapon';
+import { Profile } from './Profile';
+import { Helmet } from './Helmet';
+import { Shield } from './Shield';
+import { Boot } from './Boot';
+import { Ring } from './Ring';
+import { Modifier } from './Modifier';
+import { Task } from './Task';
+import { Ingredient } from './Ingredients';
+import { HealingPotion } from './HealingPotion';
+import { AntidotePotion } from './AntidotePotion';
+import { EnhancerPotion } from './EnhancerPotion';
 
 export interface PlayerPopulated {
   _id: string;

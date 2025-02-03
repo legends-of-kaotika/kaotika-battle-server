@@ -1,4 +1,4 @@
-import { Modifier } from "./Modifier"
+import { Modifier } from './Modifier';
 
 export interface Weapon {
   _id: string,

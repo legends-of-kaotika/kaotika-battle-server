@@ -1,4 +1,4 @@
-import { Modifier } from "./Modifier"
+import { Modifier } from './Modifier';
 
 export interface Ring {
   _id: string,
