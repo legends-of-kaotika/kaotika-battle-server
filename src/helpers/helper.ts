@@ -60,12 +60,7 @@ export const findPlayerByEmail = (email: string): Player | undefined => {
 
 //returns a boolean if a player is connected. searched by email
 export const returnIfPlayerIsConnected = (email: string): boolean => {
-  ONLINE_USERS.map( player => {
-    if (player.email === email) {
-      return true
-    } 
-  })
-  return false
+  return ONLINE_USERS.some((player) => (player.email === email))
 };
 
 //returns a object of loyals and betrayers
