@@ -1,7 +1,6 @@
-import { playersMock } from "./__mocks__/players";
-import { Player } from "./interfaces/Player";
+import { Player } from './interfaces/Player';
 
-export let ONLINE_USERS: Player[] = []
+export const ONLINE_USERS: Player[] = [];
 export let webSocketId: string = '';
 
 export let target: Player | undefined;
@@ -11,10 +10,10 @@ export let round: number = 1;
 
 //changes the websocketId
 export const setWebSocket = (socketId: string): void => {
-    webSocketId = socketId;
-  };
+  webSocketId = socketId;
+};
 
-  //changes the websocketId
+//changes the websocketId
 export const setTarget = (player: Player): void => {
   target = player;
 };
