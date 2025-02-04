@@ -12,7 +12,6 @@ import {
 } from '../../emits/user';
 import {
   findPlayerById,
-  findPlayerBySocketId,
   insertSocketId,
 } from '../../../helpers/helper';
 import {
@@ -75,7 +74,19 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   socket.on(MOBILE_SET_SELECTED_PLAYER, async (_id: string) => {
     console.log('mobile-setSelectedPlayer socket message listened.');
     const newTarget = findPlayerById(_id);
-    setTarget(newTarget!);
+    console.log('newTarget: ', newTarget?.nickname);
+    
+    if (!newTarget) {
+      console.error('Selected player not found');
+      return;
+    }
+  
+    if (newTarget._id !== _id) {
+      console.error('Target ID mismatch in selection');
+      return;
+    }
+  
+    setTarget(newTarget);
     sendSelectedPlayerIdToWeb(io, target);
   });
 
@@ -98,8 +109,24 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   });
 
   socket.on(MOBILE_ATTACK, async (_id) => {
-    //Find the the players currently fighting
-    const attacker = findPlayerBySocketId(socket.id);
+    // Ensure that there's a target selected
+    if (!target) {
+      console.error('No target has been selected');
+      return;
+    }
+    // Attack the selected target vía their ID
+    console.log('Attacking the player: ', target?.nickname);
+    if (target._id !== _id) {
+      console.error(`Attack target mismatch. Expected: ${target._id}, Received: ${_id}`);
+      return;
+    }
+    // Define the current attacker, and ensure there's one
+    const attacker = currentPlayer;
+    console.log('Target being attacked by the player: ', attacker?.nickname);
+    if (!attacker) {
+      console.error('Attacker not found');
+      return;
+    }
 
     if (!target || !attacker) {
       console.error('Either attacker or target not found');
@@ -121,6 +148,9 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     // if(attacker?.status.tired){
     //   totalDmg = Math.floor(totalDmg * ?); //The attackers total damage is reduced by % [TIRED]
     // }
+
+    console.log('Total damage inflicted: ', totalDmg);
+    
 
     //Updates the target's hit points
     target.attributes.hit_points = Math.max(0,
