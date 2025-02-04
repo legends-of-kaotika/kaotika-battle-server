@@ -31,6 +31,7 @@ import {
   currentPlayer,
   round,
   setCurrentPlayer,
+  setGameStarted,
   setTarget,
   target,
   turn,
@@ -54,6 +55,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   // When Mortimer presses the START Button
   socket.on(MOBILE_GAME_START, async () => {
     console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
+    
+    // Set game as started
+    setGameStarted(true);
+    
     //sort players by charisma
     sortPlayersByCharisma(ONLINE_USERS);
 
