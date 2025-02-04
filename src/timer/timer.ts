@@ -1,20 +1,14 @@
 import { clearInterval } from 'timers';
 import { sendTimerDataToAll } from '../sockets/emits/user';
 import { io } from '../..';
-import { changeTurn } from '../helpers/helper';
 import { TURN_TIMER } from '../constants/constants';
 
 export let turnTime: number = TURN_TIMER;
 let intervalId: NodeJS.Timeout;
-const decreaseTimer = (intervalId: NodeJS.Timeout): void => {
+const decreaseTimer = (): void => {
   turnTime--;
   console.log('Time:' , turnTime);
   sendTimerDataToAll(io ,turnTime);
-  if (turnTime <= 0) {
-    console.log('Turn ended');
-    clearInterval(intervalId);
-    changeTurn();
-  }
 };
 
 export const startTimer = () => {
@@ -23,7 +17,7 @@ export const startTimer = () => {
   console.log('turn time', turnTime);
   // set an interval to decrease timer every second
   intervalId = setInterval(() => {
-    decreaseTimer(intervalId);
+    decreaseTimer();
   }, 1000);
 };
 
