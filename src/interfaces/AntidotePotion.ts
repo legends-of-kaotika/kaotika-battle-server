@@ -1,5 +1,5 @@
-import { AntidoteModifier } from "./AntidoteModifier";
-import { Curse } from "./Curse";
+import { AntidoteModifier } from './AntidoteModifier';
+import { Curse } from './Curse';
 
 export interface AntidotePotion {
 	_id: string, 

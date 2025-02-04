@@ -1,10 +1,9 @@
-import { PlayerModel } from "../models/playerSchema";
-import { Player } from "../interfaces/Player";
-import { PlayerPopulated } from "../interfaces/PlayerPopulated";
-import { Modifier } from "../interfaces/Modifier";
+import { PlayerModel } from '../models/playerSchema';
+import { Player } from '../interfaces/Player';
+import { PlayerPopulated } from '../interfaces/PlayerPopulated';
+import { Modifier } from '../interfaces/Modifier';
 
 const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
-
   const equipmentModifiers: Modifier[] = [
     data.equipment.helmet?.modifiers,
     data.equipment.weapon?.modifiers,
@@ -15,11 +14,10 @@ const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
     data.equipment.ring?.modifiers,
   ].filter((modifier): modifier is Modifier => modifier !== undefined);
 
-
   const calculateAttribute = (attribute: keyof Modifier): number => {
     const baseValue = data.attributes[attribute] || 0;
-    const equipmentValue = equipmentModifiers.reduce((sum, modifier) => 
-      sum + (modifier[attribute] || 0), 0);
+    const equipmentValue = equipmentModifiers.reduce((sum, modifier) => sum + (modifier[attribute] || 0),
+      0);
     return baseValue + equipmentValue;
   };
 
@@ -65,7 +63,6 @@ export const calculateBCFA = (attributes: Modifier): number => {
 };
 
 const filterPlayerData = (data: PlayerPopulated): Player => {
-
   const baseAttributes = calculateBaseAttributes(data);
 
   const calculatedAttributes = {
@@ -113,7 +110,7 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
       healing_potion: data.equipment?.healing_potion || {},
       antidote_potion: data.equipment?.antidote_potion || {},
       enhancer_potion: data.equipment?.enhancer_potion || {},
-      weapon: data.equipment?.weapon || {}
+      weapon: data.equipment?.weapon || {},
     },
     inventory: {
       healing_potions: data.inventory?.healing_potions || [],
@@ -123,31 +120,31 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
     status: {
       ethaziumCurse: false,
       common_diseases: [],
-      tired: false
+      tired: false,
     },
   };
   return player;
 };
 
-const assignRole = (email: String) => {
+const assignRole = (email: string) => {
   switch (email) {
-    case process.env.ISTVAN_EMAIL:
-      return 'istvan'
-    case process.env.VILLAIN_EMAIL:
-      return 'villain'
-    case process.env.MORTIMER_EMAIL:
-      return 'mortimer'
-    default:
-      return 'acolyte'
+  case process.env.ISTVAN_EMAIL:
+    return 'istvan';
+  case process.env.VILLAIN_EMAIL:
+    return 'villain';
+  case process.env.MORTIMER_EMAIL:
+    return 'mortimer';
+  default:
+    return 'acolyte';
   }
-}
-export const initFetchPlayer = async (email: String) => {
+};
+export const initFetchPlayer = async (email: string) => {
   try {
     const queryResponse = await fetch(`https://kaotika-server.fly.dev/players/email/${email}/`);
     const userData = await queryResponse.json();
     const role = assignRole(userData.data.email);
 
-    let user = filterPlayerData(userData.data);
+    const user = filterPlayerData(userData.data);
     user.role = role;
 
     console.log('Email: ', email);

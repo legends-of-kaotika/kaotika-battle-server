@@ -1,3 +1,5 @@
+import { Modifier } from './Modifier';
+
 export interface ItemData {
     _id: string;
     name: string;
@@ -5,7 +7,7 @@ export interface ItemData {
     image: string;
     type: string;
     value?: number;
-    modifiers?: any;
+    modifiers?: Modifier;
     min_lvl?: number;
     effects?: Array<string>;
     profiles?: Array<string>;
