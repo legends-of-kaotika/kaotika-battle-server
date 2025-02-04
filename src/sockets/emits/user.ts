@@ -55,8 +55,8 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 
 // Sends the player data to server
 export const assingTurn = (io: Server, player:Player):void => {
-  console.log('player es este: ' + player);
-  if (player != undefined) {
+  console.log(`Assigned player:  ${player.name}`);
+  if (player) {
     console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`);
     io.emit(ASSING_TURN, player._id);
   }
