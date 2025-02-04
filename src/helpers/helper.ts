@@ -65,9 +65,7 @@ export const returnLoyalsAndBetrayers = (): DividedPlayers => {
     } else {
       obj.kaotika.push(player);
     }
-  });
-  console.log(obj);
-  
+  });  
   return obj;
 };
 
