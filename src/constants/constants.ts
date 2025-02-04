@@ -27,6 +27,7 @@ export const GAME_START = 'gameStart';
 
 export const UPDATE_PLAYER = 'updatePlayer';
 
+export const REMOVE_PLAYER = 'removePlayer';
 
 
 //LISTENERS

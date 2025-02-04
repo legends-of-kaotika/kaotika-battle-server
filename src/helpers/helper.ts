@@ -4,7 +4,7 @@ import { MOBILE } from '../constants/constants';
 import { ONLINE_USERS, currentPlayer, increaseTurn, setCurrentPlayer, turn } from '../game';
 import { DividedPlayers } from '../interfaces/DividedPlayers';
 import { Player } from '../interfaces/Player';
-import { assingTurn } from '../sockets/emits/user';
+import { assingTurn, sendPlayerRemoved } from '../sockets/emits/user';
 import { clearTimer, startTimer } from '../timer/timer';
 
 //returns a player searched by id
@@ -30,12 +30,15 @@ export const insertSocketId = (email: string, socketId: string): Player | undefi
 };
 
 //removes the player that got disconnected from playerConnected[] global variable
-export const removePlayerConnected = (socket: Socket, socketId: string): void => {
+export const removePlayerConnected = (socket: Socket, socketId: string): void => {  
   const userIndex = ONLINE_USERS.findIndex((user)=> user.socketId === socketId);
   if (userIndex != -1) {    
     console.log('Player with email',ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId ,'disconnected');
     socket.leave(MOBILE);
+    sendPlayerRemoved(io,ONLINE_USERS[userIndex]);
     ONLINE_USERS.splice(userIndex, 1);
+  } else {
+    console.log('No players found with the received socket');
   }
 };
 
