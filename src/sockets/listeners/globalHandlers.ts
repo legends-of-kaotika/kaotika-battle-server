@@ -1,5 +1,4 @@
 import { Server, Socket } from 'socket.io';
-import { sendConnectedUsersArrayToAll } from '../emits/user';
 import { removePlayerConnected } from '../../helpers/helper';
 import { DISCONNECT } from '../../constants/constants';
 

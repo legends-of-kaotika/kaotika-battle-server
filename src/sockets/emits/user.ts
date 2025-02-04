@@ -72,6 +72,6 @@ export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:
 
 // Sends the players(id) that has been disconnected
 export const sendPlayerRemoved = (io: Server, player:Player): void => {
-    console.log(`Emitting removePlayer socket message with ${player._id} id`);
-    io.emit(REMOVE_PLAYER, player._id);
-  };
+  console.log(`Emitting removePlayer socket message with ${player._id} id`);
+  io.emit(REMOVE_PLAYER, player._id);
+};
