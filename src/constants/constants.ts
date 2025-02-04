@@ -21,7 +21,7 @@ export const SEND_TIMER = 'send-timer';
 
 export const TURN_START = 'turn-start';
 
-export const ASSING_TURN = 'assing-turn';
+export const ASSIGN_TURN = 'assign-turn';
 
 export const GAME_START = 'gameStart';
 
