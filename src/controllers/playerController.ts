@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ONLINE_USERS } from '../game';
+import { isGameStarted, ONLINE_USERS } from '../game';
 import { returnIfPlayerIsConnected } from '../helpers/helper';
 
 import { initFetchPlayer } from '../services/playerService';
@@ -17,6 +17,16 @@ export const initFetchPlayerController = async (req: Request, res: Response) => 
       .send({
         status: 'FAILED',
         data: { error: 'ERROR: Parameter :email cannot be empty' },
+      });
+  }
+
+  // Check if game is already started
+  if (isGameStarted) {
+    return res
+      .status(403)
+      .send({
+        status: 'FAILED',
+        data: { error: 'Cannot join: Game is already in progress' },
       });
   }
 
