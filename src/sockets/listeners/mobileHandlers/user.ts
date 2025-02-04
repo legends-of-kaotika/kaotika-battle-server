@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import {
-  assingTurn,
+  assignTurn,
   gameStartToAll,
   sendConnectedUsersArrayToAll,
   sendCurseSelectedToWeb,
@@ -65,7 +65,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sendConnectedUsersArrayToAll(io);
 
     //emit first turn player id
-    assingTurn(io, currentPlayer!);
+    assignTurn(io, currentPlayer!);
     gameStartToAll(io);
     startTimer();
   });
