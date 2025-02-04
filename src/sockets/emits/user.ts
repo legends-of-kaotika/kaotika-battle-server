@@ -55,8 +55,10 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 
 // Sends the player data to server
 export const assingTurn = (io: Server, player:Player):void => {
-  console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`);
-  io.emit(ASSING_TURN, player._id);
+  if (player) {
+    console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`);
+    io.emit(ASSING_TURN, player._id);
+  }
 };
 
 export const gameStartToAll = (io: Server):void => {
@@ -72,6 +74,6 @@ export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:
 
 // Sends the players(id) that has been disconnected
 export const sendPlayerRemoved = (io: Server, player:Player): void => {
-    console.log(`Emitting removePlayer socket message with ${player._id} id`);
-    io.emit(REMOVE_PLAYER, player._id);
-  };
+  console.log(`Emitting removePlayer socket message with ${player._id} id`);
+  io.emit(REMOVE_PLAYER, player._id);
+};
