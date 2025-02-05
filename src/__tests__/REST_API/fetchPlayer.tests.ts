@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { initFetchPlayerController } from '../controllers/playerController';
-import { initFetchPlayer } from '../services/playerService';
-import { ONLINE_USERS_MOCK } from '../__mocks__/players';
+import { initFetchPlayerController } from '../../controllers/playerController';
+import { initFetchPlayer } from '../../services/playerService';
+import { ONLINE_USERS_MOCK } from '../../__mocks__/players';
 
-jest.mock('../services/playerService', () => ({
+jest.mock('../../services/playerService', () => ({
   initFetchPlayer: jest.fn()
 }));
 
-jest.mock('../game', () => ({
+jest.mock('../../game', () => ({
   isGameStarted: false,
   ONLINE_USERS: []
 }));
