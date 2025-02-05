@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { webSocketId } from '../../game';
 import { Player } from '../../interfaces/Player';
-import { ASSING_TURN, CONNECTED_USERS, GAME_START, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
+import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
 import { returnLoyalsAndBetrayers } from '../../helpers/helper';
 import { DividedPlayers } from '../../interfaces/DividedPlayers';
 import { Modifier } from '../../interfaces/Modifier';
@@ -54,10 +54,11 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 };
 
 // Sends the player data to server
-export const assingTurn = (io: Server, player:Player):void => {
+export const assignTurn = (io: Server, player:Player):void => {
+  console.log(`Assigned player:  ${player.name}`);
   if (player) {
-    console.log(`Emitting assing-turn socket message with ${player.name}'s player data to all devices to change turn.`);
-    io.emit(ASSING_TURN, player._id);
+    console.log(`Emitting assign-turn socket message with ${player.name}'s player data to all devices to change turn.`);
+    io.emit(ASSIGN_TURN, player._id);
   }
 };
 

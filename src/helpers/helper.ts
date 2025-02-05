@@ -4,7 +4,7 @@ import { MOBILE } from '../constants/constants';
 import { ONLINE_USERS, currentPlayer, increaseTurn, setCurrentPlayer, turn } from '../game';
 import { DividedPlayers } from '../interfaces/DividedPlayers';
 import { Player } from '../interfaces/Player';
-import { assingTurn, sendPlayerRemoved } from '../sockets/emits/user';
+import { assignTurn, sendPlayerRemoved } from '../sockets/emits/user';
 import { clearTimer, startTimer } from '../timer/timer';
 
 //returns a player searched by id
@@ -65,9 +65,7 @@ export const returnLoyalsAndBetrayers = (): DividedPlayers => {
     } else {
       obj.kaotika.push(player);
     }
-  });
-  console.log(obj);
-  
+  });  
   return obj;
 };
 
@@ -76,7 +74,7 @@ export const changeTurn = () => {
   increaseTurn();
   const nextPlayer = ONLINE_USERS[turn];
   setCurrentPlayer(nextPlayer);
-  assingTurn(io,currentPlayer!);
+  assignTurn(io,currentPlayer!);
   clearTimer();
   startTimer();
 };

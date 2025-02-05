@@ -7,6 +7,7 @@ export let target: Player | undefined;
 export let currentPlayer: Player | undefined;
 export let turn: number = 0;
 export let round: number = 1;
+export let isGameStarted: boolean = false;
 
 //changes the websocketId
 export const setWebSocket = (socketId: string): void => {
@@ -36,4 +37,9 @@ export const increaseTurn = (): void => {
 export const increaseRound = (): void => {
   round++;
   console.log('Round: ', round, ' Fight!');
+};
+
+// Sets the game state
+export const setGameStarted = (status: boolean): void => {
+  isGameStarted = status;
 };
