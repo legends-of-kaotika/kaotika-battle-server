@@ -78,9 +78,9 @@ export const sendPlayerRemoved = (io: Server, player:Player): void => {
 };
 
 // Send to Mortimer that there is not enough players
-export const sendNotEnoughPlayers = (io: Server, socketId: string): void => {
+export const sendEnoughPlayers = (io: Server, socketId: string , condition: boolean): void => {
   console.log('Emitting to Mortimer that there is not enough players to start the game');
-  io.to(socketId).emit(NOT_ENOUGH_PLAYERS);
+  io.to(socketId).emit(NOT_ENOUGH_PLAYERS, condition);
 };
 
 //Sends the name of the player that has been disconnected to web
