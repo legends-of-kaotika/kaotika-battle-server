@@ -55,7 +55,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   });
 
   // When Mortimer presses the START Button
-  socket.on(MOBILE_GAME_START, async (socket) => {
+  socket.on(MOBILE_GAME_START, async () => {
 
     //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (checkStartGameRequirement() === false) {
@@ -77,7 +77,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       setCurrentPlayer(ONLINE_USERS[turn]);
 
       //divide players by loyalty
-      sendConnectedUsersArrayToAll(io);
+      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
       //emit first turn player id
       assignTurn(io, currentPlayer!);
