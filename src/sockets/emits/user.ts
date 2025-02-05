@@ -66,9 +66,9 @@ export const gameStartToAll = (io: Server):void => {
 };
 
 // Sends the target players(id) with the attributes updated and the total damage
-export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number): void => {
+export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number, isBetrayer:boolean): void => {
   console.log(`Emitting updatePlayer socket message with ${id} id, the total damage and updated attributes`);
-  io.emit(UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage});
+  io.emit(UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage, isBetrayer: isBetrayer});
 };
 
 // Sends the players(id) that has been disconnected
