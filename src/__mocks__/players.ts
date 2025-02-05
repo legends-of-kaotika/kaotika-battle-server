@@ -1,6 +1,7 @@
  
 
 import { DividedPlayers } from '../interfaces/DividedPlayers';
+import { Modifier } from '../interfaces/Modifier';
 import { Player } from '../interfaces/Player';
 
 export const ONLINE_USERS_MOCK: Player[] = 
@@ -538,6 +539,24 @@ export const playerMock: Player =
   inventory: { healing_potions: [], antidote_potions: [], enhancer_potions: [] },
   status: { ethaziumCurse: false, common_diseases: [], tired: false },
 };
+
+export const attributesMock: Modifier = 
+{
+  charisma: 130,
+  constitution: 60,
+  dexterity: 23,
+  insanity: 95,
+  intelligence: 29,
+  strength: 18,
+  resistance: 100,
+  attack: -30,
+  hit_points: 35,
+  defense: 97,
+  magic_resistance: 159,
+  CFP: 95,
+  BCFA: 113,
+};
+
 
 export const sortedLoyalsAndBetrayersMock: DividedPlayers = 
 {
