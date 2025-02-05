@@ -76,7 +76,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       setCurrentPlayer(ONLINE_USERS[turn]);
 
       //divide players by loyalty
-      sendConnectedUsersArrayToAll(io);
+      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
       //emit first turn player id
       assignTurn(io, currentPlayer!);

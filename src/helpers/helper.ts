@@ -54,12 +54,12 @@ export const returnIfPlayerIsConnected = (email: string): boolean => {
 };
 
 //returns a object of loyals and betrayers
-export const returnLoyalsAndBetrayers = (): DividedPlayers => {
+export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
     dravocar: [],
   };
-  ONLINE_USERS.map( player => {
+  users.map( player => {
     if (player.isBetrayer) {
       obj.dravocar.push(player);
     } else {
