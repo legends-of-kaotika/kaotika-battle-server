@@ -17,6 +17,8 @@ export const WEB_SELECT_USE_POTION = 'web-selectUsePotion';
 
 export const WEB_SEND_USER = 'web-sendUser';
 
+export const WEB_USER_DISCONNECT = 'web-playerDisconnected';
+
 export const SEND_TIMER = 'send-timer';
 
 export const TURN_START = 'turn-start';
@@ -29,7 +31,7 @@ export const UPDATE_PLAYER = 'updatePlayer';
 
 export const REMOVE_PLAYER = 'removePlayer';
 
-export const NOT_ENOUGH_PLAYERS = 'insufficient-players';
+export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
 
 
 //LISTENERS

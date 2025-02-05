@@ -12,6 +12,7 @@ import {
   sendNotEnoughPlayers
 } from '../../emits/user';
 import {
+  checkStartGameRequirement,
   findPlayerById,
   insertSocketId,
 } from '../../../helpers/helper';
@@ -56,9 +57,9 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   // When Mortimer presses the START Button
   socket.on(MOBILE_GAME_START, async (socket) => {
 
-    //Check if there at least 2 players connected
-    if (ONLINE_USERS.length < 2) {
-      console.log('Not at least 2 players connected, can\'t start game');
+    //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
+    if (checkStartGameRequirement() === false) {
+      console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
       sendNotEnoughPlayers(io, socket.id);
     }
 
@@ -174,6 +175,6 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       target.attributes.hit_points - totalDmg);
 
     //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg);
+    sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
   });
 };
