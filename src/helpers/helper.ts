@@ -1,27 +1,27 @@
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { io } from '../..';
 import { MOBILE } from '../constants/constants';
-import { ONLINE_USERS, currentPlayer, increaseTurn, setCurrentPlayer, turn } from '../game';
+import { ONLINE_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game';
 import { DividedPlayers } from '../interfaces/DividedPlayers';
 import { Player } from '../interfaces/Player';
-import { assignTurn, sendPlayerRemoved } from '../sockets/emits/user';
+import { assignTurn, sendGameEnd, sendPlayerRemoved } from '../sockets/emits/user';
 import { clearTimer, startTimer } from '../timer/timer';
 
 //returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
-  const user = ONLINE_USERS.find((player)=> player._id === _id);
+  const user = ONLINE_USERS.find((player) => player._id === _id);
   return user;
 };
 
 //returns a player searched by socketid
 export const findPlayerBySocketId = (id: string): Player | undefined => {
-  const user = ONLINE_USERS.find((player)=> player.socketId === id);
+  const user = ONLINE_USERS.find((player) => player.socketId === id);
   return user;
 };
 
 //inserts socketId in the specific player of playerConnected[] global variable
 export const insertSocketId = (email: string, socketId: string): Player | undefined => {
-  const user = ONLINE_USERS.find((user)=> user.email === email);
+  const user = ONLINE_USERS.find((user) => user.email === email);
   if (user) {
     user.socketId = socketId;
     return user;
@@ -30,12 +30,12 @@ export const insertSocketId = (email: string, socketId: string): Player | undefi
 };
 
 //removes the player that got disconnected from playerConnected[] global variable
-export const removePlayerConnected = (socket: Socket, socketId: string): void => {  
-  const userIndex = ONLINE_USERS.findIndex((user)=> user.socketId === socketId);
-  if (userIndex != -1) {    
-    console.log('Player with email',ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId ,'disconnected');
+export const removePlayerConnected = (socket: Socket, socketId: string): void => {
+  const userIndex = ONLINE_USERS.findIndex((user) => user.socketId === socketId);
+  if (userIndex != -1) {
+    console.log('Player with email', ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId, 'disconnected');
     socket.leave(MOBILE);
-    sendPlayerRemoved(io,ONLINE_USERS[userIndex]);
+    sendPlayerRemoved(io, ONLINE_USERS[userIndex]);
     ONLINE_USERS.splice(userIndex, 1);
   } else {
     console.log('No players found with the received socket');
@@ -44,7 +44,7 @@ export const removePlayerConnected = (socket: Socket, socketId: string): void =>
 
 //returns a player searched by email
 export const findPlayerByEmail = (email: string): Player | undefined => {
-  const user = ONLINE_USERS.find((player)=> player.email === email);
+  const user = ONLINE_USERS.find((player) => player.email === email);
   return user;
 };
 
@@ -59,13 +59,13 @@ export const returnLoyalsAndBetrayers = (): DividedPlayers => {
     kaotika: [],
     dravocar: [],
   };
-  ONLINE_USERS.map( player => {
+  ONLINE_USERS.map(player => {
     if (player.isBetrayer) {
       obj.dravocar.push(player);
     } else {
       obj.kaotika.push(player);
     }
-  });  
+  });
   return obj;
 };
 
@@ -74,8 +74,30 @@ export const changeTurn = () => {
   increaseTurn();
   const nextPlayer = ONLINE_USERS[turn];
   setCurrentPlayer(nextPlayer);
-  assignTurn(io,currentPlayer!);
+  assignTurn(io, currentPlayer!);
   clearTimer();
   startTimer();
 };
+
+// Check if there are at least 1 player from each side
+export const checkIfEachSideHasPlayers = (io: Server): boolean => {
+  let gameHasPlayers: boolean = true;
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();
+  if ((dividedPlayers.dravocar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
+    sendGameEnd(io, 'draw');
+    resetInitialGameValues();
+    gameHasPlayers = false;
+  } else if (dividedPlayers.dravocar.length === 0) {
+    sendGameEnd(io, 'kaotika');
+    resetInitialGameValues();
+    gameHasPlayers = false;
+  } else if (dividedPlayers.kaotika.length === 0) {
+    sendGameEnd(io, 'dravocar');
+    resetInitialGameValues();
+    gameHasPlayers = false;
+  }
+  clearTimer();
+  return gameHasPlayers;
+};
+
 

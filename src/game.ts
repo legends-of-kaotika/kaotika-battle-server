@@ -43,3 +43,16 @@ export const increaseRound = (): void => {
 export const setGameStarted = (status: boolean): void => {
   isGameStarted = status;
 };
+
+// Resets the values to the initals
+export const resetInitialGameValues = (): void => {
+  isGameStarted = false;
+  target = undefined;
+  currentPlayer = undefined;
+  turn = 0;
+  round = 1;
+  // Empty the players array
+  while (ONLINE_USERS.length > 0) {
+    ONLINE_USERS.pop();
+  };
+};
