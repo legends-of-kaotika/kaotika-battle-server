@@ -31,6 +31,8 @@ export const UPDATE_PLAYER = 'updatePlayer';
 
 export const REMOVE_PLAYER = 'removePlayer';
 
+export const GAME_END = 'gameEnd';
+
 export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
 
 
