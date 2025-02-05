@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "jest --forceExit",
     "build": "tsc",
     "dev": "node --env-file=.env --watch -r ts-node/register index.ts",
     "start": "node index.ts"
