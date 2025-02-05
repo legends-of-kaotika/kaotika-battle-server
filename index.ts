@@ -1,5 +1,4 @@
 import { Socket } from 'socket.io';
-import mongoose from 'mongoose';
 import express from 'express';
 import bodyParser from 'body-parser';
 const app = express();
@@ -8,9 +7,6 @@ const PORT = process.env.PORT || 3000;
 import router from './src/routes/routes';
 import dotenv from 'dotenv';
 dotenv.config();  // Load environment variables from .env file 
-
-//Mongo route 
-const mongodbRoute = process.env.MONGO_URI;
 
 import {createServer} from 'http';
 import {Server} from 'socket.io';
@@ -44,12 +40,6 @@ async function start() {
       console.log(`Socket is listening on port ${PORT}`);
       io.on('connection', onConnection);
     });
-
-    // Connect to mongoose
-    if(mongodbRoute) {
-      await mongoose.connect(mongodbRoute, {});
-      console.log('Conexion con Mongo correcta');
-    }
 
   }
   catch (error) {
