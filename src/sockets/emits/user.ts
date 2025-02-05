@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { webSocketId } from '../../game';
 import { Player } from '../../interfaces/Player';
-import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
+import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER, NOT_ENOUGH_PLAYERS } from '../../constants/constants';
 import { returnLoyalsAndBetrayers } from '../../helpers/helper';
 import { DividedPlayers } from '../../interfaces/DividedPlayers';
 import { Modifier } from '../../interfaces/Modifier';
@@ -56,10 +56,8 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 // Sends the player data to server
 export const assignTurn = (io: Server, player:Player):void => {
   console.log(`Assigned player:  ${player.name}`);
-  if (player) {
-    console.log(`Emitting assign-turn socket message with ${player.name}'s player data to all devices to change turn.`);
-    io.emit(ASSIGN_TURN, player._id);
-  }
+  console.log(`Emitting assign-turn socket message with ${player.name}'s player data to all devices to change turn.`);
+  io.emit(ASSIGN_TURN, player._id);
 };
 
 export const gameStartToAll = (io: Server):void => {
@@ -77,4 +75,10 @@ export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:
 export const sendPlayerRemoved = (io: Server, player:Player): void => {
   console.log(`Emitting removePlayer socket message with ${player._id} id`);
   io.emit(REMOVE_PLAYER, player._id);
+};
+
+// Send to Mortimer that there is not enough players
+export const sendNotEnoughPlayers = (io: Server, socketId: string): void => {
+  console.log('Emitting to Mortimer that there is not enough players to start the game');
+  io.to(socketId).emit(NOT_ENOUGH_PLAYERS);
 };
