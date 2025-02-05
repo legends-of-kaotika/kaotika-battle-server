@@ -5,6 +5,5 @@ export interface AntidoteModifier {
     insanity: number;
     charisma: number;
     strength: number;
-    hit_points: number;
   }
   

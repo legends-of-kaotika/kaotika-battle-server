@@ -1,4 +1,4 @@
-import { Modifier } from './Modifier';
+import { AntidoteModifier } from './AntidoteModifier';
 
 export interface EnhancerPotion {
   _id: string,
@@ -8,6 +8,6 @@ export interface EnhancerPotion {
   type: string,
   value: number,
   duration: number,
-  modifiers: Modifier,
+  modifiers: AntidoteModifier,
   min_lvl: number
 }

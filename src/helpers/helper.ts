@@ -79,3 +79,11 @@ export const changeTurn = () => {
   startTimer();
 };
 
+//check if there is the minimum 1 player connected and of role acolyte
+export const checkStartGameRequirement = () => {
+  if (ONLINE_USERS.length >= 1) {
+    return ONLINE_USERS.some((user)=> (user.role === 'acolyte'));
+  }
+  return false;
+};
+
