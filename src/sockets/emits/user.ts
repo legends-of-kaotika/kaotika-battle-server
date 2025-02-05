@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { webSocketId } from '../../game';
 import { Player } from '../../interfaces/Player';
-import { ASSIGN_TURN, CONNECTED_USERS, GAME_END, GAME_START, NOT_ENOUGH_PLAYERS, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
+import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER, NOT_ENOUGH_PLAYERS, WEB_USER_DISCONNECT, GAME_END } from '../../constants/constants';
 import { returnLoyalsAndBetrayers } from '../../helpers/helper';
 import { DividedPlayers } from '../../interfaces/DividedPlayers';
 import { Modifier } from '../../interfaces/Modifier';
@@ -87,4 +87,10 @@ export const sendGameEnd = (io: Server, winner:string) => {
 export const sendEnoughPlayers = (io: Server, socketId: string , condition: boolean): void => {
   console.log('Emitting to Mortimer that there is not enough players to start the game');
   io.to(socketId).emit(NOT_ENOUGH_PLAYERS, condition);
+};
+
+//Sends the name of the player that has been disconnected to web
+export const sendPlayerDisconnectedToWeb = (io: Server, name: string): void => {
+  console.log('Emitting to Mortimer that there is not enough players to start the game');
+  io.to(webSocketId).emit(WEB_USER_DISCONNECT, name);
 };
