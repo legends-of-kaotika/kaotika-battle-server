@@ -17,7 +17,8 @@ describe('Player Controller - initFetchPlayerController', () => {
   let mockResponse: Partial<Response>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetModules(); // Resets the module registry
+    jest.restoreAllMocks(); // Restores all mocks to their original implementations
 
     mockRequest = {
       params: { email: ONLINE_USERS_MOCK[0].email }
@@ -78,19 +79,4 @@ describe('Player Controller - initFetchPlayerController', () => {
       data: { error: mockError.message }
     });
   });
-
-  // it('should fail if the game has already started', async () => {
-  //   jest.mock('../game', () => ({
-  //     isGameStarted: true,
-  //     ONLINE_USERS: []
-  //   }));
-  
-  //   await initFetchPlayerController(mockRequest as Request, mockResponse as Response);
-  
-  //   expect(mockResponse.status).toHaveBeenCalledWith(403);
-  //   expect(mockResponse.send).toHaveBeenCalledWith({
-  //     status: 'FAILED',
-  //     data: { error: 'Cannot join: Game is already in progress' }
-  //   });
-  // });
 });
