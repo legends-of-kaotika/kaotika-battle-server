@@ -1,4 +1,4 @@
-import { Modifier } from './Modifier';
+import { AntidoteModifier } from './AntidoteModifier';
 
 export interface Weapon {
   _id: string,
@@ -10,6 +10,9 @@ export interface Weapon {
   die_modifier: number,
   die_num: number,
   base_percentage: number,
-  modifiers: Modifier,
+  modifiers: AntidoteModifier,
   min_lvl: number,
+  value: number,
+  isUnique: boolean,
+  isActive: boolean,
 }
