@@ -36,7 +36,7 @@ export const removePlayerConnected = (socket: Socket, socketId: string): void =>
     console.log('Player with email', ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId, 'disconnected');
     socket.leave(MOBILE);
     sendPlayerRemoved(io,ONLINE_USERS[userIndex]);
-    sendPlayerDisconnectedToWeb(io,ONLINE_USERS[userIndex].name);
+    sendPlayerDisconnectedToWeb(io,ONLINE_USERS[userIndex].nickname);
     ONLINE_USERS.splice(userIndex, 1);
   } else {
     console.log('No players found with the received socket');
