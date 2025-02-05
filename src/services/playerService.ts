@@ -1,4 +1,3 @@
-import { PlayerModel } from '../models/playerSchema';
 import { Player } from '../interfaces/Player';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated';
 import { Modifier } from '../interfaces/Modifier';
@@ -138,6 +137,7 @@ const assignRole = (email: string) => {
     return 'acolyte';
   }
 };
+
 export const initFetchPlayer = async (email: string) => {
   try {
     const queryResponse = await fetch(`https://kaotika-server.fly.dev/players/email/${email}/`);
@@ -146,28 +146,11 @@ export const initFetchPlayer = async (email: string) => {
 
     const user = filterPlayerData(userData.data);
     user.role = role;
-
+    console.log('New User Created:');
     console.log('Email: ', email);
     console.log('Role: ', role);
 
-    const existingPlayer = await PlayerModel.findOne({ email: user.email });
-
-    ///save in MongoDB
-    let player;
-    if (!existingPlayer) {
-      // ADD TO COLLECTION
-      player = new PlayerModel(user);
-      await player.save();
-      console.log('Added new player: ', player);
-    } else {
-      // MERGE TO COLLECTION
-      Object.assign(existingPlayer, user);
-      await existingPlayer.save();
-      player = existingPlayer;
-    }
-    ///////////////////
-
-    return user; //return filter user
+    return user;
   } catch (error) {
     console.error(error);
     throw error;
