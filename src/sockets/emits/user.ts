@@ -7,15 +7,15 @@ import { DividedPlayers } from '../../interfaces/DividedPlayers';
 import { Modifier } from '../../interfaces/Modifier';
 
 //sends an array with the connected users to web client on user connection
-export const sendConnectedUsersArrayToWeb = (io: Server):void => {
+export const sendConnectedUsersArrayToWeb = (io: Server, users: Player[]):void => {
   console.log('Emitting connectedUsers socket message with online user list to everyone.');
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   io.to(webSocketId).emit(CONNECTED_USERS, dividedPlayers);
 };
 
-export const sendConnectedUsersArrayToAll = (io: Server):void => {
+export const sendConnectedUsersArrayToAll = (io: Server, users: Player[]):void => {
   console.log('Emitting connectedUsers socket message with online user list to everyone.');
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();    
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);    
   io.emit(CONNECTED_USERS, dividedPlayers);
 };
 
