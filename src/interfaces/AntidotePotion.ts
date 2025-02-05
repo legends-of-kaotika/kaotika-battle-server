@@ -1,4 +1,3 @@
-import { AntidoteModifier } from './AntidoteModifier';
 import { Curse } from './Curse';
 
 export interface AntidotePotion {
@@ -10,5 +9,4 @@ export interface AntidotePotion {
 	value: number,
 	recovery_effect: Curse,
 	min_lvl: number,
-	modifiers: AntidoteModifier,
 }

@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { webSocketId } from '../../game';
 import { Player } from '../../interfaces/Player';
-import { ASSIGN_TURN, CONNECTED_USERS, GAME_END, GAME_START, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
+import { ASSIGN_TURN, CONNECTED_USERS, GAME_END, GAME_START, NOT_ENOUGH_PLAYERS, REMOVE_PLAYER, SEND_TIMER, UPDATE_PLAYER, WEB_SELECT_CURSE, WEB_SELECT_HEAL, WEB_SELECT_USE_POTION, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/constants';
 import { returnLoyalsAndBetrayers } from '../../helpers/helper';
 import { DividedPlayers } from '../../interfaces/DividedPlayers';
 import { Modifier } from '../../interfaces/Modifier';
@@ -56,10 +56,8 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 // Sends the player data to server
 export const assignTurn = (io: Server, player:Player):void => {
   console.log(`Assigned player:  ${player.name}`);
-  if (player) {
-    console.log(`Emitting assign-turn socket message with ${player.name}'s player data to all devices to change turn.`);
-    io.emit(ASSIGN_TURN, player._id);
-  }
+  console.log(`Emitting assign-turn socket message with ${player.name}'s player data to all devices to change turn.`);
+  io.emit(ASSIGN_TURN, player._id);
 };
 
 export const gameStartToAll = (io: Server):void => {
@@ -68,9 +66,9 @@ export const gameStartToAll = (io: Server):void => {
 };
 
 // Sends the target players(id) with the attributes updated and the total damage
-export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number): void => {
+export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number, isBetrayer:boolean): void => {
   console.log(`Emitting updatePlayer socket message with ${id} id, the total damage and updated attributes`);
-  io.emit(UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage});
+  io.emit(UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage, isBetrayer: isBetrayer});
 };
 
 // Sends the players(id) that has been disconnected
@@ -83,4 +81,10 @@ export const sendPlayerRemoved = (io: Server, player:Player): void => {
 export const sendGameEnd = (io: Server, winner:string) => {
   console.log(`Emitting gameEnd socket message to all devices, th battle result is ${winner}`);
   io.emit(GAME_END, winner);
+};
+
+// Send to Mortimer that there is not enough players
+export const sendEnoughPlayers = (io: Server, socketId: string , condition: boolean): void => {
+  console.log('Emitting to Mortimer that there is not enough players to start the game');
+  io.to(socketId).emit(NOT_ENOUGH_PLAYERS, condition);
 };

@@ -9,8 +9,10 @@ import {
   sendUpdatedPlayerToAll,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
+  sendEnoughPlayers
 } from '../../emits/user';
 import {
+  checkStartGameRequirement,
   findPlayerById,
   insertSocketId,
 } from '../../../helpers/helper';
@@ -53,26 +55,40 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   });
 
   // When Mortimer presses the START Button
-  socket.on(MOBILE_GAME_START, async () => {
-    console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
+  socket.on(MOBILE_GAME_START, async (socket) => {
+
+    //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
+    if (checkStartGameRequirement() === false) {
+      console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
+      sendEnoughPlayers(io, socket.id, false);
+    }
+
+    else {
+      console.log('At least 1 acolyte no betrayer connected, start game');
+      sendEnoughPlayers(io, socket.id, true);
+
+      console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
     
-    // Set game as started
-    setGameStarted(true);
+      // Set game as started
+      setGameStarted(true);
     
-    //sort players by charisma
-    sortPlayersByCharisma(ONLINE_USERS);
+      //sort players by charisma
+      sortPlayersByCharisma(ONLINE_USERS);
 
-    //assign the first player
-    console.log('Round: ', round);
-    setCurrentPlayer(ONLINE_USERS[turn]);
+      //assign the first player
+      console.log('Round: ', round);
+      setCurrentPlayer(ONLINE_USERS[turn]);
 
-    //divide players by loyalty
-    sendConnectedUsersArrayToAll(io);
+      //divide players by loyalty
+      sendConnectedUsersArrayToAll(io);
 
-    //emit first turn player id
-    assignTurn(io, currentPlayer!);
-    gameStartToAll(io);
-    startTimer();
+      //emit first turn player id
+      assignTurn(io, currentPlayer!);
+      gameStartToAll(io);
+      startTimer();
+    }
+
+    
   });
 
   // When the current turn player selects a player
@@ -162,6 +178,6 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       target.attributes.hit_points - totalDmg);
 
     //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, attacker._id, target.attributes, totalDmg);
+    sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
   });
 };
