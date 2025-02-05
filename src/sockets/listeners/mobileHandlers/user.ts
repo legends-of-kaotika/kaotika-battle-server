@@ -9,7 +9,7 @@ import {
   sendUpdatedPlayerToAll,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
-  sendNotEnoughPlayers
+  sendEnoughPlayers
 } from '../../emits/user';
 import {
   checkStartGameRequirement,
@@ -57,13 +57,16 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   // When Mortimer presses the START Button
   socket.on(MOBILE_GAME_START, async (socket) => {
 
-    //Check if there at least 1 acolyte connected (enemy always there is one as a bot)
+    //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (checkStartGameRequirement() === false) {
-      console.log('Not minimum 1 acolyte connected, can\'t start game');
-      sendNotEnoughPlayers(io, socket.id);
+      console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
+      sendEnoughPlayers(io, socket.id, false);
     }
 
     else {
+      console.log('At least 1 acolyte no betrayer connected, start game');
+      sendEnoughPlayers(io, socket.id, true);
+
       console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
     
       // Set game as started
