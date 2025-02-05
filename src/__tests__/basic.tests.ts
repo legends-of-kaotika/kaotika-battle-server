@@ -4,9 +4,10 @@ import { createServer } from 'http';
 import Client from 'socket.io-client';
 import { Socket } from 'socket.io';
 import { DividedPlayers } from '../interfaces/DividedPlayers';
-import { CONNECTED_USERS } from '../constants/constants';
-import { sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb } from '../sockets/emits/user';
-import { ONLINE_USERS_MOCK } from '../__mocks__/players';
+import { CONNECTED_USERS, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../constants/constants';
+import { sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendUserDataToWeb } from '../sockets/emits/user';
+import { ONLINE_USERS_MOCK, playerMock } from '../__mocks__/players';
+import { Player } from '../interfaces/Player';
 
 describe('Socket.IO server tests', () => {
   let io: Server;
@@ -38,20 +39,35 @@ describe('Socket.IO server tests', () => {
     serverSocket.emit('test', 'hello world');
   });
 
-  describe('Emit tests', () => {
+  describe('Global Emit tests', () => {
     test('should send an array with the connected users to all clients on gameStart', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
         expect(arg.dravocar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
       });
       sendConnectedUsersArrayToAll(io, ONLINE_USERS_MOCK);
     });
+  });
+  describe('Mobile Emit tests', () => {
+  });
+  describe('Web Emit tests', () => {
     test('should send an array with the connected users to web client on user connection', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
         expect(arg.dravocar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
       });
       sendConnectedUsersArrayToWeb(io, ONLINE_USERS_MOCK);
     });
-    
+    test('should send an _id of a player', () => {
+      clientSocket.on(WEB_SET_SELECTED_PLAYER, (arg:string) => {
+        expect(arg).toEqual(playerMock._id); // expect an id
+      });
+      sendSelectedPlayerIdToWeb(io, playerMock);
+    });
+    test('should send a player', () => {
+      clientSocket.on(WEB_SEND_USER, (arg:Player) => {
+        expect(arg._id).toEqual(playerMock._id); // expect a player, check ids
+      });
+      sendUserDataToWeb(io, playerMock);
+    });
   });
 
   describe('Mobile listener tests', () => {
