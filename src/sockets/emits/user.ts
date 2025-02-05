@@ -85,6 +85,6 @@ export const sendEnoughPlayers = (io: Server, socketId: string , condition: bool
 
 //Sends the name of the player that has been disconnected to web
 export const sendPlayerDisconnectedToWeb = (io: Server, name: string): void => {
-  console.log('Emitting to Mortimer that there is not enough players to start the game');
+  console.log('Emitting to Web that ',name,' player has been disconnected from battle');
   io.to(webSocketId).emit(WEB_USER_DISCONNECT, name);
 };
