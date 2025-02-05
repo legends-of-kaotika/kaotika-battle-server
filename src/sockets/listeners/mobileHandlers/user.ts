@@ -175,6 +175,6 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       target.attributes.hit_points - totalDmg);
 
     //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, attacker._id, target.attributes, totalDmg);
+    sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg);
   });
 };
