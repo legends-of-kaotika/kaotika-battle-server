@@ -55,12 +55,12 @@ export const returnIfPlayerIsConnected = (email: string): boolean => {
 };
 
 //returns a object of loyals and betrayers
-export const returnLoyalsAndBetrayers = (): DividedPlayers => {
+export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
     dravocar: [],
   };
-  ONLINE_USERS.map(player => {
+  users.map( player => {
     if (player.isBetrayer) {
       obj.dravocar.push(player);
     } else {
@@ -81,9 +81,9 @@ export const changeTurn = () => {
 };
 
 // Check if there are at least 1 player from each side
-export const checkIfEachSideHasPlayers = (io: Server): boolean => {
+export const checkIfEachSideHasPlayers = (io: Server, users: Player[]): boolean => {
   let gameHasPlayers: boolean = true;
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   if ((dividedPlayers.dravocar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
     sendGameEnd(io, 'draw');
     resetInitialGameValues();
