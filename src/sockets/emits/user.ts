@@ -7,15 +7,15 @@ import { DividedPlayers } from '../../interfaces/DividedPlayers';
 import { Modifier } from '../../interfaces/Modifier';
 
 //sends an array with the connected users to web client on user connection
-export const sendConnectedUsersArrayToWeb = (io: Server):void => {
+export const sendConnectedUsersArrayToWeb = (io: Server, users: Player[]):void => {
   console.log('Emitting connectedUsers socket message with online user list to everyone.');
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   io.to(webSocketId).emit(CONNECTED_USERS, dividedPlayers);
 };
 
-export const sendConnectedUsersArrayToAll = (io: Server):void => {
+export const sendConnectedUsersArrayToAll = (io: Server, users: Player[]):void => {
   console.log('Emitting connectedUsers socket message with online user list to everyone.');
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers();    
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);    
   io.emit(CONNECTED_USERS, dividedPlayers);
 };
 
@@ -78,13 +78,13 @@ export const sendPlayerRemoved = (io: Server, player:Player): void => {
 };
 
 // Send to Mortimer that there is not enough players
-export const sendEnoughPlayers = (io: Server, socketId: string , condition: boolean): void => {
+export const sendNotEnoughPlayers = (io: Server, socketId: string): void => {
   console.log('Emitting to Mortimer that there is not enough players to start the game');
-  io.to(socketId).emit(NOT_ENOUGH_PLAYERS, condition);
+  io.to(socketId).emit(NOT_ENOUGH_PLAYERS);
 };
 
 //Sends the name of the player that has been disconnected to web
 export const sendPlayerDisconnectedToWeb = (io: Server, name: string): void => {
-  console.log('Emitting to Mortimer that there is not enough players to start the game');
+  console.log('Emitting to Web that ',name,' player has been disconnected from battle');
   io.to(webSocketId).emit(WEB_USER_DISCONNECT, name);
 };

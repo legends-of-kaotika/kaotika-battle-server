@@ -9,7 +9,7 @@ import {
   sendUpdatedPlayerToAll,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
-  sendEnoughPlayers
+  sendNotEnoughPlayers
 } from '../../emits/user';
 import {
   checkStartGameRequirement,
@@ -60,13 +60,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (checkStartGameRequirement() === false) {
       console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
-      sendEnoughPlayers(io, socket.id, false);
+      sendNotEnoughPlayers(io, socket.id);
     }
 
     else {
-      console.log('At least 1 acolyte no betrayer connected, start game');
-      sendEnoughPlayers(io, socket.id, true);
-
       console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
     
       // Set game as started
@@ -80,7 +77,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       setCurrentPlayer(ONLINE_USERS[turn]);
 
       //divide players by loyalty
-      sendConnectedUsersArrayToAll(io);
+      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
       //emit first turn player id
       assignTurn(io, currentPlayer!);
