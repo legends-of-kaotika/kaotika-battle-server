@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { sendConnectedUsersArrayToWeb } from '../../emits/user';
 import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game';
-import { changeTurn, checkIfEachSideHasPlayers } from '../../../helpers/helper';
+import { changeTurn, eachSideHasPlayers } from '../../../helpers/helper';
 import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END } from '../../../constants/constants';
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
@@ -22,7 +22,7 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   // When the turn ends
   socket.on(WEB_TURN_END, async () => {
     console.log('web-turnEnd socket message listened. Check if the game has to end.');
-    if (checkIfEachSideHasPlayers(io, ONLINE_USERS)) {
+    if (eachSideHasPlayers(io, ONLINE_USERS)) {
       console.log('Changing to the next turn.');
       changeTurn();
     }
