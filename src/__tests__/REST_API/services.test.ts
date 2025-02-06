@@ -1,6 +1,5 @@
-import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, /*filterPlayerData,*/assignRole, /*initFetchPlayer*/ } from '../../services/playerService';
+import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, assignRole} from '../../services/playerService';
 import { Modifier } from '../../interfaces/Modifier';
-// import { playerPopulated } from '../../__mocks__/playerPopulated';
 
 describe('Attribute Calculation Functions', () => {
   const mockAttributes: Modifier = {
@@ -44,16 +43,6 @@ describe('Attribute Calculation Functions', () => {
   });
 });
 
-// describe('filterPlayerData', () => {
-//   test('should return a properly structured Player object', () => {
-//     const player = filterPlayerData(playerPopulated);
-//     expect(player).toHaveProperty('_id', '123');
-//     expect(player).toHaveProperty('name', 'TestPlayer');
-//     expect(player).toHaveProperty('attributes');
-//     expect(player.attributes).toHaveProperty('hit_points');
-//     expect(player.attributes).toHaveProperty('attack');
-//   });
-// });
 
 describe('assignRole', () => {
   it('assigns special roles based on email', () => {
@@ -67,18 +56,3 @@ describe('assignRole', () => {
     expect(assignRole('random@example.com')).toBe('acolyte');
   });
 });
-
-// describe('initFetchPlayer', () => {
-//   beforeEach(() => {
-//     global.fetch = jest.fn(() =>
-//       Promise.resolve({
-//         json: () => Promise.resolve({ data: { email: 'test@example.com', name: 'Test Player' } })
-//       }));
-//   });
-
-//   test('fetches player data and assigns role', async () => {
-//     const player = await initFetchPlayer('test@example.com');
-//     expect(player).toHaveProperty('name');
-//     expect(player).toHaveProperty('role');
-//   });
-// });
