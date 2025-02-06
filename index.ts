@@ -1,17 +1,19 @@
 import { Socket } from 'socket.io';
 import express from 'express';
 import bodyParser from 'body-parser';
-const app = express();
-const PORT = process.env.PORT || 3000;
-// const playerService = require("./src/controllers/playerController");
+import { socketHandlers } from './src/sockets/handlers';
 import router from './src/routes/routes';
 import dotenv from 'dotenv';
-dotenv.config();  // Load environment variables from .env file 
-
 import {createServer} from 'http';
 import {Server} from 'socket.io';
-const server = createServer(app);
 import cors from 'cors';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+dotenv.config();
+
+const server = createServer(app);
 export const io = new Server(server, {
   cors: {
     origin: '*', 
@@ -22,11 +24,8 @@ export const io = new Server(server, {
 });
 
 app.use(cors());
-
 app.use(bodyParser.json());
 app.use('/api/player', router);
-
-import { socketHandlers } from './src/sockets/handlers';
 
 const onConnection = (socket: Socket): void => {  
   console.log(socket.id, ' joined the server.');
@@ -34,13 +33,12 @@ const onConnection = (socket: Socket): void => {
 };
 
 async function start() {
-  try {
 
+  try {
     server.listen(PORT, () => {
       console.log(`Socket is listening on port ${PORT}`);
       io.on('connection', onConnection);
     });
-
   }
   catch (error) {
     console.log(`Error starting the server: ${error.message}`);

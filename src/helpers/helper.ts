@@ -50,7 +50,7 @@ export const findPlayerByEmail = (email: string): Player | undefined => {
 };
 
 //returns a boolean if a player is connected. searched by email
-export const returnIfPlayerIsConnected = (email: string): boolean => {
+export const isPlayerConnected = (email: string): boolean => {
   return ONLINE_USERS.some((player) => (player.email === email));
 };
 
@@ -60,7 +60,7 @@ export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
     kaotika: [],
     dravocar: [],
   };
-  users.map( player => {
+  users.forEach(player => {
     if (player.isBetrayer) {
       obj.dravocar.push(player);
     } else {
@@ -81,7 +81,7 @@ export const changeTurn = () => {
 };
 
 // Check if there are at least 1 player from each side
-export const checkIfEachSideHasPlayers = (io: Server, users: Player[]): boolean => {
+export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   if ((dividedPlayers.dravocar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
@@ -101,12 +101,23 @@ export const checkIfEachSideHasPlayers = (io: Server, users: Player[]): boolean 
   return gameHasPlayers;
 };
 
-
 //check if there is the minimum 1 player connected and of role acolyte no betrayer
 export const checkStartGameRequirement = () => {
   if (ONLINE_USERS.length >= 1) {
     return ONLINE_USERS.some((user)=> (user.role === 'acolyte' && user.isBetrayer === false));
   }
   return false;
+};
+
+//returns an array of players sorted by their charisma
+export const sortPlayersByCharisma = (players: Player[]): Player[] => {
+  //sort characters by charisma
+  players.sort((c1, c2) =>
+    c1.attributes.charisma < c2.attributes.charisma
+      ? 1
+      : c1.attributes.charisma > c2.attributes.charisma
+        ? -1
+        : 0);
+  return players;
 };
 
