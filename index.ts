@@ -3,10 +3,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 const app = express();
 const PORT = process.env.PORT || 3000;
-// const playerService = require("./src/controllers/playerController");
 import router from './src/routes/routes';
 import dotenv from 'dotenv';
-dotenv.config();  // Load environment variables from .env file 
+
+// Load .env file (only for non-test environments)
+if (process.env.NODE_ENV !== 'test') {
+  dotenv.config(); // Load environment variables from .env file 
+}
 
 import {createServer} from 'http';
 import {Server} from 'socket.io';
@@ -34,16 +37,19 @@ const onConnection = (socket: Socket): void => {
 };
 
 async function start() {
-  try {
+  // Start server only if NOT in test mode
+  if (process.env.NODE_ENV !== 'test') {
+    try {
 
-    server.listen(PORT, () => {
-      console.log(`Socket is listening on port ${PORT}`);
-      io.on('connection', onConnection);
-    });
+      server.listen(PORT, () => {
+        console.log(`Socket is listening on port ${PORT}`);
+        io.on('connection', onConnection);
+      });
 
-  }
-  catch (error) {
-    console.log(`Error starting the server: ${error.message}`);
+    }
+    catch (error) {
+      console.log(`Error starting the server: ${error.message}`);
+    }
   }
 }
 
