@@ -35,14 +35,16 @@ export const initFetchPlayerController = async (req: Request, res: Response) => 
     if (!playerData) {
       return res.status(404).send({ message: 'Does not exist any player with this email' });
     }
-    // Return the player data
+    // check if player is already connected
     if (returnIfPlayerIsConnected(playerData.email)) {
       console.log(playerData.email, 'is already connected');
-      res.send({ status: 'OK', data: playerData });
     } else {
       ONLINE_USERS.push(playerData);
-      res.send({ status: 'OK', data: playerData });
     }
+    // Return player data
+    res
+      .status(200)
+      .send({ status: 'OK', data: playerData });
     
   } catch (error) {
     res

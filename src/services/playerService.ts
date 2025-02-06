@@ -61,7 +61,7 @@ export const calculateBCFA = (attributes: Modifier): number => {
   return Math.floor(attributes.strength + attributes.insanity);
 };
 
-const filterPlayerData = (data: PlayerPopulated): Player => {
+export const filterPlayerData = (data: PlayerPopulated): Player => {
   const baseAttributes = calculateBaseAttributes(data);
 
   const calculatedAttributes = {
@@ -125,7 +125,7 @@ const filterPlayerData = (data: PlayerPopulated): Player => {
   return player;
 };
 
-const assignRole = (email: string) => {
+export const assignRole = (email: string) => {
   switch (email) {
   case process.env.ISTVAN_EMAIL:
     return 'istvan';
