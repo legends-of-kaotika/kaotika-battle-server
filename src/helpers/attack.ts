@@ -1,6 +1,5 @@
 import { Player } from '../interfaces/Player';
 
-
 export const adjustAtributes = (player: Player): Player => {
 
   //----ATTRIBUTES----
@@ -34,4 +33,9 @@ export const adjustAtributes = (player: Player): Player => {
   player.attributes.BCFA = Math.max(0, player.attributes.BCFA);
   player.attributes.resistance = Math.max(0, player.attributes.resistance);
   return player;
+};
+
+export const getCriticalPercentage = (player: Player, successPercentage: number) => {
+  // Formula: CRIT% = CFP * SUCCESS% / 100 (result rounded up)
+  return Math.ceil(player.attributes.CFP*successPercentage/100);
 };
