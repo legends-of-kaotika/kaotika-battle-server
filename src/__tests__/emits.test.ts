@@ -28,9 +28,14 @@ describe('Socket.IO server tests', () => {
     });
   });
 
-  afterAll(() => {
-    io.close();
+  afterAll((done) => {
+    io.close(() => {
+      console.log('Closed Socket.IO server');
+      done();
+    });
+  
     clientSocket.close();
+    serverSocket.disconnect();
   });
 
   test('should communicate', (done) => {
