@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
-import { sendConnectedUsersArrayToWeb } from '../../emits/user';
-import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game';
-import { changeTurn, eachSideHasPlayers } from '../../../helpers/helper';
-import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END } from '../../../constants/constants';
+import { sendConnectedUsersArrayToWeb } from '../../emits/user.ts';
+import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
+import { changeTurn, eachSideHasPlayers } from '../../../helpers/helper.ts';
+import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END } from '../../../constants/constants.ts';
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
 

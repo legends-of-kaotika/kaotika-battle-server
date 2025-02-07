@@ -3,12 +3,12 @@ import { Server } from 'socket.io';
 import { createServer } from 'http';
 import Client from 'socket.io-client';
 import { Socket } from 'socket.io';
-import { DividedPlayers } from '../interfaces/DividedPlayers';
-import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, UPDATE_PLAYER, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../constants/constants';
-import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToAll, sendUpdatedPlayerToAll, sendUserDataToWeb } from '../sockets/emits/user';
-import { attributesMock, ONLINE_USERS_MOCK, playerMock } from '../__mocks__/players';
-import { Player } from '../interfaces/Player';
-import { Modifier } from '../interfaces/Modifier';
+import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
+import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, UPDATE_PLAYER, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../constants/constants.ts';
+import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToAll, sendUpdatedPlayerToAll, sendUserDataToWeb } from '../sockets/emits/user.ts';
+import { attributesMock, ONLINE_USERS_MOCK, playerMock } from '../__mocks__/players.ts';
+import { Player } from '../interfaces/Player.ts';
+import { Modifier } from '../interfaces/Modifier.ts';
 
 describe('Socket.IO server tests', () => {
   let io: Server;
