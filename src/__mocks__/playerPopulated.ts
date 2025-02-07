@@ -1,4 +1,4 @@
-// import { PlayerPopulated } from '../interfaces/PlayerPopulated';
+// import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 
 // export const playerPopulated : PlayerPopulated = {
 //   _id: '66decc4ff42d4a193db77e71',
