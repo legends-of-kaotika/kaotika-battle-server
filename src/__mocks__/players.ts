@@ -8,13 +8,13 @@ export const ONLINE_USERS_MOCK: Player[] =
 [
   {
     _id: '66decc4ff42d4a193db77e11',
-    name: 'FREDIE_MERKURY',
-    nickname: 'Dr Singer',
+    name: 'Boss (BOT)',
+    nickname: 'Boss (BOT)',
     avatar: 'https://lh3.googleusercontent.com/a/ACg8ocIs9M5Fz0Dg1M7KgxcDGVyUSOeCIrXQmEVToR9cipfo71RLlOE=s96-c',
-    email: 'fredie.mendiburu@ikasle.aeg.eus',
+    email: 'boss.bot@ikasle.aeg.eus',
     level: 18,
     role: 'acolyte',
-    socketId: '3o0LeOf-R28YvEMhAAAB',
+    socketId: '',
     isBetrayer: true,
     profile: { name: 'Blasphemer' },
     attributes: {
