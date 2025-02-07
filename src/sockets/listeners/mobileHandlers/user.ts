@@ -6,7 +6,6 @@ import {
   sendCurseSelectedToWeb,
   sendHealSelectedToWeb,
   sendSelectedPlayerIdToWeb,
-  sendUpdatedPlayerToAll,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers
@@ -29,10 +28,8 @@ import {
   target,
   turn,
 } from '../../../game';
-import {
-  calculateAttack,
-  calculateDefense,
-} from '../../../services/playerService';
+
+
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
@@ -128,6 +125,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       console.error('No target has been selected');
       return;
     }
+
     // Attack the selected target vía their ID
     console.log('Attacking the player: ', target?.nickname);
 
@@ -151,29 +149,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    //Calculate the damage dealt by the attacker
-    let totalDmg = calculateAttack(attacker.attributes);
-
-    //Calculate the target's defense attribute and by how much it reduces the total damage dealt
-    const targetDefense = calculateDefense(target.attributes);
-    totalDmg = Math.max(0, totalDmg - targetDefense);
-
-    // //Applies any status effects or modifiers currently in effect to the damage dealt
-    // if(attacker?.status.ethaziumCurse){
-    //   totalDmg = Math.floor(totalDmg * ?); //The attackers total damage is reduced by % [ETHAZIUM CURSE]
-    // }
-
-    // if(attacker?.status.tired){
-    //   totalDmg = Math.floor(totalDmg * ?); //The attackers total damage is reduced by % [TIRED]
-    // }
-
-    console.log('Total damage inflicted: ', totalDmg);
-    
-    //Updates the target's hit points
-    target.attributes.hit_points = Math.max(0, target.attributes.hit_points - totalDmg);
-
     //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
+    // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
 
   });
 };
