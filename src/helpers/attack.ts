@@ -1,4 +1,4 @@
-import { Player } from '../interfaces/Player';
+import { Player } from '../interfaces/Player.ts';
 
 
 export const getCriticalPercentage = (player: Player, successPercentage: number) => {

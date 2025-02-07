@@ -1,6 +1,6 @@
 
-import { getCriticalPercentage } from '../../helpers/attack';
-import { mock_CFP31, mock_CFP0 } from '../../__mocks__/attackMocks/getCriticalPercentageMocks';
+import { getCriticalPercentage } from '../../helpers/attack.ts';
+import { mock_CFP31, mock_CFP0 } from '../../__mocks__/attackMocks/getCriticalPercentageMocks.ts';
 
 describe('getCriticalPercentage', () => {
   it('should return the correct critical percentage', () => {
