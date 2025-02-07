@@ -4,13 +4,13 @@ export default class Die{
   private modifier: number;
 
   constructor
-  (num_die: number, num_faces: number, modifier: number){
+  (num_die: number, num_faces: number, modifier: number = 0){
     this.num_faces = num_faces;
     this.num_die = num_die;
     this.modifier = modifier;
   }
 
-  public static create(num_die: number, num_faces: number, modifier: number) : Die{
+  public static create(num_die: number, num_faces: number, modifier: number = 0) : Die{
     return new Die(num_die, num_faces, modifier);
   }
   
