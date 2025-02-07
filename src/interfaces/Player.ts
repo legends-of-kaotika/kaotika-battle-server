@@ -1,10 +1,10 @@
-import { AntidotePotion } from './AntidotePotion';
-import { HealingPotion } from './HealingPotion';
-import { EnhancerPotion } from './EnhancerPotion';
-import { Profile } from './Profile';
-import { Modifier } from './Modifier';
-import { Status } from './Status';
-import { Weapon } from './Weapon';
+import { AntidotePotion } from './AntidotePotion.ts';
+import { HealingPotion } from './HealingPotion.ts';
+import { EnhancerPotion } from './EnhancerPotion.ts';
+import { Profile } from './Profile.ts';
+import { Modifier } from './Modifier.ts';
+import { Status } from './Status.ts';
+import { Weapon } from './Weapon.ts';
 
 export interface Player {
   _id: string;

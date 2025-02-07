@@ -1,4 +1,4 @@
-import { AntidoteModifier } from './AntidoteModifier';
+import { AntidoteModifier } from './AntidoteModifier.ts';
 
 export interface EnhancerPotion {
   _id: string,

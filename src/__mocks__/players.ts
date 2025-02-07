@@ -1,8 +1,8 @@
  
 
-import { DividedPlayers } from '../interfaces/DividedPlayers';
-import { Modifier } from '../interfaces/Modifier';
-import { Player } from '../interfaces/Player';
+import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
+import { Modifier } from '../interfaces/Modifier.ts';
+import { Player } from '../interfaces/Player.ts';
 
 export const ONLINE_USERS_MOCK: Player[] = 
 [
