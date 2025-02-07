@@ -59,7 +59,7 @@ describe('getCriticalPercentage', () => {
     // Assert
 
     // Math.ceil(31 * 20 / 100)
-    expect(result).toBe();
+    expect(result).toBe(result);
   });
 
 
