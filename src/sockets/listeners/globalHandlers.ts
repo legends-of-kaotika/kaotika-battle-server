@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
-import { removePlayerConnected } from '../../helpers/helper';
-import { DISCONNECT } from '../../constants/constants';
+import { removePlayerConnected } from '../../helpers/player.ts';
+import { DISCONNECT } from '../../constants/sockets.ts';
 
 export const globalHandlers = (io: Server, socket: Socket): void => { 
   //sends the new array of players on disconnect

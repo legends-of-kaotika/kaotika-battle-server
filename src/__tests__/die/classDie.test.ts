@@ -1,7 +1,7 @@
-import Die from '../classes/Die';
+import Die from '../../classes/Die.ts';
 
 describe('Test Die class ant its methods', () => {
-  describe('test creare, roll, rollWithModifier methos', () => {
+  describe('test creare, roll, rollWithModifier methods', () => {
     const die10 = Die.create(3, 3, 2);
 
     it('should creat the correct Die', () => {

@@ -1,6 +1,4 @@
 
-{/* SOCKET CONSTANTS */ }
-
 // ROOMS
 export const MOBILE = 'mobile';
 
@@ -41,6 +39,3 @@ export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
 
-// Timer
-
-export const TURN_TIMER = 30;

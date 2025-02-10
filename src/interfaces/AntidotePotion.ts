@@ -1,4 +1,4 @@
-import { Curse } from './Curse';
+import { Curse } from './Curse.ts';
 
 export interface AntidotePotion {
 	_id: string, 

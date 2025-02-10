@@ -1,5 +1,5 @@
-import { ONLINE_USERS_MOCK } from './__mocks__/players';
-import { Player } from './interfaces/Player';
+import { ONLINE_USERS_MOCK } from './__mocks__/players.ts';
+import { Player } from './interfaces/Player.ts';
 
 export const ONLINE_USERS: Player[] = [ONLINE_USERS_MOCK[0]];
 export let webSocketId: string = '';
