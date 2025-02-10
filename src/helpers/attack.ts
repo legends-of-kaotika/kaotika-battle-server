@@ -2,6 +2,7 @@ import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
 import { defenseRules } from '../constants/combatRules.ts';
 import { Player } from '../interfaces/Player.ts';
+
 export const adjustAtributes = (player: Player): Player => {
 
   const attributes = Object.keys(player.attributes) as (keyof Player['attributes'])[];

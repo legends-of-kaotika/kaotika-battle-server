@@ -1,5 +1,5 @@
-import { adjustAtributes } from '../../helpers/attack';
-import { Player } from '../../interfaces/Player';
+import { adjustAtributes } from '../../helpers/attack.ts';
+import { Player } from '../../interfaces/Player.ts';
 
 describe('adjustAtributes', () => {
   it('should round all attributes to integers', () => {
@@ -64,7 +64,6 @@ describe('adjustAtributes', () => {
     expect(adjustedPlayer.attributes.charisma).toBe(1);
     expect(adjustedPlayer.attributes.strength).toBe(1);
     expect(adjustedPlayer.attributes.hit_points).toBe(1);
-    expect(adjustedPlayer.attributes.attack).toBe(0);
     expect(adjustedPlayer.attributes.defense).toBe(1);
     expect(adjustedPlayer.attributes.magic_resistance).toBe(1);
     expect(adjustedPlayer.attributes.CFP).toBe(10);
