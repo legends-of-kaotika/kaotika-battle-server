@@ -1,5 +1,6 @@
 import { Player } from '../interfaces/Player.ts';
 import { Die100 } from '../constants/constants.ts';
+import Die from '../classes/Die.ts';
 
 
 export const getCriticalPercentage = (player: Player, successPercentage: number) => {
@@ -74,4 +75,9 @@ export const calculateDefenseModificator = (totalDefense: number) : number => {
 
 export const calculateTotalDefense = (totalArmorDefense : number, playerDefense: number) : number => {
   return Math.floor(totalArmorDefense + playerDefense);
+};
+
+export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number, weaponDieModifier: number): number => {
+  const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
+  return weaponDie.rollWithModifier();
 };
