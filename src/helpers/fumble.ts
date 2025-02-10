@@ -40,3 +40,8 @@ export const applyFairytale = (currentPlayer: Player): number => {
 export const applyHack = (currentPlayerDex: number)=> {
   return Math.ceil(currentPlayerDex / 2);
 }; //object with dex and to who me (later do merge)
+
+//kill the current player
+export const applyScythe = (currentPlayerHitPoints: number)=> {
+  return currentPlayerHitPoints + 1;
+}; // object hit points and to who me (later do merge)
