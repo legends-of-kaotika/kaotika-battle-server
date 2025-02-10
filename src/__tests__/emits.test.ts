@@ -9,6 +9,7 @@ import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnected
 import { attributesMock, ONLINE_USERS_MOCK, playerMock } from '../__mocks__/players.ts';
 import { Player } from '../interfaces/Player.ts';
 import { Modifier } from '../interfaces/Modifier.ts';
+import { logUnlessTesting } from '../helpers/helper.ts';
 
 describe('Socket.IO server tests', () => {
   let io: Server;
@@ -30,7 +31,7 @@ describe('Socket.IO server tests', () => {
 
   afterAll((done) => {
     io.close(() => {
-      console.log('Closed Socket.IO server');
+      logUnlessTesting('Closed Socket.IO server');
       done();
     });
   
