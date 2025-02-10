@@ -1,9 +1,7 @@
-import { Player } from '../interfaces/Player.ts';
 import { Die100 } from '../constants/constants.ts';
 
-
-export const getCriticalPercentage = (player: Player, successPercentage: number) => {
-  return Math.ceil(player.attributes.CFP*successPercentage/100);
+export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
+  return Math.ceil(CFP*successPercentage/100);
 };
 
 export const getInsanityModificator = (insanity:number):number => {
