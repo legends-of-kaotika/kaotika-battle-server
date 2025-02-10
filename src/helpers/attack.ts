@@ -23,7 +23,11 @@ export const getInsanityModificator = (insanity:number):number => {
   else { return 15; }
 };
 
-export const getAttackRoll = () => {
+export const getAttackRoll = (): number => {
   const die = new Die(1, 100);
   return die.roll();
+};
+
+export const getSuccessPercentage = (weaponBasePercentage : number, playerDexterity: number, playerInsanity: number) : number => {
+  return weaponBasePercentage + Math.ceil(playerDexterity/3) + playerInsanity;
 };
