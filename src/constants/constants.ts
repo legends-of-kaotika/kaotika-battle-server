@@ -1,3 +1,10 @@
+import Die from '../classes/Die';
+
+{/* DIES */ }
+
+export const Die100 = new Die(1, 100);
+export const Die2 = new Die(1, 2);
+
 
 {/* SOCKET CONSTANTS */ }
 
