@@ -32,7 +32,6 @@ export const getFumblePercentage = (playerCFP: number, successPercentage: number
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
 
-
 export const luckRolls = (charisma: number): number[] => {
 
   const rollTimes = Math.floor(charisma / 20);
@@ -50,6 +49,9 @@ export const luckRolls = (charisma: number): number[] => {
   return luckRolls;
 };
 
+export const hasLuck = (luckRolls: number[]): boolean => {
+  return luckRolls.some(roll => roll<20);
+};
 
 export const calculateDefenseModificator = (totalDefense: number) : number => {
   // ----DEF MOD RESULTS---- //
