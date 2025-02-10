@@ -1,11 +1,11 @@
 import { Server, Socket } from 'socket.io';
-import { io } from '../..';
-import { MOBILE } from '../constants/constants';
-import { ONLINE_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game';
-import { DividedPlayers } from '../interfaces/DividedPlayers';
-import { Player } from '../interfaces/Player';
-import { assignTurn, sendGameEnd, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user';
-import { clearTimer, startTimer } from '../timer/timer';
+import { io } from '../../index.ts';
+import { MOBILE } from '../constants/constants.ts';
+import { ONLINE_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
+import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
+import { Player } from '../interfaces/Player.ts';
+import { assignTurn, sendGameEnd, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
+import { clearTimer, startTimer } from '../timer/timer.ts';
 
 //returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {

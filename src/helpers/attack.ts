@@ -1,9 +1,11 @@
-import { Player } from '../interfaces/Player';
+import Die from '../classes/Die.ts';
+import { Player } from '../interfaces/Player.ts';
 
 
 export const getCriticalPercentage = (player: Player, successPercentage: number) => {
   return Math.ceil(player.attributes.CFP*successPercentage/100);
 };
+
 export const getInsanityModificator = (insanity:number):number => {
   // ----INS MOD RESULTS---- //
   // 95-100 = 15
@@ -19,6 +21,11 @@ export const getInsanityModificator = (insanity:number):number => {
   else if ( insanity <= 89 ){ return 7; }
   else if ( insanity <= 94 ){ return 10; }
   else { return 15; }
+};
+
+export const getAttackRoll = () => {
+  const die = new Die(1, 100);
+  return die.roll();
 };
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);

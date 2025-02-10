@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { isGameStarted, ONLINE_USERS } from '../game';
-import { isPlayerConnected } from '../helpers/helper';
+import { isGameStarted, ONLINE_USERS } from '../game.ts';
+import { isPlayerConnected } from '../helpers/helper.ts';
 
-import { initFetchPlayer } from '../services/playerService';
-import { Player } from '../interfaces/Player';
+import { initFetchPlayer } from '../services/playerService.ts';
+import { Player } from '../interfaces/Player.ts';
 
 
 export const initFetchPlayerController = async (req: Request, res: Response) => {

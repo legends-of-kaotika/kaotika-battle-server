@@ -9,15 +9,15 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers
-} from '../../emits/user';
+} from '../../emits/user.ts';
 import {
   checkStartGameRequirement,
   findPlayerById,
   insertSocketId,
   sortPlayersByCharisma
-} from '../../../helpers/helper';
-import * as SOCKETS from '../../../constants/constants';
-import { startTimer } from '../../../timer/timer';
+} from '../../../helpers/helper.ts';
+import * as SOCKETS from '../../../constants/constants.ts';
+import { startTimer } from '../../../timer/timer.ts';
 import {
   ONLINE_USERS,
   currentPlayer,
@@ -27,7 +27,7 @@ import {
   setTarget,
   target,
   turn,
-} from '../../../game';
+} from '../../../game.ts';
 
 
 
