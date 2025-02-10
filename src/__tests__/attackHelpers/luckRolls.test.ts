@@ -1,5 +1,5 @@
 
-import { luckRolls } from '../../helpers/attack';
+import { luckRolls } from '../../helpers/attack.ts';
 
 const dieRollMock = jest.fn();
 
