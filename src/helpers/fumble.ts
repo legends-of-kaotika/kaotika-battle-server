@@ -35,3 +35,8 @@ export const applyFairytale = (currentPlayer: Player): number => {
   currentPlayer.eruditoGlasses = true; ///add in interface eruditoGlasses?
   return 0; //object hitPoint 0 but message yes ???
 };
+
+//halve the dex of currentPlayer forever
+export const applyHack = (currentPlayerDex: number)=> {
+  return Math.ceil(currentPlayerDex / 2);
+}; //object with dex and to who me (later do merge)
