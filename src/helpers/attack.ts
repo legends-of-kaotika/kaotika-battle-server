@@ -7,9 +7,9 @@ export const adjustAtributes = (player: Player): Player => {
   attributes.forEach((key) => {
     // Every attribute has to be rounded to integer
     player.attributes[key] = Math.round(player.attributes[key] as number);
-    // Remaining attributes will have a minimum value of 0
+    // Remaining attributes will have a minimum value of 1
     if (key !== 'insanity' && key !== 'attack') {
-      player.attributes[key] = Math.max(0, player.attributes[key] as number);
+      player.attributes[key] = Math.max(1, player.attributes[key] as number);
       //INS: min 1 - max 100
     }else if(key === 'insanity'){
       player.attributes[key] = Math.max(1, Math.min(100, player.attributes[key] as number));
