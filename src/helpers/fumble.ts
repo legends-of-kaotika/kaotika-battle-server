@@ -1,4 +1,4 @@
-
+import { Player } from '../interfaces/Player.ts';
 
 //----------------------helper for getting fumble effect------------------------------//
 
@@ -30,3 +30,8 @@ export const getFumbleEffect = (fumblePercentile: number ): string => {
 export const applySlash = (calculationFumbleDamage: number): number => {
   return Math.ceil(calculationFumbleDamage / 2); //console.log to explain what happens?
 }; //object with hit point and to who me (later do merge)
+
+export const applyFairytale = (currentPlayer: Player): number => {
+  currentPlayer.eruditoGlasses = true; ///add in interface eruditoGlasses?
+  return 0; //object hitPoint 0 but message yes ???
+};

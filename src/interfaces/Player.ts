@@ -31,4 +31,5 @@ export interface Player {
   status: Status,
   role: string,
   isBetrayer: boolean,
+  eruditoGlasses?: boolean,
 }
