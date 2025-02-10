@@ -1,12 +1,3 @@
-import Die from '../classes/Die';
-
-{/* DIES */ }
-
-export const Die100 = new Die(1, 100);
-export const Die2 = new Die(1, 2);
-
-
-{/* SOCKET CONSTANTS */ }
 
 // ROOMS
 export const MOBILE = 'mobile';
@@ -48,6 +39,3 @@ export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
 
-// Timer
-
-export const TURN_TIMER = 30;

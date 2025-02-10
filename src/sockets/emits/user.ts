@@ -1,8 +1,9 @@
 import { Server } from 'socket.io';
 import { webSocketId } from '../../game.ts';
 import { Player } from '../../interfaces/Player.ts';
-import * as SOCKETS from '../../constants/constants.ts';
-import { returnLoyalsAndBetrayers, logUnlessTesting } from '../../helpers/helper.ts';
+import * as SOCKETS from '../../constants/sockets.ts';
+import { returnLoyalsAndBetrayers } from '../../helpers/game.ts';
+import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
 import { Modifier } from '../../interfaces/Modifier.ts';
 

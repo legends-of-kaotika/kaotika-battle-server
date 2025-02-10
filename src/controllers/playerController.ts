@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { isGameStarted, ONLINE_USERS } from '../game.ts';
-import { isPlayerConnected } from '../helpers/helper.ts';
+import { isPlayerConnected } from '../helpers/player.ts';
 
 import { initFetchPlayer } from '../services/playerService.ts';
 import { Player } from '../interfaces/Player.ts';

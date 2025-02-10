@@ -11,12 +11,12 @@ import {
   sendNotEnoughPlayers
 } from '../../emits/user.ts';
 import {
-  checkStartGameRequirement,
   findPlayerById,
-  insertSocketId,
   sortPlayersByCharisma
-} from '../../../helpers/helper.ts';
-import * as SOCKETS from '../../../constants/constants.ts';
+} from '../../../helpers/player.ts';
+import { checkStartGameRequirement } from '../../../helpers/game.ts';
+import { insertSocketId } from '../../../helpers/socket.ts';
+import * as SOCKETS from '../../../constants/sockets.ts';
 import { startTimer } from '../../../timer/timer.ts';
 import {
   ONLINE_USERS,
