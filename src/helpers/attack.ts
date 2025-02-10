@@ -1,5 +1,24 @@
 import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
+import { Player } from '../interfaces/Player.ts';
+
+export const adjustAtributes = (player: Player): Player => {
+
+  const attributes = Object.keys(player.attributes) as (keyof Player['attributes'])[];
+    
+  attributes.forEach((key) => {
+    // Every attribute has to be rounded to integer
+    player.attributes[key] = Math.round(player.attributes[key] as number);
+    // Remaining attributes will have a minimum value of 1
+    if (key !== 'insanity' && key !== 'attack') {
+      player.attributes[key] = Math.max(1, player.attributes[key] as number);
+      //INS: min 1 - max 100
+    }else if(key === 'insanity'){
+      player.attributes[key] = Math.max(1, Math.min(100, player.attributes[key] as number));
+    }
+  });
+  return player;
+};
 
 export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
   return Math.ceil(CFP*successPercentage/100);
@@ -21,24 +40,6 @@ export const getFumblePercentage = (playerCFP: number, successPercentage: number
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
 
-export const calculateDefenseModificator = (totalDefense: number) : number => {
-  // ----DEF MOD RESULTS---- //
-  // 400 = 7
-  // 351-400 = 6
-  // 275-350 = 5
-  // 201-274 = 4
-  // 151-200 = 3
-  // 100-150 = 2
-  // <100 =  0
-
-  if(totalDefense < 100) return 0;
-  else if(totalDefense <= 150) return 2;
-  else if(totalDefense <= 200) return 3;
-  else if(totalDefense <= 274) return 4;
-  else if(totalDefense <= 350) return 5;
-  else if(totalDefense <= 400) return 6;
-  else return 7;
-};
 
 export const calculateTotalDefense = (totalArmorDefense : number, playerDefense: number) : number => {
   return Math.floor(totalArmorDefense + playerDefense);

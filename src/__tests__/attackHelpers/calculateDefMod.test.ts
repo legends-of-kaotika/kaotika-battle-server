@@ -1,4 +1,5 @@
-import { calculateDefenseModificator, calculateTotalDefense } from '../../helpers/attack.ts';
+import { DEFENSE_RULES } from '../../constants/combatRules.ts';
+import { getValueFromRule, calculateTotalDefense } from '../../helpers/attack.ts';
 
 describe('test de calculate defense mod' , () => {
   it('should calculate correctly the total defense', () => {
@@ -8,7 +9,7 @@ describe('test de calculate defense mod' , () => {
   });
 
   it('should calculate correctly the defense mod', () => {
-    const defenseMod = calculateDefenseModificator(35);
+    const defenseMod = getValueFromRule(DEFENSE_RULES,35);
     expect(defenseMod).toBe(0);
   });
 });
