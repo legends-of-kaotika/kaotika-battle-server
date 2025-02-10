@@ -20,3 +20,6 @@ export const getInsanityModificator = (insanity:number):number => {
   else if ( insanity <= 94 ){ return 10; }
   else { return 15; }
 };
+export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
+  return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
+};
