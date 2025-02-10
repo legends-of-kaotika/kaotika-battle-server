@@ -1,6 +1,6 @@
 
-import { getFumblePercentage } from '../../helpers/attack';
-import { mock_CFP31, mock_CFP0 } from '../../__mocks__/attackMocks/testingPlayerMock';
+import { getFumblePercentage } from '../../helpers/attack.ts';
+import { mock_CFP31, mock_CFP0 } from '../../__mocks__/attackMocks/testingPlayerMock.ts';
 
 describe('getFumblePercentage', () => {
   it('should return the correct Fumble percentage', () => {
