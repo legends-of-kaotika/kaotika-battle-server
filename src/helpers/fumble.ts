@@ -45,3 +45,21 @@ export const applyHack = (currentPlayerDex: number)=> {
 export const applyScythe = (currentPlayerHitPoints: number)=> {
   return currentPlayerHitPoints + 1;
 }; // object hit points and to who me (later do merge)
+
+export const getFumbleHitDamage = (fumbleEffect: string, currentPlayer: Player, calculationFumbleDamage: number) => {
+  switch (fumbleEffect) {
+  case 'slash':
+    return applySlash(calculationFumbleDamage);
+  case 'fairytale':
+    return applyFairytale(currentPlayer);
+  case 'hack':
+    return applyHack(currentPlayer.attributes.dexterity);
+  case 'scythe':
+    return applyScythe(currentPlayer.attributes.hit_points);
+  default:
+    console.log('Unknown fumble effect');
+    return 0;
+  }
+};
+
+//--------------------------------------------------------------------------------//
