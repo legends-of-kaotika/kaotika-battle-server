@@ -1,4 +1,4 @@
-import Die from '../classes/Die';
+import Die from '../classes/Die.ts';
 
 describe('Test Die class ant its methods', () => {
   describe('test creare, roll, rollWithModifier methods', () => {

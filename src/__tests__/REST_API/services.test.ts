@@ -1,5 +1,5 @@
-import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, assignRole} from '../../services/playerService';
-import { Modifier } from '../../interfaces/Modifier';
+import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, assignRole} from '../../services/playerService.ts';
+import { Modifier } from '../../interfaces/Modifier.ts';
 
 describe('Attribute Calculation Functions', () => {
   const mockAttributes: Modifier = {

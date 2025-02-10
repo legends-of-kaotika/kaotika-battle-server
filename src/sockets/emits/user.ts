@@ -1,10 +1,10 @@
 import { Server } from 'socket.io';
-import { webSocketId } from '../../game';
-import { Player } from '../../interfaces/Player';
-import * as SOCKETS from '../../constants/constants';
-import { returnLoyalsAndBetrayers } from '../../helpers/helper';
-import { DividedPlayers } from '../../interfaces/DividedPlayers';
-import { Modifier } from '../../interfaces/Modifier';
+import { webSocketId } from '../../game.ts';
+import { Player } from '../../interfaces/Player.ts';
+import * as SOCKETS from '../../constants/constants.ts';
+import { returnLoyalsAndBetrayers } from '../../helpers/helper.ts';
+import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
+import { Modifier } from '../../interfaces/Modifier.ts';
 
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = (io: Server, users: Player[]):void => {

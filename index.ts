@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { socketHandlers } from './src/sockets/handlers';
-import router from './src/routes/routes';
+import { socketHandlers } from './src/sockets/handlers.ts';
+import router from './src/routes/routes.ts';
 import dotenv from 'dotenv';
 import {createServer} from 'http';
 import {Server} from 'socket.io';

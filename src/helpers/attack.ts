@@ -1,5 +1,5 @@
-import { Player } from '../interfaces/Player';
-import { Die100 } from '../constants/constants';
+import { Player } from '../interfaces/Player.ts';
+import { Die100 } from '../constants/constants.ts';
 
 
 export const getCriticalPercentage = (player: Player, successPercentage: number) => {
@@ -21,6 +21,17 @@ export const getInsanityModificator = (insanity:number):number => {
   else if ( insanity <= 89 ){ return 7; }
   else if ( insanity <= 94 ){ return 10; }
   else { return 15; }
+};
+
+export const getAttackRoll = (): number => {
+  return Die100.roll();
+};
+
+export const getSuccessPercentage = (weaponBasePercentage : number, playerDexterity: number, playerInsanity: number) : number => {
+  return weaponBasePercentage + Math.ceil(playerDexterity/3) + playerInsanity;
+};
+export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
+  return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
 
 

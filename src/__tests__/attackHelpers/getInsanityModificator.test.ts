@@ -1,4 +1,4 @@
-import { getInsanityModificator } from '../../helpers/attack';
+import { getInsanityModificator } from '../../helpers/attack.ts';
 
 // ----INS MOD RESULTS---- //
 // 95-100 = 15

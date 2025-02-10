@@ -1,4 +1,4 @@
-import { Modifier } from './Modifier';
+import { Modifier } from './Modifier.ts';
 
 export interface Shield {
   _id: string,

@@ -1,6 +1,6 @@
-import { Player } from '../interfaces/Player';
-import { PlayerPopulated } from '../interfaces/PlayerPopulated';
-import { Modifier } from '../interfaces/Modifier';
+import { Player } from '../interfaces/Player.ts';
+import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
+import { Modifier } from '../interfaces/Modifier.ts';
 
 const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
   const equipmentModifiers: Modifier[] = [
