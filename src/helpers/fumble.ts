@@ -23,3 +23,10 @@ export const getFumbleEffect = (fumblePercentile: number ): string => {
 };
 
 //-------------------------------------------------------------------------------------//
+
+//----------------------helper for getting fumbleHitDamage-----------------------------//
+
+//apply self damage to the player
+export const applySlash = (calculationFumbleDamage: number): number => {
+  return Math.ceil(calculationFumbleDamage / 2); //console.log to explain what happens?
+}; //object with hit point and to who me (later do merge)
