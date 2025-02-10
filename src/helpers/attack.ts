@@ -1,10 +1,8 @@
-import { Player } from '../interfaces/Player.ts';
 import { Die100 } from '../constants/constants.ts';
 import Die from '../classes/Die.ts';
 
-
-export const getCriticalPercentage = (player: Player, successPercentage: number) => {
-  return Math.ceil(player.attributes.CFP*successPercentage/100);
+export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
+  return Math.ceil(CFP*successPercentage/100);
 };
 
 export const getInsanityModificator = (insanity:number):number => {
@@ -35,7 +33,6 @@ export const getFumblePercentage = (playerCFP: number, successPercentage: number
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
 
-
 export const luckRolls = (charisma: number): number[] => {
 
   const rollTimes = Math.floor(charisma / 20);
@@ -53,6 +50,9 @@ export const luckRolls = (charisma: number): number[] => {
   return luckRolls;
 };
 
+export const hasLuck = (luckRolls: number[]): boolean => {
+  return luckRolls.some(roll => roll<20);
+};
 
 export const calculateDefenseModificator = (totalDefense: number) : number => {
   // ----DEF MOD RESULTS---- //
