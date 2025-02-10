@@ -1,6 +1,7 @@
 import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
 import { Player } from '../interfaces/Player.ts';
+import { INSANITY_RULES } from '../constants/combatRules.ts';
 
 export const adjustAtributes = (player: Player): Player => {
 
@@ -25,8 +26,11 @@ export const getCriticalPercentage = (CFP: number, successPercentage: number) =>
 };
 
 export const getValueFromRule = (rule:{max: number, value: number}[], findValue:number):number => {
-  const {value} = rule.find(({max}) => findValue <= max)!; 
+  const {value} = rule.find(({max}) => findValue <= max)!;
   return value;
+};
+export const getInsanityModificator = (insanity:number) =>{
+  return getValueFromRule(INSANITY_RULES,insanity);
 };
 
 export const getAttackRoll = (): number => {
