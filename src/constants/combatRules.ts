@@ -34,11 +34,20 @@ export const ATTACK_RULES_MOD2 = [
   {max:Infinity, value:15},
 ];
 
-export const CRITICAL_MODIFIERS = [
-  { max: 7, mod1: 'Instant death', mod2: 'Instant death' },
-  { max: 14, mod1: 0.3, mod2: 25 },
-  { max: 24, mod1: 0.25, mod2: 20 },
-  { max: 40, mod1: 0.23, mod2: 15 },
-  { max: 60, mod1: 0.2, mod2: 10 },
-  { max: Infinity, mod1: 0.15, mod2: 5 },
+export const CRITICAL_MOD1 = [
+  { max: 7, value: 100},
+  { max: 14, value: 0.3},
+  { max: 24, value: 0.25},
+  { max: 40, value: 0.23},
+  { max: 60, value: 0.2},
+  { max: Infinity, value: 0.15},
+];
+
+export const CRITICAL_MOD2 = [
+  { max: 7,  value: 100},
+  { max: 14, value: 25 },
+  { max: 24, value: 20 },
+  { max: 40, value: 15 },
+  { max: 60,  value: 10 },
+  { max: Infinity, value: 5 },
 ];
