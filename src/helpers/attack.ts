@@ -84,25 +84,25 @@ export const getNormalHitDamage = (weaponRoll: number, attackMod1: number, attac
   return value || 1;
 };
 export const attack = (target: Player, attacker: Player) => {
-  const adjustedAttacker: Player = adjustAtributes(attacker);
-  const adjustedTarget: Player = adjustAtributes(target);
+  target = adjustAtributes(attacker);
+  attacker = adjustAtributes(target);
   const attackRoll = getAttackRoll();
-  const successPercentage = getSuccessPercentage(adjustedAttacker.equipment.weapon.base_percentage, adjustedAttacker.attributes.dexterity, adjustedAttacker.attributes.insanity);
-  const CriticalPercentage = getCriticalPercentage(adjustedAttacker.attributes.CFP, successPercentage);
-  const fumblePercentage = getFumblePercentage(adjustedAttacker.attributes.CFP, successPercentage);
-  const weaponRoll = getWeaponDieRoll(adjustedAttacker.equipment.weapon.die_num, adjustedAttacker.equipment.weapon.die_faces, adjustedAttacker.equipment.weapon.die_modifier);
+  const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+  const CriticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+  const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
+  const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
   let hitDamage: number;
   let attackType: AttackTypes;
   if (attackRoll <= CriticalPercentage) {
     const critMod1 = getCriticalAttackModifier1(attackRoll, CriticalPercentage);
     const critMod2 = getCriticalAttackModifier2(attackRoll, CriticalPercentage);
-    hitDamage = getCriticalHitDamage(adjustedAttacker.attributes.BCFA, weaponRoll, critMod1, critMod2);
+    hitDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
     attackType = 'CRITICAL';
   }
   else if (attackRoll <= successPercentage) {
-    const attackMod1 = getAttackModificator1(adjustedAttacker.attributes.attack);
-    const attackMod2 = getAttackModificator2(adjustedAttacker.attributes.attack);
-    const totalDefense = adjustedTarget.attributes.defense + adjustedTarget.equipment.armor.defense;
+    const attackMod1 = getAttackModificator1(target.attributes.attack);
+    const attackMod2 = getAttackModificator2(target.attributes.attack);
+    const totalDefense = attacker.attributes.defense + attacker.equipment.armor.defense;
     const defMod = getDefenseModificator(totalDefense);
     hitDamage = getNormalHitDamage(weaponRoll, attackMod1, attackMod2, defMod);
     attackType = 'NORMAL';
