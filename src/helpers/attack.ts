@@ -83,19 +83,17 @@ export const getNormalHitDamage = (weaponRoll: number, attackMod1: number, attac
   const value = Math.ceil((weaponRoll * attackMod1 + attackMod2) / defenseMod);
   return value || 1;
 };
-export const attack = (target: Player, attacker: Player) => {
+export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number) => {
   target = adjustAtributes(attacker);
   attacker = adjustAtributes(target);
-  const attackRoll = getAttackRoll();
-  const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
-  const CriticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+ 
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
   const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
   let hitDamage: number;
   let attackType: AttackTypes;
-  if (attackRoll <= CriticalPercentage) {
-    const critMod1 = getCriticalAttackModifier1(attackRoll, CriticalPercentage);
-    const critMod2 = getCriticalAttackModifier2(attackRoll, CriticalPercentage);
+  if (attackRoll <= criticalPercentage) {
+    const critMod1 = getCriticalAttackModifier1(attackRoll, criticalPercentage);
+    const critMod2 = getCriticalAttackModifier2(attackRoll, criticalPercentage);
     hitDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
     attackType = 'CRITICAL';
   }
