@@ -1,5 +1,6 @@
-import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
+import { DEFENSE_RULES } from '../constants/combatRules.ts';
+import { Die100 } from '../constants/dies.ts';
 import { Player } from '../interfaces/Player.ts';
 
 export const adjustAtributes = (player: Player): Player => {
@@ -40,6 +41,9 @@ export const getFumblePercentage = (playerCFP: number, successPercentage: number
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
 
+export const getDefenseModificator = (value: number) : number => {
+  return getValueFromRule(DEFENSE_RULES, value);
+};
 
 export const calculateTotalDefense = (totalArmorDefense : number, playerDefense: number) : number => {
   return Math.floor(totalArmorDefense + playerDefense);
