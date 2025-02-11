@@ -55,15 +55,12 @@ export const isPlayerConnected = (email: string): boolean => {
 export const sortPlayersByCharisma = (players: Player[]): Player[] => {
   //sort characters by charisma
   players.sort((c1, c2) =>
-    c1.attributes.charisma < c2.attributes.charisma
-      ? 1
-      : c1.attributes.charisma > c2.attributes.charisma
-        ? -1
-        : 0);
+    c1.attributes.charisma < c2.attributes.charisma ? 1 :
+      c1.attributes.charisma > c2.attributes.charisma ? -1 : 0);
   return players;
 };
 
-export const getTurnNumOfDieRolls = (playerCharisma: number , playerDexterity: number): number => {
+export const getNumOfTurnRolls = (playerCharisma: number , playerDexterity: number): number => {
   return Math.ceil((playerCharisma + playerDexterity / 2) / 20);
 };
 
@@ -71,7 +68,7 @@ export const getPlayerTurnSuccesses = (turnNumOfDieRolls: number): number => {
   let numOfSuccesses = 0;
   for (let i = 0; i < turnNumOfDieRolls; ++i) {
     const rollResult = Die2.roll();
-    if (rollResult === 2) {numOfSuccesses += 1;};
+    if (rollResult === 2) {numOfSuccesses ++;};
   }
   return numOfSuccesses;
 };
@@ -79,9 +76,9 @@ export const getPlayerTurnSuccesses = (turnNumOfDieRolls: number): number => {
 export const getPlayersTurnSuccesses = (onlineUsers: Player[]): Record<string, number> => {
   let outputObject = {};
   onlineUsers.forEach((player) => {
-    const turnNumOfDieRolls = getTurnNumOfDieRolls(player.attributes.charisma, player.attributes.dexterity);
-    const successTime = getPlayerTurnSuccesses(turnNumOfDieRolls);
-    outputObject = { ...outputObject, [player._id]: successTime };
+    const numbOfTurnRolls = getNumOfTurnRolls(player.attributes.charisma, player.attributes.dexterity);
+    const numOfSuccesses = getPlayerTurnSuccesses(numbOfTurnRolls);
+    outputObject = { ...outputObject, [player._id]: numOfSuccesses };
   });
   return outputObject;
 };

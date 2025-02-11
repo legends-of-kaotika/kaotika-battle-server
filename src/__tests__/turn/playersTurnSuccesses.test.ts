@@ -13,7 +13,6 @@ describe ('getPlayersTurnSuccesses method', ()=> {
     //check if keys length is same as array length
     const isObjectLengthCorrect =  Object.keys(playersTurnSuccesses).length === onlineUsersCopyMock.length;
     
-    console.log(playersTurnSuccesses);
     expect(allKeysAreString).toBe(true);
     expect(allValuesAreNumber).toBe(true);
     expect(isObjectLengthCorrect).toBe(true);
