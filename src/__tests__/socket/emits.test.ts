@@ -8,7 +8,7 @@ import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, UPDATE_PLAYER, WE
 import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToAll, sendUpdatedPlayerToAll, sendUserDataToWeb } from '../../sockets/emits/user.ts';
 import { attributesMock, ONLINE_USERS_MOCK, playerMock } from '../../__mocks__/players.ts';
 import { Player } from '../../interfaces/Player.ts';
-import { Modifier } from '../../interfaces/Modifier.ts';
+import { Attribute } from '../../interfaces/Attribute.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 
 describe('Socket.IO server tests', () => {
@@ -80,7 +80,7 @@ describe('Socket.IO server tests', () => {
     test('should send the target players(id) with the attributes updated and the total damage', (done) => {  
       interface props { //match the interface of the function
         _id: string;
-        attributes: Modifier;
+        attributes: Attribute;
         totalDamage: number;
         isBetrayer: boolean;
       }
