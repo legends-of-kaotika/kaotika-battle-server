@@ -43,6 +43,6 @@ export const applyDefenseLuck = () => {
   }
 };
 
-const getDefenseLuckConstant = (luckRoll: number) : number => {
+export const getDefenseLuckConstant = (luckRoll: number) : number => {
   return getValueFromRule(DEFENSE_LUCK_RULES, luckRoll);
 };
