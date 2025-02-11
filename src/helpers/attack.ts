@@ -53,3 +53,7 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
   const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
   return weaponDie.rollWithModifier();
 };
+
+export const getCriticalHitDamage = (bcfa: number, weaponRoll: number, critMod1: number, critMod2: number) => {
+  return Math.ceil(bcfa/5 + weaponRoll * critMod1 + critMod2);
+};
