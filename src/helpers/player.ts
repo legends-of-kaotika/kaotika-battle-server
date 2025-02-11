@@ -4,6 +4,7 @@ import { MOBILE } from '../constants/sockets.ts';
 import { ONLINE_USERS } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
+import { Die2 } from '../constants/dies.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -57,3 +58,61 @@ export const sortPlayersByCharisma = (players: Player[]): Player[] => {
 export const getTurnNumOfDieRolls = (playerCharisma: number , playerDexterity: number): number => {
   return Math.ceil((playerCharisma + playerDexterity / 2) / 20);
 };
+
+export const getPlayerTurnSuccesses = (turnNumOfDieRolls: number): number => {
+  let numOfSuccesses = 0;
+  for (let i = 0; i < turnNumOfDieRolls; ++i) {
+    const rollResult = Die2.roll();
+    if (rollResult === 2) {numOfSuccesses += 1;};
+  }
+  return numOfSuccesses;
+};
+
+// export const getPlayersWithTurnSuccesses = (players: Player[]): Record
+
+
+// // FLUJO
+
+// const playersTurnSuccesses = getPlayerTurnSuccesses();
+// sortTurnPlayers(playersTurnSuccesses);
+
+
+// ARCHIVO HELPERS
+
+export const getPlayersTurnSuccesses = (onlineUsers: Player[]): Record<string, number> => {
+  let outputObject = {};
+  onlineUsers.forEach((player) => {
+    const turnNumOfDieRolls = getTurnNumOfDieRolls(player.attributes.charisma, player.attributes.dexterity);
+    const successTime = getPlayerTurnSuccesses(turnNumOfDieRolls);
+    outputObject = { ...outputObject, [player._id]: successTime };
+  });
+  return outputObject;
+};
+
+// const sortTurnPlayers = (playersTurnSuccesses) => {
+
+//   ONLINE_USERS.sort((a, b) => {
+
+//     const player1Suceceses = playersTurnSuccesses[player1._id]; // 3
+//     const player2Suceceses = playersTurnSuccesses[player2._id]; // 1
+
+//     if (player1Suceceses !== player2Suceceses) {
+
+//       // SORT BY SUCESS
+//       return player2Suceceses - player1Suceceses;
+
+//     } else {
+//       // SORT BY CHARISMA & DEXTERITY
+
+//       if (player1.attributes.charisma === player2.attributes.charisma) {
+//         // SORT BY CHARISMA
+
+//       } else {
+//         // SORT BY DEXTERITY
+
+//       }
+
+//     }
+
+//   });
+// };
