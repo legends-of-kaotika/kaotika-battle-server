@@ -1,8 +1,9 @@
 import { DEFENSE_LUCK_RULES } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
-import { getValueFromRule } from './attack.ts';
 import { Player } from '../interfaces/Player.ts';
+import { getValueFromRule } from './attack.ts';
+import { nextRoundStartFirst, noDamageReceived } from './game.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -25,16 +26,18 @@ export const hasLuck = (luckRolls: number[]): boolean => {
   return luckRolls.some(roll => roll<20);
 };
 
-export const applyDefenseLuck = () => {
+export const applyDefenseLuck = (defender: Player, playersTurn: Player[]) => {
   const roll = Die100.roll();
   const defenseLuck = getDefenseLuckConstant(roll);
 
   switch(defenseLuck){
   case DEFENSE_LUCK_EFFECTS.NO_DAMAGE_RECEIVED:
+    noDamageReceived();
     // No damage receiverd func
     break;
   
   case DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND:
+    nextRoundStartFirst(defender, playersTurn);
     // defender start next round
     break;
 
