@@ -1,4 +1,4 @@
-import { getPlayerTurnSuccesses } from '../../helpers/player.ts';
+import { getPlayerTurnSuccesses } from '../../helpers/turn.ts';
 
 const numDieRollsMock = 5;
 

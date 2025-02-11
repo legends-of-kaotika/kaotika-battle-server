@@ -1,4 +1,4 @@
-import { getNumOfTurnRolls } from '../../helpers/player.ts';
+import { getNumOfTurnRolls } from '../../helpers/turn.ts';
 
 const charismaMock = 80;
 const dexterityMock = 40;

@@ -11,8 +11,7 @@ import {
   sendNotEnoughPlayers
 } from '../../emits/user.ts';
 import {
-  findPlayerById,
-  sortPlayersByCharisma
+  findPlayerById
 } from '../../../helpers/player.ts';
 import { checkStartGameRequirement } from '../../../helpers/game.ts';
 import { insertSocketId } from '../../../helpers/socket.ts';
@@ -28,6 +27,7 @@ import {
   target,
   turn,
 } from '../../../game.ts';
+import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 
 
 
@@ -48,7 +48,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     console.log(`Socket ${SOCKETS.MOBILE_GAME_START} received`);
 
-    //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
+    // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (checkStartGameRequirement() === false) {
       console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
       sendNotEnoughPlayers(io, socket.id);
@@ -58,17 +58,18 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       // Set game as started
       setGameStarted(true);
     
-      //sort players by charisma
-      sortPlayersByCharisma(ONLINE_USERS);
+      // Sort players by successes, charisma, dexterity
+      const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
+      sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
 
-      //assign the first player
+      // Assign the first player
       console.log('Round: ', round);
       setCurrentPlayer(ONLINE_USERS[turn]);
 
-      //divide players by loyalty
+      // Divide players by loyalty
       sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
-      //emit first turn player id
+      // Emit first turn player id
       assignTurn(io, currentPlayer!);
       gameStartToAll(io);
       startTimer();
