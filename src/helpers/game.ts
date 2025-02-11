@@ -60,3 +60,14 @@ export const checkStartGameRequirement = () => {
   }
   return false;
 };
+
+export const nextRoundStartFirst = (player : Player, playersTurns: Player[]) : Player[] => {
+  playersTurns.unshift(player);
+  return playersTurns;
+};
+
+export const noDamageReceived = () : void => {
+  
+};
+
+

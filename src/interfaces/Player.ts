@@ -2,9 +2,9 @@ import { AntidotePotion } from './AntidotePotion.ts';
 import { HealingPotion } from './HealingPotion.ts';
 import { EnhancerPotion } from './EnhancerPotion.ts';
 import { Profile } from './Profile.ts';
-import { Modifier } from './Modifier.ts';
+import { Attribute } from './Attribute.ts';
 import { Status } from './Status.ts';
-import { Weapon } from './Weapon.ts';
+import { Equipment } from './Equipment.ts';
 
 export interface Player {
   _id: string;
@@ -15,14 +15,9 @@ export interface Player {
   level: number;
   socketId: string;
   profile: Profile | null;
-  attributes: Modifier;
-  base_attributes: Modifier;
-  equipment:{
-    weapon: Weapon,
-    healing_potion: HealingPotion,
-    antidote_potion: AntidotePotion,
-    enhancer_potion: EnhancerPotion,
-  },
+  attributes: Attribute;
+  base_attributes: Attribute;
+  equipment: Equipment,
   inventory: {
     healing_potions: HealingPotion[],
     antidote_potions: AntidotePotion[],

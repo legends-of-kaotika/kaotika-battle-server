@@ -5,7 +5,7 @@ import * as SOCKETS from '../../constants/sockets.ts';
 import { returnLoyalsAndBetrayers } from '../../helpers/game.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
-import { Modifier } from '../../interfaces/Modifier.ts';
+import { Attribute } from '../../interfaces/Attribute.ts';
 
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = (io: Server, users: Player[]):void => {
@@ -70,7 +70,7 @@ export const gameStartToAll = (io: Server):void => {
 };
 
 // Sends the target players(id) with the attributes updated and the total damage
-export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Modifier, totalDamage:number, isBetrayer:boolean): void => {
+export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:Attribute, totalDamage:number, isBetrayer:boolean): void => {
   logUnlessTesting(`Emitting ${SOCKETS.UPDATE_PLAYER} socket message with ${id} id, the total damage, updated attributes and isBetrayer`);
   io.emit(SOCKETS.UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage, isBetrayer: isBetrayer});
 };

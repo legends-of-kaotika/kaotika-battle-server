@@ -1,4 +1,4 @@
-import { AntidoteModifier } from './AntidoteModifier.ts';
+import { Modifier } from './Modifier.ts';
 
 export interface EnhancerPotion {
   _id: string,
@@ -8,6 +8,6 @@ export interface EnhancerPotion {
   type: string,
   value: number,
   duration: number,
-  modifiers: AntidoteModifier,
+  modifiers: Modifier,
   min_lvl: number
 }
