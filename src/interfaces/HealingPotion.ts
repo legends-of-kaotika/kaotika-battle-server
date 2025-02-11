@@ -1,3 +1,5 @@
+import { PotionModifier } from './PotionModifier.ts';
+
 export interface HealingPotion {
 	_id: string,
 	name: string,
@@ -5,14 +7,6 @@ export interface HealingPotion {
 	image: string,
 	type: string,
 	value: number,
-	modifiers: {
-		hit_points: number,
-		intelligence: number,
-		dexterity: number,
-		constitution: number,
-		insanity: number,
-		charisma: number,
-		strength: number
-	},
+	modifiers: PotionModifier,
 	min_lvl: number
 }

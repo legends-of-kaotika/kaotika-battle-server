@@ -1,4 +1,4 @@
-import { Modifier } from './Modifier.ts';
+import { Attribute } from './Attribute.ts';
 
 export interface Ring {
   _id: string,
@@ -7,6 +7,6 @@ export interface Ring {
   type: string,
   image: string,
   value: number,
-  modifiers: Modifier,
+  modifiers: Attribute,
   min_lvl: number,
 }
