@@ -29,6 +29,7 @@ export const getValueFromRule = (rule:{max: number, value: number}[], findValue:
   const {value} = rule.find(({max}) => findValue <= max)!;
   return value;
 };
+
 export const getInsanityModificator = (insanity:number) =>{
   return getValueFromRule(INSANITY_RULES,insanity);
 };
@@ -40,10 +41,10 @@ export const getAttackRoll = (): number => {
 export const getSuccessPercentage = (weaponBasePercentage : number, playerDexterity: number, playerInsanity: number) : number => {
   return weaponBasePercentage + Math.ceil(playerDexterity/3) + playerInsanity;
 };
+
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
-
 
 export const calculateTotalDefense = (totalArmorDefense : number, playerDefense: number) : number => {
   return Math.floor(totalArmorDefense + playerDefense);
