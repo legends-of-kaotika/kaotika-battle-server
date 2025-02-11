@@ -18,7 +18,7 @@ export const ONLINE_USERS_MOCK: Player[] =
     isBetrayer: true,
     profile: { name: 'Blasphemer' },
     attributes: {
-      charisma: 130,
+      charisma: 129,
       constitution: 60,
       dexterity: 23,
       insanity: 95,

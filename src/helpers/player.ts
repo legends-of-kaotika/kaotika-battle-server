@@ -43,6 +43,14 @@ export const isPlayerConnected = (email: string): boolean => {
   return ONLINE_USERS.some((player) => (player.email === email));
 };
 
+
+// // FLOW/////////////////////////////////////////////////////////////
+
+// const playersTurnSuccesses = getPlayerTurnSuccesses();
+// sortTurnPlayers(playersTurnSuccesses);
+
+//////////////////////////////////////////////////////////////////////////
+
 // Returns an array of players sorted by their charisma
 export const sortPlayersByCharisma = (players: Player[]): Player[] => {
   //sort characters by charisma
@@ -68,17 +76,6 @@ export const getPlayerTurnSuccesses = (turnNumOfDieRolls: number): number => {
   return numOfSuccesses;
 };
 
-// export const getPlayersWithTurnSuccesses = (players: Player[]): Record
-
-
-// // FLUJO
-
-// const playersTurnSuccesses = getPlayerTurnSuccesses();
-// sortTurnPlayers(playersTurnSuccesses);
-
-
-// ARCHIVO HELPERS
-
 export const getPlayersTurnSuccesses = (onlineUsers: Player[]): Record<string, number> => {
   let outputObject = {};
   onlineUsers.forEach((player) => {
@@ -89,30 +86,32 @@ export const getPlayersTurnSuccesses = (onlineUsers: Player[]): Record<string, n
   return outputObject;
 };
 
-// const sortTurnPlayers = (playersTurnSuccesses) => {
 
-//   ONLINE_USERS.sort((a, b) => {
+/////FINAL METHOD//////////////////////////////////////////////////////////////////////
 
-//     const player1Suceceses = playersTurnSuccesses[player1._id]; // 3
-//     const player2Suceceses = playersTurnSuccesses[player2._id]; // 1
+export const sortTurnPlayers = (playersTurnSuccesses: Record<string, number>, onlineUsers: Player[]) => {
 
-//     if (player1Suceceses !== player2Suceceses) {
+  onlineUsers.sort((player1, player2) => {
 
-//       // SORT BY SUCESS
-//       return player2Suceceses - player1Suceceses;
+    const player1Successes = playersTurnSuccesses[player1._id]; // number
+    const player2Successes = playersTurnSuccesses[player2._id]; // number
 
-//     } else {
-//       // SORT BY CHARISMA & DEXTERITY
+    if (player1Successes !== player2Successes) {
 
-//       if (player1.attributes.charisma === player2.attributes.charisma) {
-//         // SORT BY CHARISMA
+      // sort by successes
+      return player2Successes - player1Successes;
 
-//       } else {
-//         // SORT BY DEXTERITY
+    } else {
+      // sort by charisma or dexterity
 
-//       }
+      if (player1.attributes.charisma !== player2.attributes.charisma) {
+        // sort by charisma
+        return player2.attributes.charisma - player1.attributes.charisma ;
 
-//     }
-
-//   });
-// };
+      } else {
+        // sort by dexterity
+        return player2.attributes.dexterity - player1.attributes.dexterity ;
+      }
+    }
+  });
+};
