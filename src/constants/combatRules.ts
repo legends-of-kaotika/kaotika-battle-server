@@ -15,3 +15,21 @@ export const INSANITY_RULES = [
   {max:94, value:10},
   {max:Infinity, value:15},
 ];
+export const ATTACK_RULES_MOD1 = [
+  {max:-20, value:0.8},
+  {max:-11, value:0.9},
+  {max:0, value:1},
+  {max:19, value:1.1},
+  {max:44, value:1.15},
+  {max:60, value:1.2},
+  {max:Infinity, value:1.25},
+];
+export const ATTACK_RULES_MOD2 = [
+  {max:-20, value:0},
+  {max:-11, value:2},
+  {max:0, value:4},
+  {max:19, value:6},
+  {max:44, value:10},
+  {max:60, value:15},
+  {max:Infinity, value:15},
+];

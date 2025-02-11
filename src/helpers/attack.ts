@@ -1,7 +1,7 @@
 import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
 import { Player } from '../interfaces/Player.ts';
-import { INSANITY_RULES } from '../constants/combatRules.ts';
+import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES } from '../constants/combatRules.ts';
 
 export const adjustAtributes = (player: Player): Player => {
 
@@ -31,6 +31,12 @@ export const getValueFromRule = (rule:{max: number, value: number}[], findValue:
 };
 export const getInsanityModificator = (insanity:number) =>{
   return getValueFromRule(INSANITY_RULES,insanity);
+};
+export const getAttackModificator1 = (attack:number) =>{
+  return getValueFromRule(ATTACK_RULES_MOD1,attack);
+};
+export const getAttackModificator2 = (attack:number) =>{
+  return getValueFromRule(ATTACK_RULES_MOD2,attack);
 };
 
 export const getAttackRoll = (): number => {
