@@ -53,3 +53,7 @@ export const sortPlayersByCharisma = (players: Player[]): Player[] => {
         : 0);
   return players;
 };
+
+export const getTurnNumOfDieRolls = (playerCharisma: number , playerDexterity: number): number => {
+  return Math.ceil((playerCharisma + playerDexterity / 2) / 20);
+};
