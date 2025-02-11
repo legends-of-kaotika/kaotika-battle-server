@@ -1,6 +1,7 @@
 import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
 import { Player } from '../interfaces/Player.ts';
+import { CRITICAL_MODIFIERS } from '../constants/combatRules.ts';
 
 export const adjustAtributes = (player: Player): Player => {
 
@@ -48,4 +49,10 @@ export const calculateTotalDefense = (totalArmorDefense : number, playerDefense:
 export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number, weaponDieModifier: number): number => {
   const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
   return weaponDie.rollWithModifier();
+};
+
+export const getCriticalAttackModifiers = (attackPercentage: number , criticalPercentage: number): {mod1: number | string, mod2: number | string} => {
+  const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
+  const result = CRITICAL_MODIFIERS.find(({ max }) => criticalPercentageMod <= max);
+  return result ? { mod1: result.mod1, mod2: result.mod2 } : { mod1: 0, mod2: 0 };
 };

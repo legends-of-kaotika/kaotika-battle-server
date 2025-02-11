@@ -15,3 +15,11 @@ export const INSANITY_RULES = [
   {max:94, value:10},
   {max:Infinity, value:15},
 ];
+export const CRITICAL_MODIFIERS = [
+  { max: 7, mod1: 'Instant death', mod2: 'Instant death' },
+  { max: 14, mod1: 0.3, mod2: 25 },
+  { max: 24, mod1: 0.25, mod2: 20 },
+  { max: 40, mod1: 0.23, mod2: 15 },
+  { max: 60, mod1: 0.2, mod2: 10 },
+  { max: Infinity, mod1: 0.15, mod2: 5 },
+];
