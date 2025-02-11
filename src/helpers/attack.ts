@@ -34,9 +34,11 @@ export const getValueFromRule = (rule:{max: number, value: number}[], findValue:
 export const getInsanityModificator = (insanity:number) =>{
   return getValueFromRule(INSANITY_RULES,insanity);
 };
+
 export const getAttackModificator1 = (attack:number) =>{
   return getValueFromRule(ATTACK_RULES_MOD1,attack);
 };
+
 export const getAttackModificator2 = (attack:number) =>{
   return getValueFromRule(ATTACK_RULES_MOD2,attack);
 };
@@ -67,4 +69,8 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
 
 export const getCriticalHitDamage = (bcfa: number, weaponRoll: number, critMod1: number, critMod2: number) => {
   return Math.ceil(bcfa/5 + weaponRoll * critMod1 + critMod2);
+};
+export const getNormalHitDamage = (weaponRoll:number, attackMod1:number, attackMod2:number, defenseMod:number):number => {
+  const value = Math.ceil((weaponRoll * attackMod1 + attackMod2)/defenseMod);
+  return value || 1;
 };
