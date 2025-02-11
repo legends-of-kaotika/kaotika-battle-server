@@ -1,7 +1,9 @@
-import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
+import { DEFENSE_RULES } from '../constants/combatRules.ts';
+import { Die100 } from '../constants/dies.ts';
 import { Player } from '../interfaces/Player.ts';
-import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES } from '../constants/combatRules.ts';
+import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES, CRITICAL_MOD1, CRITICAL_MOD2 } from '../constants/combatRules.ts';
+
 
 export const adjustAtributes = (player: Player): Player => {
 
@@ -53,6 +55,9 @@ export const getSuccessPercentage = (weaponBasePercentage : number, playerDexter
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
+export const getDefenseModificator = (value: number) : number => {
+  return getValueFromRule(DEFENSE_RULES, value);
+};
 
 export const calculateTotalDefense = (totalArmorDefense : number, playerDefense: number) : number => {
   return Math.floor(totalArmorDefense + playerDefense);
@@ -62,7 +67,14 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
   const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
   return weaponDie.rollWithModifier();
 };
-
+export const getCriticalAttackModifier1 = (attackPercentage: number , criticalPercentage: number) => {
+  const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
+  return getValueFromRule(CRITICAL_MOD1,criticalPercentageMod);
+};
+export const getCriticalAttackModifier2 = (attackPercentage: number , criticalPercentage: number) => {
+  const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
+  return getValueFromRule(CRITICAL_MOD2,criticalPercentageMod);
+};
 export const getCriticalHitDamage = (bcfa: number, weaponRoll: number, critMod1: number, critMod2: number) => {
   return Math.ceil(bcfa/5 + weaponRoll * critMod1 + critMod2);
 };

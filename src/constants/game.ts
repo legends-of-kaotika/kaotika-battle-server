@@ -1,3 +1,10 @@
 
 // Timer
 export const TURN_TIMER = 30;
+
+// LUCK CONSTANTS 
+export const DEFENSE_LUCK_EFFECTS = {
+  START_NEXT_ROUND: 1,
+  NO_EFFECTS: 0,
+  NO_DAMAGE_RECEIVED: 2
+};
