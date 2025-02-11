@@ -2,6 +2,8 @@ import { Die100 } from '../constants/dies.ts';
 import Die from '../classes/Die.ts';
 import { Player } from '../interfaces/Player.ts';
 import { CRITICAL_MODIFIERS } from '../constants/combatRules.ts';
+import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES } from '../constants/combatRules.ts';
+
 
 export const adjustAtributes = (player: Player): Player => {
 
@@ -26,8 +28,18 @@ export const getCriticalPercentage = (CFP: number, successPercentage: number) =>
 };
 
 export const getValueFromRule = (rule:{max: number, value: number}[], findValue:number):number => {
-  const {value} = rule.find(({max}) => findValue <= max)!; 
+  const {value} = rule.find(({max}) => findValue <= max)!;
   return value;
+};
+
+export const getInsanityModificator = (insanity:number) =>{
+  return getValueFromRule(INSANITY_RULES,insanity);
+};
+export const getAttackModificator1 = (attack:number) =>{
+  return getValueFromRule(ATTACK_RULES_MOD1,attack);
+};
+export const getAttackModificator2 = (attack:number) =>{
+  return getValueFromRule(ATTACK_RULES_MOD2,attack);
 };
 
 export const getAttackRoll = (): number => {
@@ -37,10 +49,10 @@ export const getAttackRoll = (): number => {
 export const getSuccessPercentage = (weaponBasePercentage : number, playerDexterity: number, playerInsanity: number) : number => {
   return weaponBasePercentage + Math.ceil(playerDexterity/3) + playerInsanity;
 };
+
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
 };
-
 
 export const calculateTotalDefense = (totalArmorDefense : number, playerDefense: number) : number => {
   return Math.floor(totalArmorDefense + playerDefense);
@@ -50,9 +62,12 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
   const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
   return weaponDie.rollWithModifier();
 };
-
 export const getCriticalAttackModifiers = (attackPercentage: number , criticalPercentage: number): {mod1: number | string, mod2: number | string} => {
   const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
   const result = CRITICAL_MODIFIERS.find(({ max }) => criticalPercentageMod <= max);
   return result ? { mod1: result.mod1, mod2: result.mod2 } : { mod1: 0, mod2: 0 };
 };
+export const getCriticalHitDamage = (bcfa: number, weaponRoll: number, critMod1: number, critMod2: number) => {
+  return Math.ceil(bcfa/5 + weaponRoll * critMod1 + critMod2);
+};
+
