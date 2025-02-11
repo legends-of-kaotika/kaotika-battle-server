@@ -2,6 +2,7 @@ import { DEFENSE_LUCK_RULES } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
 import { getValueFromRule } from './attack.ts';
+import { Player } from '../interfaces/Player.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -45,4 +46,10 @@ export const applyDefenseLuck = () => {
 
 export const getDefenseLuckConstant = (luckRoll: number) : number => {
   return getValueFromRule(DEFENSE_LUCK_RULES, luckRoll);
+};
+export const attackerLuck = (attacker: Player) => {
+
+  const attackerLuckRolls = luckRolls(attacker.attributes.charisma);
+  const attackerHasLuck = hasLuck(attackerLuckRolls);
+  
 };
