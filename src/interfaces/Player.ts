@@ -5,6 +5,7 @@ import { Profile } from './Profile.ts';
 import { Modifier } from './Modifier.ts';
 import { Status } from './Status.ts';
 import { Weapon } from './Weapon.ts';
+import { Armor } from './Armor.ts';
 
 export interface Player {
   _id: string;
@@ -22,6 +23,7 @@ export interface Player {
     healing_potion: HealingPotion,
     antidote_potion: AntidotePotion,
     enhancer_potion: EnhancerPotion,
+    armor: Armor
   },
   inventory: {
     healing_potions: HealingPotion[],
