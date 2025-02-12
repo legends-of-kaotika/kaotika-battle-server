@@ -1,6 +1,6 @@
 import { calculateNormalHitDamage } from '../../helpers/attack.ts';
 
-describe('getNormalHitDamage', () => {
+describe('calculateNormalHitDamage', () => {
 
   it('should calculate the normal hit damage correctly', () => {
     expect(calculateNormalHitDamage(50, 1.25, 15, 2)).toBe(39);
