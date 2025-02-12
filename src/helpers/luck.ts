@@ -1,6 +1,7 @@
 import { DEFENSE_LUCK_RULES } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
+import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
 import { Player } from '../interfaces/Player.ts';
 import { getValueFromRule } from './attack.ts';
 import { nextRoundStartFirst, noDamageReceived } from './game.ts';
@@ -54,13 +55,15 @@ export const applyDefenseLuck = (defender: Player) => {
 export const getDefenseLuckConstant = (luckRoll: number) : number => {
   return getValueFromRule(DEFENSE_LUCK_RULES, luckRoll);
 };
-export const attackerLuck = (hitDamage: number, attacker: Player, attackPercentage: number, criticalPercentage: number) => {
+export const attackerLuck = (hitDamage: number, attacker: Player, attackPercentage: number, criticalPercentage: number): AttackerLuck => {
 
   const attackerLuckRolls = luckRolls(attacker.attributes.charisma);
   const attackerHasLuck = hasLuck(attackerLuckRolls);
   if(attackerHasLuck){
     //const applyLuckResult = applyAttackLuck(hitDamage,attackPercentage,criticalPercentage);
-    return {attackerLuckRolls,attackerHasLuck};
+    const dealedDamage = 20;
+    const attackerLuckMessage = 'Attack increase';
+    return {attackerLuckRolls,attackerHasLuck,dealedDamage,attackerLuckMessage };
   }
   
 };
