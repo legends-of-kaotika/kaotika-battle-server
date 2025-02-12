@@ -38,14 +38,14 @@ export const initFetchPlayerController = async (req: Request, res: Response) => 
     // check if player is already connected
     if (isPlayerConnected(playerData.email)) {
       console.log(playerData.email, 'is already connected');
+      return res.status(409).send({ message: 'User is already connected'});
     } else {
       ONLINE_USERS.push(playerData);
+      // Return player data
+      return res
+        .status(200)
+        .send({ status: 'OK', data: playerData });
     }
-    // Return player data
-    res
-      .status(200)
-      .send({ status: 'OK', data: playerData });
-    
   } catch (error) {
     res
       .status(error?.status || 500)
