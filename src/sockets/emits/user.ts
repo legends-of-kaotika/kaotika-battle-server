@@ -59,7 +59,7 @@ export const sendTimerDataToAll = (io: Server, timer:number):void => {
 
 // Sends the player data to server
 export const assignTurn = (io: Server, player:Player):void => {
-  console.log(`Emitting ${SOCKETS.ASSIGN_TURN} socket message with ${player.name}'s id to all devices to change turn.`);
+  //console.log(`Emitting ${SOCKETS.ASSIGN_TURN} socket message with ${player.name}'s id to all devices to change turn.`);
   io.emit(SOCKETS.ASSIGN_TURN, player._id);
 };
 

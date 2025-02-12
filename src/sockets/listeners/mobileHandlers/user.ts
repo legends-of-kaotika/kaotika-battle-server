@@ -8,7 +8,8 @@ import {
   sendSelectedPlayerIdToWeb,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
-  sendNotEnoughPlayers
+  sendNotEnoughPlayers,
+  sendUpdatedPlayerToAll
 } from '../../emits/user.ts';
 import {
   checkStartGameRequirement,
@@ -150,7 +151,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     }
 
     //Emits the attack results to mobile clients
-    // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
+    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
 
   });
 };
