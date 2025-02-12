@@ -1,5 +1,4 @@
 import { playerMock } from '../../__mocks__/players.ts';
-import { turnArray } from '../../__mocks__/playerTurns.ts';
 import { Die100 } from '../../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../../constants/game.ts';
 import { nextRoundStartFirst, noDamageReceived } from '../../helpers/game.ts';
@@ -28,19 +27,19 @@ describe('applyDefenseLuck function', () => {
 
   it('should call noDamageReceived when defenseLuck is NO_DAMAGE_RECEIVED', () => {
     (Die100.roll as jest.Mock).mockReturnValue(15); 
-    applyDefenseLuck(playerMock, turnArray);
+    applyDefenseLuck(playerMock);
     expect(noDamageReceived).toHaveBeenCalled();
   });
 
   it('should call nextRoundStartFirst when defenseLuck is START_NEXT_ROUND', () => {
     (Die100.roll as jest.Mock).mockReturnValue(98); 
-    applyDefenseLuck(playerMock, turnArray);
-    expect(nextRoundStartFirst).toHaveBeenCalledWith(playerMock, turnArray);
+    applyDefenseLuck(playerMock);
+    expect(nextRoundStartFirst).toHaveBeenCalledWith(playerMock);
   });
 
   it('should do nothing when defenseLuck is NO_EFFECTS', () => {
     (Die100.roll as jest.Mock).mockReturnValue(34); 
-    applyDefenseLuck(playerMock, turnArray);
+    applyDefenseLuck(playerMock);
     expect(noDamageReceived).not.toHaveBeenCalled();
     expect(nextRoundStartFirst).not.toHaveBeenCalled();
   });

@@ -157,7 +157,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
     const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
     attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
-    defenderLuck(target,ONLINE_USERS);
+    defenderLuck(target);
     //Emits the attack results to mobile clients
     // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
 
