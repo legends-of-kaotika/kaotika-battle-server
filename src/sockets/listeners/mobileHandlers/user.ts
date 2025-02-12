@@ -8,7 +8,7 @@ import {
   sendSelectedPlayerIdToWeb,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
-  sendNotEnoughPlayers
+  sendNotEnoughPlayers,
 } from '../../emits/user.ts';
 import {
   findPlayerById
@@ -160,6 +160,9 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     // defenderLuck(target,ONLINE_USERS);
     //Emits the attack results to mobile clients
     // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
+
+    //ifPlayerDies
+    // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
 
   });
 };

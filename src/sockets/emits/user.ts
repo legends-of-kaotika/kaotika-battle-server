@@ -93,8 +93,14 @@ export const sendNotEnoughPlayers = (io: Server, socketId: string): void => {
   io.to(socketId).emit(SOCKETS.NOT_ENOUGH_PLAYERS);
 };
 
-//Sends the name of the player that has been disconnected to web
+// Sends the name of the player that has been disconnected to web
 export const sendPlayerDisconnectedToWeb = (io: Server, name: string): void => {
   logUnlessTesting(`Emitting ${SOCKETS.WEB_USER_DISCONNECT} to Web that ${name} player has been disconnected from battle`);
   io.to(webSocketId).emit(SOCKETS.WEB_USER_DISCONNECT, name);
+};
+
+// Sends the the id of the player that has been killed 
+export const sendKilledPlayer = (io: Server, id: string): void => {
+  logUnlessTesting(`Emitting to all connected devices that player with id: ${id} has been killed in the battle`);
+  io.emit(SOCKETS.KILLED_PLAYER, id);
 };

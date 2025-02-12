@@ -26,7 +26,7 @@ export const hasLuck = (luckRolls: number[]): boolean => {
   return luckRolls.some(roll => roll<20);
 };
 
-export const applyDefenseLuck = (defender: Player, playersTurn: Player[]) => {
+export const applyDefenseLuck = (defender: Player) => {
   const roll = Die100.roll();
   const defenseLuck = getDefenseLuckConstant(roll);
   let rollMessage;
@@ -39,7 +39,7 @@ export const applyDefenseLuck = (defender: Player, playersTurn: Player[]) => {
     break;
   
   case DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND:
-    nextRoundStartFirst(defender, playersTurn);
+    nextRoundStartFirst(defender);
     rollMessage = 'Defender start next round';
     // defender start next round
     break;
@@ -64,12 +64,12 @@ export const attackerLuck = (hitDamage: number, attacker: Player, attackPercenta
   }
   
 };
-export const defenderLuck = (defender: Player, turnPlayer: Player[]) => {
+export const defenderLuck = (defender: Player) => {
 
   const defenderLuckRolls = luckRolls(defender.attributes.charisma);
   const defenderHasLuck = hasLuck(defenderLuckRolls);
   if(defenderHasLuck){
-    const applyLuckResult = applyDefenseLuck(defender,turnPlayer);
+    const applyLuckResult = applyDefenseLuck(defender);
     return {defenderLuckRolls,defenderHasLuck, applyLuckResult};
   }
 };
