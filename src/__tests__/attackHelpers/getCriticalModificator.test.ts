@@ -2,7 +2,7 @@ import { getCriticalAttackModifier1, getCriticalAttackModifier2 } from '../../he
 
 describe('getCriticalAttackModifier1',() =>{
   it('should return the rigth value of modificator1 ', () => {
-    expect(getCriticalAttackModifier1(2,50)).toBe(100);
+    expect(getCriticalAttackModifier1(2,50)).toBe(999);
     expect(getCriticalAttackModifier1(13,100)).toBe(0.3);
     expect(getCriticalAttackModifier1(7,30)).toBe(0.25);
     expect(getCriticalAttackModifier1(10,35)).toBe(0.23);
@@ -12,7 +12,7 @@ describe('getCriticalAttackModifier1',() =>{
 });
 describe('getCriticalAttackModifier2',() =>{
   it('should return the rigth value of modificator1 ', () => {
-    expect(getCriticalAttackModifier2(2,50)).toBe(100);
+    expect(getCriticalAttackModifier2(2,50)).toBe(999);
     expect(getCriticalAttackModifier2(13,100)).toBe(25);
     expect(getCriticalAttackModifier2(7,30)).toBe(20);
     expect(getCriticalAttackModifier2(10,35)).toBe(15);

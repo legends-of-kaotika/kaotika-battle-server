@@ -41,7 +41,7 @@ export const DEFENSE_LUCK_RULES = [
   {max: 100, value: DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND},
 ];
 export const CRITICAL_MOD1 = [
-  { max: 7, value: 100},
+  { max: 7, value: 999},
   { max: 14, value: 0.3},
   { max: 24, value: 0.25},
   { max: 40, value: 0.23},
@@ -50,7 +50,7 @@ export const CRITICAL_MOD1 = [
 ];
 
 export const CRITICAL_MOD2 = [
-  { max: 7,  value: 100},
+  { max: 7,  value: 999},
   { max: 14, value: 25 },
   { max: 24, value: 20 },
   { max: 40, value: 15 },

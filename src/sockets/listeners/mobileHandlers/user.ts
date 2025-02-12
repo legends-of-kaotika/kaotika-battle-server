@@ -27,8 +27,8 @@ import {
   target,
   turn,
 } from '../../../game.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
-import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
+// import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
+// import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 
 
@@ -152,12 +152,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    const attackRoll = getAttackRoll();
-    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
-    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
-    attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
-    defenderLuck(target);
+    // const attackRoll = getAttackRoll();
+    // const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    // const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    // const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
+    // attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
+    // defenderLuck(target,ONLINE_USERS);
     //Emits the attack results to mobile clients
     // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
 
