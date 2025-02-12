@@ -41,3 +41,8 @@ export const findPlayerByEmail = (email: string): Player | undefined => {
 export const isPlayerConnected = (email: string): boolean => {
   return ONLINE_USERS.some((player) => (player.email === email));
 };
+
+export const isMortimerDisconnected = (socketId: string): boolean => {
+  const isMortimerDisconnected = ONLINE_USERS.some((user)=> (user.socketId === socketId && user.role === 'mortimer'));
+  return isMortimerDisconnected;
+};
