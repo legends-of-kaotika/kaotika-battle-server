@@ -31,7 +31,7 @@ export const initFetchPlayerController = async (req: Request, res: Response) => 
   }
 
   try {
-    const playerData : Player = await initFetchPlayer(email);
+    const playerData : Player | undefined = await initFetchPlayer(email);
     if (!playerData) {
       return res.status(404).send({ message: 'Does not exist any player with this email' });
     }
