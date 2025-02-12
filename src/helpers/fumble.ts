@@ -1,6 +1,8 @@
 import { Player } from '../interfaces/Player.ts';
 
 
+////////////////// LUCK SE APLICA ????????????????????????????????
+
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
   return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
@@ -12,8 +14,8 @@ export const getCalculationFumbleDamage = (bcfa: number , weaponDieRoll: number 
   return Math.ceil((bcfa + weaponDieRoll) / 5);
 };
 
-export const getCalculationFumblePercentile = (fumblePercentage: number, die100Roll: number): number => {
-  return Math.ceil(100 * (die100Roll - fumblePercentage) / (100 - fumblePercentage));
+export const getCalculationFumblePercentile = (fumblePercentage: number, attackRoll: number): number => {
+  return Math.ceil(100 * (attackRoll - fumblePercentage) / (100 - fumblePercentage));
 };
 
 export const getFumbleEffect = (fumblePercentile: number ): string => {
@@ -34,23 +36,23 @@ export const getFumbleEffect = (fumblePercentile: number ): string => {
 
 //apply self damage to the player
 export const applySlash = (calculationFumbleDamage: number): number => {
-  return Math.ceil(calculationFumbleDamage / 2); //console.log to explain what happens?
-}; //object with hit point and to who me (later do merge)
+  return Math.ceil(calculationFumbleDamage / 2);
+}; //damage hit point and idPlayer itself
 
 export const applyFairytale = (currentPlayer: Player): number => {
   currentPlayer.eruditoGlasses = true; ///add in interface eruditoGlasses?
-  return 0; //object hitPoint 0 but message yes ???
+  return 0; //add attribute eruditoGlasses: true to currentPlayer
 };
 
 //halve the dex of currentPlayer forever
 export const applyHack = (currentPlayerDex: number)=> {
   return Math.ceil(currentPlayerDex / 2);
-}; //object with dex and to who me (later do merge)
+}; //dex to half current player
 
 //kill the current player
 export const applyScythe = (currentPlayerHitPoints: number)=> {
   return currentPlayerHitPoints + 1;
-}; // object hit points and to who me (later do merge)
+}; // kill current player so damage is currentPlayer life + 1
 
 export const getFumbleHitDamage = (fumbleEffect: string, currentPlayer: Player, calculationFumbleDamage: number) => {
   switch (fumbleEffect) {

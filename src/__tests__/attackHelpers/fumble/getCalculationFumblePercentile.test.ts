@@ -1,11 +1,11 @@
 import { getCalculationFumblePercentile } from '../../../helpers/fumble.ts';
 
-const fumblePercentageMock = 40;
-const die100RollMock = 35;
+const fumblePercentageMock = 70;
+const attackRollMock = 80;
 
 describe ('getCalculationFumblePercentile method', ()=> {
   it('should return correct amount of the method', ()=> {
-    const fumblePercentile = getCalculationFumblePercentile(fumblePercentageMock, die100RollMock);
-    expect(fumblePercentile).toBe(9);
+    const fumblePercentile = getCalculationFumblePercentile(fumblePercentageMock, attackRollMock);
+    expect(fumblePercentile).toBe(34);
   });
 });
