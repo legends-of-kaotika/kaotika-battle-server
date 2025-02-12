@@ -1,9 +1,9 @@
 import { Player } from '../interfaces/Player.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
-import { Modifier } from '../interfaces/Modifier.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
 
-const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
-  const equipmentModifiers: Modifier[] = [
+const calculateBaseAttributes = (data: PlayerPopulated): Attribute => {
+  const equipmentModifiers: Attribute[] = [
     data.equipment.helmet?.modifiers,
     data.equipment.weapon?.modifiers,
     data.equipment.armor?.modifiers,
@@ -11,9 +11,9 @@ const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
     data.equipment.artifact?.modifiers,
     data.equipment.boot?.modifiers,
     data.equipment.ring?.modifiers,
-  ].filter((modifier): modifier is Modifier => modifier !== undefined);
+  ].filter((modifier): modifier is Attribute => modifier !== undefined);
 
-  const calculateAttribute = (attribute: keyof Modifier): number => {
+  const calculateAttribute = (attribute: keyof Attribute): number => {
     const baseValue = data.attributes[attribute] || 0;
     const equipmentValue = equipmentModifiers.reduce((sum, modifier) => sum + (modifier[attribute] || 0),
       0);
@@ -37,27 +37,27 @@ const calculateBaseAttributes = (data: PlayerPopulated): Modifier => {
   };
 };
 
-export const calculateHitPoints = (attributes: Modifier): number => {
+export const calculateHitPoints = (attributes: Attribute): number => {
   return Math.floor(attributes.constitution + attributes.dexterity - attributes.insanity / 2);
 };
 
-export const calculateAttack = (attributes: Modifier): number => {
+export const calculateAttack = (attributes: Attribute): number => {
   return Math.floor(attributes.strength - attributes.insanity / 2);
 };
 
-export const calculateDefense = (attributes: Modifier): number => {
+export const calculateDefense = (attributes: Attribute): number => {
   return Math.floor(attributes.dexterity + attributes.constitution + attributes.intelligence / 2);
 };
 
-export const calculateMagicResistance = (attributes: Modifier): number => {
+export const calculateMagicResistance = (attributes: Attribute): number => {
   return Math.floor(attributes.intelligence + attributes.charisma);
 };
 
-export const calculateCFP = (attributes: Modifier): number => {
+export const calculateCFP = (attributes: Attribute): number => {
   return attributes.insanity;
 };
 
-export const calculateBCFA = (attributes: Modifier): number => {
+export const calculateBCFA = (attributes: Attribute): number => {
   return Math.floor(attributes.strength + attributes.insanity);
 };
 
@@ -110,6 +110,10 @@ export const filterPlayerData = (data: PlayerPopulated): Player => {
       antidote_potion: data.equipment?.antidote_potion || {},
       enhancer_potion: data.equipment?.enhancer_potion || {},
       weapon: data.equipment?.weapon || {},
+      helmet: data.equipment.helmet,
+      boot: data.equipment.boot,
+      armor: data.equipment.armor,
+      shield: data.equipment.shield,
     },
     inventory: {
       healing_potions: data.inventory?.healing_potions || [],
