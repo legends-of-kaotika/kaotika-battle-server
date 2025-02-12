@@ -37,15 +37,15 @@ export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   if ((dividedPlayers.dravocar.length === 0) && (dividedPlayers.kaotika.length === 0) && isGameStarted) {
-    sendGameEnd(io, 'draw');
+    sendGameEnd(io, 'Draw');
     resetInitialGameValues();
     gameHasPlayers = false;
   } else if (dividedPlayers.dravocar.length === 0) {
-    sendGameEnd(io, 'kaotika');
+    sendGameEnd(io, 'Kaotika');
     resetInitialGameValues();
     gameHasPlayers = false;
   } else if (dividedPlayers.kaotika.length === 0) {
-    sendGameEnd(io, 'dravocar');
+    sendGameEnd(io, 'Dravocar');
     resetInitialGameValues();
     gameHasPlayers = false;
   }
