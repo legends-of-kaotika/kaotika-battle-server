@@ -68,10 +68,14 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
   const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
   return weaponDie.rollWithModifier();
 };
+
+// ---- CRITICAL ATTACK ---- // 
+
 export const getCriticalAttackModifier1 = (attackPercentage: number, criticalPercentage: number) => {
   const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
   return getValueFromRule(CRITICAL_MOD1, criticalPercentageMod);
 };
+
 export const getCriticalAttackModifier2 = (attackPercentage: number, criticalPercentage: number) => {
   const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
   return getValueFromRule(CRITICAL_MOD2, criticalPercentageMod);
@@ -86,6 +90,8 @@ export const getCriticalHitDamage = (BCFA: number, weaponRoll: number, attackPer
   const critMod2 = getCriticalAttackModifier2(attackPercentage, criticalPercentage);
   return calculateCriticalHitDamage(BCFA, weaponRoll, critMod1, critMod2);
 };
+
+// ---- NORMAL ATTACK ---- // 
 
 export const calculateNormalHitDamage = (weaponRoll:number, attackMod1:number, attackMod2:number, defenseMod:number):number => {
   const value = Math.ceil((weaponRoll * attackMod1 + attackMod2)/defenseMod);
