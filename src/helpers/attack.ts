@@ -70,6 +70,12 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
   return weaponDie.rollWithModifier();
 };
 
+export const getEquipmentDefense = (equipment: Equipment): number => {
+  return Object.values(equipment)
+    .filter(item => item?.defense)
+    .reduce((total, item) => total+item.defense, 0);
+};
+
 // ---- CRITICAL ATTACK ---- // 
 
 export const getCriticalAttackModifier1 = (attackPercentage: number, criticalPercentage: number) => {
@@ -99,13 +105,14 @@ export const calculateNormalHitDamage = (weaponRoll:number, attackMod1:number, a
   return value || 1;
 };
 
-export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number) => {
+export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) => {
   const attackMod1 = getAttackModificator1(attackAttribute);
   const attackMod2 = getAttackModificator2(attackAttribute);
-  const equipmentDefense = 0;
+  const equipmentDefense = getEquipmentDefense(targetEquipment);
   const totalDefense = calculateTotalDefense(equipmentDefense, targetDefenseAttribute);
   const defenseMod = getDefenseModificator(totalDefense);
-  return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2, defenseMod);
+  const attackMod2Increase = attackMod2*attMod2IncreaseRate;
+  return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2+attackMod2Increase, defenseMod);
 };
 
 export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number) => {
