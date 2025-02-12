@@ -3,8 +3,10 @@ import { Die100 } from '../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
 import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
 import { Player } from '../interfaces/Player.ts';
-import { getValueFromRule } from './attack.ts';
+import { getCriticalHitDamage, getValueFromRule } from './attack.ts';
 import { nextRoundStartFirst, noDamageReceived } from './game.ts';
+import { AttackTypes } from '../interfaces/AttackTypes.ts';
+import { playerMock } from '../__mocks__/players.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -75,4 +77,47 @@ export const defenderLuck = (defender: Player) => {
     const applyLuckResult = applyDefenseLuck(defender);
     return {defenderLuckRolls,defenderHasLuck, applyLuckResult};
   }
+};
+
+
+const attacker = playerMock;
+const defender = playerMock;
+
+export const applyAttackLuck = (hitDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number) => {
+
+  const roll = Die100.roll();
+  let rollMessage;
+
+  if (roll >= 81) {
+
+    // STARTS NEXT ROUND 
+    nextRoundStartFirst(attacker);
+    rollMessage = 'The player will start first in the next round';
+
+  } else if (roll >= 65) {
+
+    if (attackType !== 'NORMAL') {
+      rollMessage = 'The luck roll has no effect';
+    } else {
+      hitDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
+      rollMessage = 'The attack has been transformed into critical.';
+    }
+    
+  } else if (roll >= 16) {
+
+    const attackIncreaseFactor = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
+    const getDef = getDeffense;
+ 
+    hitDamage = getNormalHitDamage(weaponRoll, attackMod1+0.5, attackMod2, defMod);
+
+    rollMessage = `The attack modifier has been increased +${attackMod2Increased}`;
+  } else {
+    rollMessage = 'The luck roll has no effect';
+  }
+
+  return {
+    hitDamage,
+    rollMessage
+  };
+
 };
