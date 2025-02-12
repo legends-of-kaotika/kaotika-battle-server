@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { io } from '../../index.ts';
-import { ONLINE_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
+import { ONLINE_USERS, currentPlayer, increaseTurn, isGameStarted, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
@@ -10,11 +10,11 @@ import { clearTimer, startTimer } from '../timer/timer.ts';
 export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
-    dravocar: [],
+    DRAVOKAR: [],
   };
   users.forEach(player => {
     if (player.isBetrayer) {
-      obj.dravocar.push(player);
+      obj.DRAVOKAR.push(player);
     } else {
       obj.kaotika.push(player);
     }
@@ -36,16 +36,16 @@ export const changeTurn = () => {
 export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
-  if ((dividedPlayers.dravocar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
-    sendGameEnd(io, 'draw');
+  if ((dividedPlayers.DRAVOKAR.length === 0) && (dividedPlayers.kaotika.length === 0) && isGameStarted) {
+    sendGameEnd(io, 'Draw');
     resetInitialGameValues();
     gameHasPlayers = false;
-  } else if (dividedPlayers.dravocar.length === 0) {
-    sendGameEnd(io, 'kaotika');
+  } else if (dividedPlayers.DRAVOKAR.length === 0) {
+    sendGameEnd(io, 'Kaotika');
     resetInitialGameValues();
     gameHasPlayers = false;
   } else if (dividedPlayers.kaotika.length === 0) {
-    sendGameEnd(io, 'dravocar');
+    sendGameEnd(io, 'DRAVOKAR');
     resetInitialGameValues();
     gameHasPlayers = false;
   }
