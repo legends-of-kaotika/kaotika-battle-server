@@ -64,3 +64,8 @@ export function removePlayerFromConectedUsersById(id: string, onlinePlayers: Pla
   }
   onlinePlayers.splice(index, 1);
 }
+
+export const isMortimerDisconnected = (socketId: string): boolean => {
+  const isMortimerDisconnected = ONLINE_USERS.some((user)=> (user.socketId === socketId && user.role === 'mortimer'));
+  return isMortimerDisconnected;
+};
