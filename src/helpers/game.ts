@@ -61,9 +61,10 @@ export const checkStartGameRequirement = () => {
   return false;
 };
 
-export const nextRoundStartFirst = (player : Player, playersTurns: Player[]) : Player[] => {
-  playersTurns.unshift(player);
-  return playersTurns;
+export const nextRoundStartFirst = (player: Player) : void => {
+  const playerIndex = ONLINE_USERS.indexOf(player);
+  ONLINE_USERS.splice(playerIndex, 1);
+  ONLINE_USERS.unshift(player);
 };
 
 export const noDamageReceived = () : void => {
