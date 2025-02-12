@@ -1,8 +1,8 @@
 import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, assignRole} from '../../services/playerService.ts';
-import { Modifier } from '../../interfaces/Modifier.ts';
+import { Attribute } from '../../interfaces/Attribute.ts';
 
 describe('Attribute Calculation Functions', () => {
-  const mockAttributes: Modifier = {
+  const mockAttributes: Attribute = {
     charisma: 5,
     constitution: 10,
     dexterity: 8,

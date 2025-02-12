@@ -1,4 +1,4 @@
-import { AntidoteModifier } from './AntidoteModifier.ts';
+import { Modifier } from './Modifier.ts';
 
 export interface Weapon {
   _id: string,
@@ -10,7 +10,7 @@ export interface Weapon {
   die_modifier: number,
   die_num: number,
   base_percentage: number,
-  modifiers: AntidoteModifier,
+  modifiers: Modifier,
   min_lvl: number,
   value: number,
   isUnique: boolean,

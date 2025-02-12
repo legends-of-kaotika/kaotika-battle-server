@@ -8,7 +8,7 @@ import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, UPDATE_PLAYER, WE
 import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToAll, sendUpdatedPlayerToAll, sendUserDataToWeb } from '../../sockets/emits/user.ts';
 import { attributesMock, ONLINE_USERS_MOCK, playerMock } from '../../__mocks__/players.ts';
 import { Player } from '../../interfaces/Player.ts';
-import { Modifier } from '../../interfaces/Modifier.ts';
+import { Attribute } from '../../interfaces/Attribute.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 
 describe('Socket.IO server tests', () => {
@@ -50,7 +50,7 @@ describe('Socket.IO server tests', () => {
   describe('Global Emit tests', () => {
     test('should send an array with the connected users to all clients on gameStart', (done) => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
-        expect(arg.dravocar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
+        expect(arg.Dravokar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
         done();
       });
       sendConnectedUsersArrayToAll(io, ONLINE_USERS_MOCK);
@@ -80,7 +80,7 @@ describe('Socket.IO server tests', () => {
     test('should send the target players(id) with the attributes updated and the total damage', (done) => {  
       interface props { //match the interface of the function
         _id: string;
-        attributes: Modifier;
+        attributes: Attribute;
         totalDamage: number;
         isBetrayer: boolean;
       }
@@ -105,7 +105,7 @@ describe('Socket.IO server tests', () => {
   describe('Web Emit tests', () => {
     test('should send an array with the connected users to web client on user connection', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
-        expect(arg.dravocar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
+        expect(arg.Dravokar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
       });
       sendConnectedUsersArrayToWeb(io, ONLINE_USERS_MOCK);
     });
@@ -132,13 +132,13 @@ describe('Socket.IO server tests', () => {
   describe('Mobile listener tests', () => {
     test('should send an array with the connected users to all clients on gameStart', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
-        expect(arg.dravocar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
+        expect(arg.Dravokar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
       });
       sendConnectedUsersArrayToAll(io, ONLINE_USERS_MOCK);
     });
     test('should send an array with the connected users to web client on user connection', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
-        expect(arg.dravocar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
+        expect(arg.Dravokar[0].name).toEqual(ONLINE_USERS_MOCK[0].name);
       });
       sendConnectedUsersArrayToWeb(io, ONLINE_USERS_MOCK);
     });

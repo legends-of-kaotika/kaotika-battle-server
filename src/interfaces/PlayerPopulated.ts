@@ -6,12 +6,12 @@ import { Helmet } from './Helmet.ts';
 import { Shield } from './Shield.ts';
 import { Boot } from './Boot.ts';
 import { Ring } from './Ring.ts';
-import { Modifier } from './Modifier.ts';
+import { Attribute } from './Attribute.ts';
 import { Task } from './Task.ts';
-import { Ingredient } from './Ingredients.ts';
 import { HealingPotion } from './HealingPotion.ts';
 import { AntidotePotion } from './AntidotePotion.ts';
 import { EnhancerPotion } from './EnhancerPotion.ts';
+import { Ingredient } from './Ingredients.ts';
 
 export interface PlayerPopulated {
   _id: string;
@@ -25,16 +25,16 @@ export interface PlayerPopulated {
   is_active: boolean;
   created_date: string;
   profile: Profile | null;
-  attributes: Modifier;
+  attributes: Attribute;
   classroom_id: string | null;
   isBetrayer: boolean;
   equipment:{
-    helmet: Helmet | null,
+    helmet: Helmet,
     weapon: Weapon,
     armor: Armor,
-    shield: Shield | null,
+    shield: Shield,
     artifact: Artifact,
-    boot: Boot | null,
+    boot: Boot,
     ring: Ring | null,
     healing_potion: HealingPotion,
     antidote_potion: AntidotePotion,
@@ -54,8 +54,4 @@ export interface PlayerPopulated {
     enhancer_potions: EnhancerPotion[],
   },
   tasks: Task[]
-}
-
-export interface PlayerPopulatedDocument extends PlayerPopulated, Document {
-  // You can add any custom methods if needed
 }

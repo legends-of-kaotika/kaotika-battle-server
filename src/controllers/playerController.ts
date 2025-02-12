@@ -31,21 +31,21 @@ export const initFetchPlayerController = async (req: Request, res: Response) => 
   }
 
   try {
-    const playerData : Player = await initFetchPlayer(email);
+    const playerData : Player | undefined = await initFetchPlayer(email);
     if (!playerData) {
       return res.status(404).send({ message: 'Does not exist any player with this email' });
     }
     // check if player is already connected
     if (isPlayerConnected(playerData.email)) {
       console.log(playerData.email, 'is already connected');
+      return res.status(409).send({ message: 'User is already connected'});
     } else {
       ONLINE_USERS.push(playerData);
+      // Return player data
+      return res
+        .status(200)
+        .send({ status: 'OK', data: playerData });
     }
-    // Return player data
-    res
-      .status(200)
-      .send({ status: 'OK', data: playerData });
-    
   } catch (error) {
     res
       .status(error?.status || 500)

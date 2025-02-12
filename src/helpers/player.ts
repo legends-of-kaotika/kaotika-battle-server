@@ -3,7 +3,8 @@ import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
 import { ONLINE_USERS } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
-import { sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
+import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
+import { logUnlessTesting } from './utils.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -42,14 +43,29 @@ export const isPlayerConnected = (email: string): boolean => {
   return ONLINE_USERS.some((player) => (player.email === email));
 };
 
-// Returns an array of players sorted by their charisma
-export const sortPlayersByCharisma = (players: Player[]): Player[] => {
-  //sort characters by charisma
-  players.sort((c1, c2) =>
-    c1.attributes.charisma < c2.attributes.charisma
-      ? 1
-      : c1.attributes.charisma > c2.attributes.charisma
-        ? -1
-        : 0);
-  return players;
+export const isPlayerConnectedById = (id : string, onlinePlayers: Player[]) : boolean => {
+  return onlinePlayers.some((player) => player._id === id);
+};
+
+export function handlePlayerDeath(id: string, onlinePlayers: Player[]) : void{
+  const isConnected = isPlayerConnectedById(id, onlinePlayers);
+
+  if(!isConnected) return;
+
+  sendKilledPlayer(io, id);
+  removePlayerFromConectedUsersById(id, onlinePlayers);
+}
+
+export function removePlayerFromConectedUsersById(id: string, onlinePlayers: Player[]) : void{
+  const index = onlinePlayers.findIndex(player => player._id === id);
+  if(index === -1){
+    logUnlessTesting(`FAILED to delete player with the id ${id} dont exist in ONLINE USER array`);
+    return;
+  }
+  onlinePlayers.splice(index, 1);
+}
+
+export const isMortimerDisconnected = (socketId: string): boolean => {
+  const isMortimerDisconnected = ONLINE_USERS.some((user)=> (user.socketId === socketId && user.role === 'mortimer'));
+  return isMortimerDisconnected;
 };
