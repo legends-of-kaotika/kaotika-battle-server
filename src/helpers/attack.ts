@@ -4,6 +4,7 @@ import { Die100 } from '../constants/dies.ts';
 import { Player } from '../interfaces/Player.ts';
 import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES, CRITICAL_MOD1, CRITICAL_MOD2 } from '../constants/combatRules.ts';
 import { Equipment } from '../interfaces/Equipment.ts';
+import { AttackTypes } from '../interfaces/AttackTypes.ts';
 
 
 export const adjustAtributes = (player: Player): Player => {
@@ -98,44 +99,42 @@ export const calculateNormalHitDamage = (weaponRoll:number, attackMod1:number, a
   return value || 1;
 };
 
-export const getNormalHitDamage = (weaponRoll: number, attack: number, equipment: Equipment, defense: number) => {
-  const attackMod1 = getAttackModificator1(attack);
-  const attackMod2 = getAttackModificator2(attack);
+export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number) => {
+  const attackMod1 = getAttackModificator1(attackAttribute);
+  const attackMod2 = getAttackModificator2(attackAttribute);
   const equipmentDefense = 0;
-  const totalDefense = calculateTotalDefense(equipmentDefense, defense);
+  const totalDefense = calculateTotalDefense(equipmentDefense, targetDefenseAttribute);
   const defenseMod = getDefenseModificator(totalDefense);
   return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2, defenseMod);
 };
 
 export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number) => {
-//   target = adjustAtributes(attacker);
-//   attacker = adjustAtributes(target);
+  target = adjustAtributes(attacker);
+  attacker = adjustAtributes(target);
  
-//   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
-//   const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
-//   let hitDamage: number;
-//   let attackType: AttackTypes;
-//   if (attackRoll <= criticalPercentage) {
-//     const critMod1 = getCriticalAttackModifier1(attackRoll, criticalPercentage);
-//     const critMod2 = getCriticalAttackModifier2(attackRoll, criticalPercentage);
-//     hitDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
-//     attackType = 'CRITICAL';
-//   }
-//   else if (attackRoll <= successPercentage) {
-//     const attackMod1 = getAttackModificator1(target.attributes.attack);
-//     const attackMod2 = getAttackModificator2(target.attributes.attack);
-//     const totalDefense = attacker.attributes.defense + attacker.equipment.armor.defense;
-//     const defMod = getDefenseModificator(totalDefense);
-//     hitDamage = getNormalHitDamage(weaponRoll, attackMod1, attackMod2, defMod);
-//     attackType = 'NORMAL';
-//   }
-//   else if (attackRoll <= 100 - fumblePercentage) {
-//     hitDamage = 0;
-//     attackType = 'FAILED';
-//   }
-//   else {
-//     hitDamage = 0;
-//     attackType = 'FUMBLE';
-//   }
-//   return {hitDamage, attackType};
+  const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
+  const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
+  let hitDamage: number;
+  let attackType: AttackTypes;
+  if (attackRoll <= criticalPercentage) {
+    const critMod1 = getCriticalAttackModifier1(attackRoll, criticalPercentage);
+    const critMod2 = getCriticalAttackModifier2(attackRoll, criticalPercentage);
+    hitDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
+    attackType = 'CRITICAL';
+  }
+  else if (attackRoll <= successPercentage) {
+    const totalDefense = attacker.attributes.defense + attacker.equipment.armor.defense;
+    const defMod = getDefenseModificator(totalDefense);
+    hitDamage = getNormalHitDamage(weaponRoll,attacker.attributes.attack ,target.equipment, defMod);
+    attackType = 'NORMAL';
+  }
+  else if (attackRoll <= 100 - fumblePercentage) {
+    hitDamage = 0;
+    attackType = 'FAILED';
+  }
+  else {
+    hitDamage = 0;
+    attackType = 'FUMBLE';
+  }
+  return {hitDamage, attackType};
 };
