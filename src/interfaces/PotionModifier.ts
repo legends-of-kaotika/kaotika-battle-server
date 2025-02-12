@@ -1,6 +1,6 @@
+
 import { Modifier } from './Modifier.ts';
 
-export interface PotionModifier {
-    hit_points: number;
-    attribute: Modifier
-  }
+export interface PotionModifier extends Modifier {
+  hit_points: number
+}

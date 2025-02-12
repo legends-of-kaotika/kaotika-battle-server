@@ -1,6 +1,4 @@
 
-{/* SOCKET CONSTANTS */ }
-
 // ROOMS
 export const MOBILE = 'mobile';
 
@@ -21,6 +19,7 @@ export const UPDATE_PLAYER = 'updatePlayer';
 export const REMOVE_PLAYER = 'removePlayer';
 export const GAME_END = 'gameEnd';
 export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
+export const KILLED_PLAYER = 'send-killedPlayer';
 
 // ---- LISTENERS ---- //
 
@@ -41,6 +40,3 @@ export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
 
-// Timer
-
-export const TURN_TIMER = 30;

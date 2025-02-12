@@ -12,12 +12,11 @@ import {
   sendUpdatedPlayerToAll
 } from '../../emits/user.ts';
 import {
-  checkStartGameRequirement,
-  findPlayerById,
-  insertSocketId,
-  sortPlayersByCharisma
-} from '../../../helpers/helper.ts';
-import * as SOCKETS from '../../../constants/constants.ts';
+  findPlayerById
+} from '../../../helpers/player.ts';
+import { checkStartGameRequirement } from '../../../helpers/game.ts';
+import { insertSocketId } from '../../../helpers/socket.ts';
+import * as SOCKETS from '../../../constants/sockets.ts';
 import { startTimer } from '../../../timer/timer.ts';
 import {
   ONLINE_USERS,
@@ -29,6 +28,9 @@ import {
   target,
   turn,
 } from '../../../game.ts';
+// import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
+// import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
+import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 
 
 
@@ -49,7 +51,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     console.log(`Socket ${SOCKETS.MOBILE_GAME_START} received`);
 
-    //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
+    // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (checkStartGameRequirement() === false) {
       console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
       sendNotEnoughPlayers(io, socket.id);
@@ -59,17 +61,18 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       // Set game as started
       setGameStarted(true);
     
-      //sort players by charisma
-      sortPlayersByCharisma(ONLINE_USERS);
+      // Sort players by successes, charisma, dexterity
+      const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
+      sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
 
-      //assign the first player
+      // Assign the first player
       console.log('Round: ', round);
       setCurrentPlayer(ONLINE_USERS[turn]);
 
-      //divide players by loyalty
+      // Divide players by loyalty
       sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
-      //emit first turn player id
+      // Emit first turn player id
       assignTurn(io, currentPlayer!);
       gameStartToAll(io);
       startTimer();
@@ -150,8 +153,20 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
+    // const attackRoll = getAttackRoll();
+    // const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    // const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    // const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
+    // attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
+    // defenderLuck(target,ONLINE_USERS);
     //Emits the attack results to mobile clients
     sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+
+    //ifPlayerDies
+    // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
+
+    //ifPlayerDies
+    // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
 
   });
 };
