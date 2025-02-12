@@ -9,6 +9,7 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers,
+  sendUpdatedPlayerToAll,
 } from '../../emits/user.ts';
 import {
   findPlayerById
@@ -27,9 +28,10 @@ import {
   target,
   turn,
 } from '../../../game.ts';
-// import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
-// import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
+import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
+import { AttackerLuck } from '../../../interfaces/AttackerLuck.ts';
 
 
 
@@ -152,16 +154,17 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    // const attackRoll = getAttackRoll();
-    // const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
-    // const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    // const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
-    // attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
-    // defenderLuck(target,ONLINE_USERS);
+    const attackRoll = getAttackRoll();
+    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
+    const attackerLuckResult: AttackerLuck = attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
+    defenderLuck(target);
     //Emits the attack results to mobile clients
-    // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
+    const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
+    sendUpdatedPlayerToAll(io, target._id, target.attributes,attackerDealedDamage, target.isBetrayer);
 
-    //ifPlayerDies
+    // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
 
   });

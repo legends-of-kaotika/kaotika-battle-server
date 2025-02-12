@@ -146,6 +146,10 @@ export const initFetchPlayer = async (email: string) => {
   try {
     const queryResponse = await fetch(`https://kaotika-server.fly.dev/players/email/${email}/`);
     const userData = await queryResponse.json();
+    if (userData.status === 'NOT FOUND'){
+      console.log(`player with email: ${email} not found`);
+      return undefined;
+    }
     const role = assignRole(userData.data.email);
 
     const user = filterPlayerData(userData.data);
