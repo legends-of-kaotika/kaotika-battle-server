@@ -180,12 +180,13 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
     //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
-
-        
+    // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+  
     //sendAttackDataToWeb
 
     //There is a socket.on of web-targetPlayer that receives server when web finishes animation of attack . Once server listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.
+
+    //Method to change attributes in our global variable (esto de antes)
 
 
     // ifPlayerDies
