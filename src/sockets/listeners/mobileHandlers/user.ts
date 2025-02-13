@@ -9,7 +9,6 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers,
-  sendUpdatedPlayerToAll,
   sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {

@@ -4,7 +4,6 @@ import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
 import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_TARGET_PLAYER } from '../../../constants/sockets.ts';
 import { findPlayerById } from '../../../helpers/player.ts';
-import { Attribute } from '../../../interfaces/Attribute.ts';
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
 
