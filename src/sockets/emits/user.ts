@@ -79,7 +79,7 @@ export const gameStartToAll = (io: Server): void => {
 // Sends the target players(id) with the attributes updated and the total damage
 export const sendAttackInformationToWeb = (io: Server, attackJSON: Attack): void => {
   logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message, with attack information`);
-  io.emit(SOCKETS.ATTACK_INFORMATION, {attackInformation: attackJSON });
+  io.to(webSocketId).emit(SOCKETS.ATTACK_INFORMATION, attackJSON);
 };
 
 // Sends the target players(id) with the attributes updated and the total damage to mobile
