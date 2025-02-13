@@ -1,6 +1,6 @@
 export type AttackerLuck = {
     attackerLuckRolls: number[],
     attackerHasLuck: boolean,
-    attackerLuckMessage?: string | undefined,
+    attackerLuckMessage?: string,
     dealedDamage?: number
 };
