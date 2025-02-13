@@ -6,6 +6,7 @@ import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './at
 import { nextRoundStartFirst, noDamageReceived } from './game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { playerMock } from '../__mocks__/players.ts';
+import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -74,10 +75,10 @@ export const defenderLuck = (defender: Player) => {
 const attacker = playerMock;
 const defender = playerMock;
 
-export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number) => {
+export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): AttackerLuck => {
 
   const roll = Die100.roll();
-  let rollMessage;
+  let rollMessage = 'The luck roll has no effect';
 
   const attackLuckConstant = getDefenseLuckConstant(roll);
 
@@ -91,7 +92,6 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   case ATTACK_LUCK_EFFECTS.NORMAL_TO_CRITICAL: {
 
     if (attackType !== 'NORMAL') {
-      rollMessage = 'The luck roll has no effect';
       break;
     }
     
@@ -108,13 +108,11 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
 
     break;
 
-  } case ATTACK_LUCK_EFFECTS.NO_EFFECTS:
-    rollMessage = 'The luck roll has no effect';
-    break;  
+  } 
   }
 
   return {
-    hitDamage: dealedDamage,
+    dealedDamage,
     rollMessage
   };
 
