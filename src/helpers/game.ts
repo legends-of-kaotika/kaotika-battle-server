@@ -5,6 +5,7 @@ import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
+import { findPlayerById } from './player.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
@@ -61,10 +62,15 @@ export const checkStartGameRequirement = () => {
   return false;
 };
 
-export const nextRoundStartFirst = (player: Player) : void => {
-  const playerIndex = ONLINE_USERS.indexOf(player);
-  ONLINE_USERS.splice(playerIndex, 1);
-  ONLINE_USERS.unshift(player);
+export const nextRoundStartFirst = (id: string, players: Player[]) : void => {
+  const player = findPlayerById(id);
+  const i = players.findIndex(player => player._id === id);
+
+  if(i === -1) return;
+  if(player === undefined) return;
+  
+  players.splice(i, 1);
+  players.unshift(player);
 };
 
 export const noDamageReceived = () : void => {
