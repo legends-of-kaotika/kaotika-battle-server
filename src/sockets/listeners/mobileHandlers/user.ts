@@ -10,6 +10,7 @@ import {
   sendUserDataToWeb,
   sendNotEnoughPlayers,
   sendUpdatedPlayerToAll,
+  sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
   findPlayerById
@@ -181,7 +182,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
     //Emits the attack results to mobile clients
     sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
-
+    sendAttackInformationToWeb(io,attackJSON);
         
     //sendAttackDataToWeb
 
