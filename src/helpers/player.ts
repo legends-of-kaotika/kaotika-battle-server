@@ -64,3 +64,8 @@ export function removePlayerFromConectedUsersById(id: string, onlinePlayers: Pla
   }
   onlinePlayers.splice(index, 1);
 }
+
+export const applyDamageToPlayer = (id: string, damage: number): void => {
+  const player = findPlayerById(id);
+  if (player) {player.attributes.hit_points -= damage;}
+};
