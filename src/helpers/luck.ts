@@ -1,4 +1,3 @@
-import { playerMock } from '../__mocks__/players.ts';
 import { ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD, DEFENSE_LUCK_RULES } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
@@ -78,12 +77,12 @@ export const defenderLuck = (defender: Player): DefenderLuck => {
   }
   return { defenderHasLuck, defenderLuckRolls };
 };
-export const attackerLuck = (defender: Player, dealedDamageWithOutLuck: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): AttackerLuck => {
+export const attackerLuck = (attacker: Player, defender: Player, dealedDamageWithOutLuck: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): AttackerLuck => {
 
-  const attackerLuckRolls = luckRolls(defender.attributes.charisma);
+  const attackerLuckRolls = luckRolls(attacker.attributes.charisma);
   const attackerHasLuck = hasLuck(attackerLuckRolls);
   if (attackerHasLuck) {
-    const applyLuckResult = applyAttackLuck(dealedDamageWithOutLuck, attackType, weaponRoll, attackPercentage, criticalPercentage);
+    const applyLuckResult = applyAttackLuck(dealedDamageWithOutLuck, attackType, weaponRoll, attackPercentage, criticalPercentage, attacker, defender);
     const attackerLuckMessage = applyLuckResult.rollMessage;
     const dealedDamage = applyLuckResult.dealedDamage;
     return { attackerLuckRolls, attackerHasLuck, attackerLuckMessage, dealedDamage };
@@ -91,15 +90,13 @@ export const attackerLuck = (defender: Player, dealedDamageWithOutLuck: number, 
   return { attackerHasLuck, attackerLuckRolls };
 };
 
-const attacker = playerMock;
-const defender = playerMock;
-
-export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): ApplyAttackLuck => {
+export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number, attacker: Player, defender: Player): ApplyAttackLuck => {
 
   const roll = Die100.roll();
   let rollMessage = 'The luck roll has no effect';
-
-  const attackLuckConstant = getDefenseLuckConstant(roll);
+  const oldDealedDamage = dealedDamage;
+  
+  const attackLuckConstant = getAttackLuckConstant(roll);
 
   switch (attackLuckConstant) {
 
@@ -117,12 +114,11 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     }
 
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
-    rollMessage = 'The attack has been transformed into critical.';
+    rollMessage = `The attack has been transformed into critical (+${dealedDamage-oldDealedDamage})`;
     break;
 
   } case ATTACK_LUCK_EFFECTS.NORMAL_ATTACK_INCREASE: {
 
-    const oldDealedDamage = dealedDamage;
     const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
     rollMessage = `The attack has been increased +${dealedDamage - oldDealedDamage}`;
