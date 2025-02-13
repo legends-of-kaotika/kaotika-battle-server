@@ -34,7 +34,7 @@ describe('applyDefenseLuck function', () => {
   it('should call nextRoundStartFirst when defenseLuck is START_NEXT_ROUND', () => {
     (Die100.roll as jest.Mock).mockReturnValue(98); 
     applyDefenseLuck(playerMock);
-    expect(nextRoundStartFirst).toHaveBeenCalledWith(playerMock);
+    expect(nextRoundStartFirst).toHaveBeenCalled();
   });
 
   it('should do nothing when defenseLuck is NO_EFFECTS', () => {

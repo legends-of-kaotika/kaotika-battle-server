@@ -65,8 +65,10 @@ export const checkStartGameRequirement = () => {
 export const nextRoundStartFirst = (id: string, players: Player[]) : void => {
   const player = findPlayerById(id);
   const i = players.findIndex(player => player._id === id);
+
   if(i === -1) return;
   if(player === undefined) return;
+  
   players.splice(i, 1);
   players.unshift(player);
 };

@@ -59,6 +59,6 @@ export const resetInitialGameValues = (): void => {
   };
 };
 
-export const setPlayerFirstTurnId =  (id: string) : void => {
+export const setPlayerFirstTurnId =  (id: string | null) : void => {
   idPlayerFirstTurn = id;
 };
