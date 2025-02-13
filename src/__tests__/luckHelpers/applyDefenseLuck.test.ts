@@ -31,22 +31,27 @@ describe('applyDefenseLuck function', () => {
     expect(luckConstant).toBe(DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND);
   });
 
-  it('should call noDamageReceived when defenseLuck is NO_DAMAGE_RECEIVED', () => {
+  it('should call modify the damageReceived to 0 and return the correct string', () => {
     (Die100.roll as jest.Mock).mockReturnValue(15); 
-    applyDefenseLuck(playerMock);
-    expect(noDamageReceived).toHaveBeenCalled();
+    const res = applyDefenseLuck(2,playerMock);
+    expect(res.damageReceived).toBe(0);
+    expect(res.rollMessage).toEqual('The attack has been dodged');
+    
   });
 
   it('should call nextRoundStartFirst when defenseLuck is START_NEXT_ROUND', () => {
     (Die100.roll as jest.Mock).mockReturnValue(98); 
-    applyDefenseLuck(playerMock);
+    const res = applyDefenseLuck(1,playerMock);
     expect(setPlayerFirstTurnId).toHaveBeenCalled();
+    expect(res.rollMessage).toEqual('Defender start next round');
+    
   });
 
   it('should do nothing when defenseLuck is NO_EFFECTS', () => {
     (Die100.roll as jest.Mock).mockReturnValue(34); 
-    applyDefenseLuck(playerMock);
+    const res = applyDefenseLuck(3,playerMock);
     expect(noDamageReceived).not.toHaveBeenCalled();
     expect(setPlayerFirstTurnId).not.toHaveBeenCalled();
+    expect(res.rollMessage).toEqual('The roll has no effect');
   });
 });
