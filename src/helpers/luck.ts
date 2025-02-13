@@ -46,7 +46,6 @@ export const applyDefenseLuck = (defender: Player) => {
   case DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND:
     if(idPlayerFirstTurn === null){
       setPlayerFirstTurnId(defender._id);
-      nextRoundStartFirst(defender._id, ONLINE_USERS);
       rollMessage = 'Defender start next round';
     }
     // defender start next round
@@ -106,7 +105,6 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   case ATTACK_LUCK_EFFECTS.NEXT_ROUND_START_FIRST:
     if(idPlayerFirstTurn === null){
       setPlayerFirstTurnId(attacker._id);
-      nextRoundStartFirst(attacker._id, ONLINE_USERS);
       rollMessage = 'The player will start first in the next round';
     }
     break;
