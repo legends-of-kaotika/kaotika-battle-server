@@ -78,7 +78,7 @@ export const sendUpdatedPlayerToAll = (io: Server, id: string, updatedAttributes
 
 // Sends the target players(id) with the attributes updated and the total damage
 export const sendAttackInformationToWeb = (io: Server, attackJSON: Attack): void => {
-  logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message with ${id} id, with attack information`);
+  logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message, with attack information`);
   io.emit(SOCKETS.ATTACK_INFORMATION, {attackInformation: attackJSON });
 };
 
