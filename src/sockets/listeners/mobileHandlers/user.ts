@@ -155,33 +155,33 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    const attackRoll = getAttackRoll();
-    const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
-    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
-    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
-    const attackerLuckResult: AttackerLuck = applyAttackLuck(attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
-    const defenderLuckResult: DefenderLuck = defenderLuck(target);
+    // const attackRoll = getAttackRoll();
+    // const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
+    // const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    // const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    // const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
+    // const attackerLuckResult: AttackerLuck = applyAttackLuck(attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
+    // const defenderLuckResult: DefenderLuck = defenderLuck(target);
     
-    const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
-
-    const normalPercentage = successPercentage - criticalPercentage;
-    const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
-    const failedPercentage = (100 - fumblePercentage) - successPercentage;
+    // const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
+    // const attackerDealedDamage = 20;
+    // const normalPercentage = successPercentage - criticalPercentage;
+    // const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
+    // const failedPercentage = (100 - fumblePercentage) - successPercentage;
     
-    //ATTACKER DATA
-    const attackerHasLuck = attackerLuckResult.attackerHasLuck;
-    const attackerLuckRolls = attackerLuckResult.attackerLuckRolls;
-    const attackerLuckMessage = attackerLuckResult.attackerLuckMessage;
+    // ATTACKER DATA
+    // const attackerHasLuck = attackerLuckResult.attackerHasLuck;
+    // const attackerLuckRolls = attackerLuckResult.attackerLuckRolls;
+    // const attackerLuckMessage = attackerLuckResult.attackerLuckMessage;
 
-    //DEFENDER DATA
-    const defenderHasLuck = defenderLuckResult.defenderHasLuck;
-    const defenderLuckRolls = defenderLuckResult.defenderLuckRolls;
-    const defenderLuckMessage = defenderLuckResult.defenderLuckMessage;
+    // //DEFENDER DATA
+    // const defenderHasLuck = defenderLuckResult.defenderHasLuck;
+    // const defenderLuckRolls = defenderLuckResult.defenderLuckRolls;
+    // const defenderLuckMessage = defenderLuckResult.defenderLuckMessage;
 
-    const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
-    //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+    // const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
+    // //Emits the attack results to mobile clients
+    // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
 
     // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
