@@ -11,11 +11,11 @@ import { findPlayerById } from './player.ts';
 export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
-    Dravokar: [],
+    dravokar: [],
   };
   users.forEach(player => {
     if (player.isBetrayer) {
-      obj.Dravokar.push(player);
+      obj.dravokar.push(player);
     } else {
       obj.kaotika.push(player);
     }
@@ -37,11 +37,11 @@ export const changeTurn = () => {
 export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
-  if ((dividedPlayers.Dravokar.length === 0) && (dividedPlayers.kaotika.length === 0) && isGameStarted) {
+  if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0) && isGameStarted) {
     sendGameEnd(io, 'Draw');
     resetInitialGameValues();
     gameHasPlayers = false;
-  } else if (dividedPlayers.Dravokar.length === 0) {
+  } else if (dividedPlayers.dravokar.length === 0) {
     sendGameEnd(io, 'Kaotika');
     resetInitialGameValues();
     gameHasPlayers = false;
