@@ -1,8 +1,8 @@
 import { playerMock } from '../../__mocks__/players.ts';
 import { Die100 } from '../../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../../constants/game.ts';
-import { setPlayerFirstTurnId } from '../../game.ts';
 import { noDamageReceived } from '../../helpers/game.ts';
+import { setPlayerFirstTurnId } from '../../game.ts';
 import { applyDefenseLuck, getDefenseLuckConstant } from '../../helpers/luck.ts';
 
 jest.mock('../../constants/dies.ts', () => ({
@@ -16,7 +16,8 @@ jest.mock('../../helpers/game.ts', () => ({
 }));
 
 jest.mock('../../game', () => ({
-  setPlayerFirstTurnId: jest.fn()
+  setPlayerFirstTurnId: jest.fn(),
+  idPlayerFirstTurn: null
 }));
 
 
