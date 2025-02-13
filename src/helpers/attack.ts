@@ -146,8 +146,8 @@ export const attack = (target: Player, attacker: Player, attackRoll: number, suc
   return {hitDamage, attackType};
 };
 
-export const attackData = (targetPlayerId: string, hit_points: number,criticalPercentage: number,normalPercentage: number,failedPercentage: number,fumblePercentage: number,attackerHasLuck: boolean,attackerLuckRolls: number[],defenderHasLuck: boolean,defenderLuckRolls: number[],attackerLuckMessage: string,defenderLuckMessage: string, attackRoll: number, attackerDealedDamage: number): Attack[] => {
-  const attackJSON: Attack[] = [
+export const attackData = (targetPlayerId: string, hit_points: number,criticalPercentage: number,normalPercentage: number,failedPercentage: number,fumblePercentage: number,attackerHasLuck: boolean,attackerLuckRolls: number[],defenderHasLuck: boolean,defenderLuckRolls: number[],attackerLuckMessage: string | undefined ,defenderLuckMessage: string | undefined, attackRoll: number, attackerDealedDamage: number): Attack => {
+  const attackJSON: Attack = 
     {
       attack: {
         targetPlayerId: targetPlayerId,
@@ -174,6 +174,6 @@ export const attackData = (targetPlayerId: string, hit_points: number,criticalPe
         }
       }
     }
-  ];
+  ;
   return attackJSON;
 };
