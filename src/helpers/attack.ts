@@ -152,28 +152,26 @@ export const attack = (target: Player, attacker: Player, attackRoll: number, suc
 };
 
 export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number): AttackJson => {
-  const attackJSON: AttackJson = 
-    {
-      attack: {
-        targetPlayerId: targetPlayerId,
-        hit_points: hit_points,
-        percentages: percentages,
-        dieRoll: attackRoll,
-        dealedDamage: attackerDealedDamage
+  return {
+    attack: {
+      targetPlayerId: targetPlayerId,
+      hit_points: hit_points,
+      percentages: percentages,
+      dieRoll: attackRoll,
+      dealedDamage: attackerDealedDamage
+    },
+    luck: {
+      attacker: {
+        hasLuck: attackerLuckResult.hasLuck,
+        luckRolls: attackerLuckResult.luckRolls,
+        luckRollMessage: attackerLuckResult.luckMessage,
       },
-      luck: {
-        attacker: {
-          hasLuck: attackerLuckResult.hasLuck,
-          luckRolls: attackerLuckResult.luckRolls,
-          luckRollMessage: attackerLuckResult.luckMessage,
-        },
-        defender: {
-          hasLuck: defenderLuckResult.hasLuck,
-          luckRolls: defenderLuckResult.luckRolls,
-          luckRollMessage: defenderLuckResult.luckMessage
-        }
+      defender: {
+        hasLuck: defenderLuckResult.hasLuck,
+        luckRolls: defenderLuckResult.luckRolls,
+        luckRollMessage: defenderLuckResult.luckMessage
       }
     }
+  }
   ;
-  return attackJSON;
 };
