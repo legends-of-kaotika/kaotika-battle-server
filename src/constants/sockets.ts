@@ -21,6 +21,7 @@ export const GAME_END = 'gameEnd';
 export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
 export const KILLED_PLAYER = 'send-killedPlayer';
 export const CURRENT_ROUND = 'send-currentRound';
+export const ATTACK_INFORMATION = 'web-attackInformation';
 
 // ---- LISTENERS ---- //
 
@@ -40,4 +41,5 @@ export const WEB_SEND_USERS = 'web-sendUsers';
 export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
+export const WEB_TARGET_PLAYER = 'web-targetPlayer';
 
