@@ -5,6 +5,9 @@ import { Player } from '../interfaces/Player.ts';
 import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES, CRITICAL_MOD1, CRITICAL_MOD2 } from '../constants/combatRules.ts';
 import { Equipment } from '../interfaces/Equipment.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
+import { AttackJson } from '../interfaces/AttackJson.ts';
+import { Luck } from '../interfaces/Luck.ts';
+import { Percentages } from '../interfaces/Percentages.ts';
 
 
 export const adjustAtributes = (player: Player): Player => {
@@ -70,6 +73,12 @@ export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number
   return weaponDie.rollWithModifier();
 };
 
+export const getEquipmentDefense = (equipment: Equipment): number => {
+  return Object.values(equipment)
+    .filter(item => item?.defense)
+    .reduce((total, item) => total + item.defense, 0);
+};
+
 // ---- CRITICAL ATTACK ---- // 
 
 export const getCriticalAttackModifier1 = (attackPercentage: number, criticalPercentage: number) => {
@@ -83,7 +92,7 @@ export const getCriticalAttackModifier2 = (attackPercentage: number, criticalPer
 };
 
 export const calculateCriticalHitDamage = (bcfa: number, weaponRoll: number, critMod1: number, critMod2: number) => {
-  return Math.ceil(bcfa/5 + weaponRoll * critMod1 + critMod2);
+  return Math.ceil(bcfa / 5 + weaponRoll * critMod1 + critMod2);
 };
 
 export const getCriticalHitDamage = (BCFA: number, weaponRoll: number, attackPercentage: number, criticalPercentage: number) => {
@@ -94,47 +103,75 @@ export const getCriticalHitDamage = (BCFA: number, weaponRoll: number, attackPer
 
 // ---- NORMAL ATTACK ---- // 
 
-export const calculateNormalHitDamage = (weaponRoll:number, attackMod1:number, attackMod2:number, defenseMod:number):number => {
-  const value = Math.ceil((weaponRoll * attackMod1 + attackMod2)/defenseMod);
+export const calculateNormalHitDamage = (weaponRoll: number, attackMod1: number, attackMod2: number, defenseMod: number): number => {
+  const value = Math.ceil((weaponRoll * attackMod1 + attackMod2) / defenseMod);
   return value || 1;
 };
 
-export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number) => {
+export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) => {
   const attackMod1 = getAttackModificator1(attackAttribute);
   const attackMod2 = getAttackModificator2(attackAttribute);
-  const equipmentDefense = 0;
+  const equipmentDefense = getEquipmentDefense(targetEquipment);
   const totalDefense = calculateTotalDefense(equipmentDefense, targetDefenseAttribute);
   const defenseMod = getDefenseModificator(totalDefense);
-  return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2, defenseMod);
+  const attackMod2Increase = attackMod2 * attMod2IncreaseRate;
+  return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2 + attackMod2Increase, defenseMod);
 };
 
-export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number) => {
+// ---- MAIN FLOW FUNCTION ---- // 
+
+export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number, weaponRoll: number) => {
   target = adjustAtributes(attacker);
   attacker = adjustAtributes(target);
- 
+
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
-  const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
-  let hitDamage: number;
+  let dealedDamage: number;
   let attackType: AttackTypes;
   if (attackRoll <= criticalPercentage) {
     const critMod1 = getCriticalAttackModifier1(attackRoll, criticalPercentage);
     const critMod2 = getCriticalAttackModifier2(attackRoll, criticalPercentage);
-    hitDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
+    dealedDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
     attackType = 'CRITICAL';
   }
   else if (attackRoll <= successPercentage) {
     const totalDefense = attacker.attributes.defense + attacker.equipment.armor.defense;
     const defMod = getDefenseModificator(totalDefense);
-    hitDamage = getNormalHitDamage(weaponRoll,attacker.attributes.attack ,target.equipment, defMod);
+    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, defMod);
     attackType = 'NORMAL';
   }
   else if (attackRoll <= 100 - fumblePercentage) {
-    hitDamage = 0;
+    dealedDamage = 0;
     attackType = 'FAILED';
   }
   else {
-    hitDamage = 0;
+    dealedDamage = 0;
     attackType = 'FUMBLE';
   }
-  return {hitDamage, attackType};
+  
+  return {dealedDamage, attackType};
+};
+
+export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number): AttackJson => {
+  return {
+    attack: {
+      targetPlayerId: targetPlayerId,
+      hit_points: hit_points,
+      percentages: percentages,
+      dieRoll: attackRoll,
+      dealedDamage: attackerDealedDamage
+    },
+    luck: {
+      attacker: {
+        hasLuck: attackerLuckResult.hasLuck,
+        luckRolls: attackerLuckResult.luckRolls,
+        luckRollMessage: attackerLuckResult.luckMessage,
+      },
+      defender: {
+        hasLuck: defenderLuckResult.hasLuck,
+        luckRolls: defenderLuckResult.luckRolls,
+        luckRollMessage: defenderLuckResult.luckMessage
+      }
+    }
+  }
+  ;
 };

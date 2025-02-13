@@ -9,9 +9,10 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers,
-  sendUpdatedPlayerToAll
+  sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
+  applyDamage,
   findPlayerById
 } from '../../../helpers/player.ts';
 import { checkStartGameRequirement } from '../../../helpers/game.ts';
@@ -28,9 +29,11 @@ import {
   target,
   turn,
 } from '../../../game.ts';
-// import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
-// import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage } from '../../../helpers/attack.ts';
+import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
+import { Luck } from '../../../interfaces/Luck.ts';
+import { Percentages } from '../../../interfaces/Percentages.ts';
 
 
 
@@ -41,7 +44,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if (newPlayerConnected) {
-      socket.join(SOCKETS.MOBILE);
+      socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
       sendUserDataToWeb(io, newPlayerConnected);
     }
   });
@@ -148,25 +151,54 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    if (!target || !attacker) {
-      console.error('Either attacker or target not found');
+    if (!target) {
+      console.error('Target not found');
       return;
     }
 
-    // const attackRoll = getAttackRoll();
-    // const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
-    // const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    // const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
-    // attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
-    // defenderLuck(target,ONLINE_USERS);
-    //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+    // Get general variables.
+    const attackRoll = getAttackRoll();
+    const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
+    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    let dealedDamage: number = 0;
 
-    //ifPlayerDies
-    // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
+    // Get the percentages of attack types.
+    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
+    const normalPercentage = successPercentage - criticalPercentage;
+    const failedPercentage = (100 - fumblePercentage) - successPercentage;
 
-    //ifPlayerDies
+    // Get the attack damage and attack type
+    const attackResult = attack(target, attacker, attackRoll, successPercentage, criticalPercentage, weaponRoll);
+    
+    // Execute attacker luck
+    const attackerLuckResult: Luck = attackerLuck(attacker, target, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+    dealedDamage = attackerLuckResult.dealedDamage;
+
+    // Execute defender luck
+    const defenderLuckResult: Luck = defenderLuck(dealedDamage, target);
+    dealedDamage = defenderLuckResult.dealedDamage;
+
+    // Construct the return data JSON.
+    const percentages: Percentages = {
+      critical: criticalPercentage,
+      normal: normalPercentage,
+      failed: failedPercentage,
+      fumble: fumblePercentage
+    };
+
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
+    
+    // Update player's attributes in ONLINE_USERS
+    applyDamage(target._id, dealedDamage);
+
+    // Send data to web
+    sendAttackInformationToWeb(io, attackJSON);
+
+    // When web finishes animation , server listens to WEB_TARGET_PLAYER and emits to mobile the updatedPlayer
+    // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
 
   });
+
 };

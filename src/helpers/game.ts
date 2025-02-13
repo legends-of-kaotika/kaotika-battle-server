@@ -1,20 +1,21 @@
 import { Server } from 'socket.io';
 import { io } from '../../index.ts';
-import { ONLINE_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
+import { ONLINE_USERS, currentPlayer, increaseTurn, isGameStarted, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
+import { findPlayerById } from './player.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
-    dravocar: [],
+    dravokar: [],
   };
   users.forEach(player => {
     if (player.isBetrayer) {
-      obj.dravocar.push(player);
+      obj.dravokar.push(player);
     } else {
       obj.kaotika.push(player);
     }
@@ -36,16 +37,16 @@ export const changeTurn = () => {
 export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
-  if ((dividedPlayers.dravocar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
-    sendGameEnd(io, 'draw');
+  if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0) && isGameStarted) {
+    sendGameEnd(io, 'Draw');
     resetInitialGameValues();
     gameHasPlayers = false;
-  } else if (dividedPlayers.dravocar.length === 0) {
-    sendGameEnd(io, 'kaotika');
+  } else if (dividedPlayers.dravokar.length === 0) {
+    sendGameEnd(io, 'Kaotika');
     resetInitialGameValues();
     gameHasPlayers = false;
   } else if (dividedPlayers.kaotika.length === 0) {
-    sendGameEnd(io, 'dravocar');
+    sendGameEnd(io, 'Dravokar');
     resetInitialGameValues();
     gameHasPlayers = false;
   }
@@ -61,10 +62,15 @@ export const checkStartGameRequirement = () => {
   return false;
 };
 
-export const nextRoundStartFirst = (player: Player) : void => {
-  const playerIndex = ONLINE_USERS.indexOf(player);
-  ONLINE_USERS.splice(playerIndex, 1);
-  ONLINE_USERS.unshift(player);
+export const nextRoundStartFirst = (id: string, players: Player[]) : void => {
+  const player = findPlayerById(id);
+  const i = players.findIndex(player => player._id === id);
+
+  if(i === -1) return;
+  if(player === undefined) return;
+  
+  players.splice(i, 1);
+  players.unshift(player);
 };
 
 export const noDamageReceived = () : void => {
