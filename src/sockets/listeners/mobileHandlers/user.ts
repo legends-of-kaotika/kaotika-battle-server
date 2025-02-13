@@ -29,8 +29,8 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, attackData, getFumblePercentage } from '../../../helpers/attack.ts';
-import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, attackData, getFumblePercentage } from '../../../helpers/attack.ts';
+import { applyAttackLuck, defenderLuck } from '../../../helpers/luck.ts';
 import { AttackerLuck } from '../../../interfaces/AttackerLuck.ts';
 import { DefenderLuck } from '../../../interfaces/DefenderLuck.ts';
 
@@ -156,10 +156,11 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     }
 
     const attackRoll = getAttackRoll();
+    const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
-    const attackerLuckResult: AttackerLuck = attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
+    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
+    const attackerLuckResult: AttackerLuck = applyAttackLuck(attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
     const defenderLuckResult: DefenderLuck = defenderLuck(target);
     
     const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
