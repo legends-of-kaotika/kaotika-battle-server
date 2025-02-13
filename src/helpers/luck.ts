@@ -1,6 +1,7 @@
 import { ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD, DEFENSE_LUCK_RULES } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
+import { LUCK_MESSAGE } from '../constants/messages.ts';
 import { idPlayerFirstTurn, setPlayerFirstTurnId } from '../game.ts';
 import { ApplyAttackLuck } from '../interfaces/ApplyAttackLuck.ts';
 import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
@@ -99,7 +100,7 @@ export const attackerLuck = (attacker: Player, defender: Player, dealedDamageWit
 export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number, attacker: Player, defender: Player): ApplyAttackLuck => {
 
   const roll = Die100.roll();
-  let rollMessage = 'The luck roll has no effect';
+  let rollMessage = LUCK_MESSAGE.NO_EFFECT;
   const oldDealedDamage = dealedDamage;
   
   const attackLuckConstant = getAttackLuckConstant(roll);
@@ -109,7 +110,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   case ATTACK_LUCK_EFFECTS.NEXT_ROUND_START_FIRST:
     if(idPlayerFirstTurn === null){
       setPlayerFirstTurnId(attacker._id);
-      rollMessage = 'The player will start first in the next round';
+      rollMessage = LUCK_MESSAGE.TURN_EFFECT;
     }
     break;
 
@@ -120,14 +121,14 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     }
 
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
-    rollMessage = `The attack has been transformed into critical (+${dealedDamage-oldDealedDamage})`;
+    rollMessage = `${LUCK_MESSAGE.CRITICAL_EFFECT} (+${dealedDamage-oldDealedDamage})`;
     break;
 
   } case ATTACK_LUCK_EFFECTS.NORMAL_ATTACK_INCREASE: {
 
     const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
-    rollMessage = `The attack has been increased +${dealedDamage - oldDealedDamage}`;
+    rollMessage = `${LUCK_MESSAGE.ATTACK_INCREASE}+${dealedDamage - oldDealedDamage}`;
 
     break;
 
