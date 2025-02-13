@@ -12,6 +12,7 @@ import {
   sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
+  applyDamageToPlayer,
   findPlayerById
 } from '../../../helpers/player.ts';
 import { checkStartGameRequirement } from '../../../helpers/game.ts';
@@ -179,14 +180,15 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const defenderLuckMessage = defenderLuckResult.defenderLuckMessage;
 
     const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
-    
-    // method to change the player attributes in ONLINE_USERS
 
+    // method to change the player attributes in ONLINE_USERS
+    const finalDamage = 20;
+    applyDamageToPlayer(target._id, finalDamage);
     // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
     sendAttackInformationToWeb(io,attackJSON);
         
 
-    // When web finishes animation , server listens to server-targetPlayer and emits to mobile updatedPlayer
+    // When web finishes animation , server listens to WEB_TARGET_PLAYER and emits to mobile the updatedPlayer
 
     // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
