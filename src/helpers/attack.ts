@@ -120,7 +120,6 @@ export const attack = (target: Player, attacker: Player, attackRoll: number, suc
   attacker = adjustAtributes(target);
  
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
-  const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
   let hitDamage: number;
   let attackType: AttackTypes;
   if (attackRoll <= criticalPercentage) {
