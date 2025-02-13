@@ -29,10 +29,10 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, attackData, getFumblePercentage } from '../../../helpers/attack.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage } from '../../../helpers/attack.ts';
 import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
-import { AttackerLuck } from '../../../interfaces/AttackerLuck.ts';
-import { DefenderLuck } from '../../../interfaces/DefenderLuck.ts';
+import { Luck } from '../../../interfaces/Luck.ts';
+import { Percentages } from '../../../interfaces/Percentages.ts';
 
 
 
@@ -155,30 +155,37 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
+    // Get general variables.
     const attackRoll = getAttackRoll();
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    let dealedDamage: number = 0;
+
+    // Get the percentages of attack types.
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
-    const attackerLuckResult: AttackerLuck = attackerLuck(attacker, target, attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
-    const defenderLuckResult: DefenderLuck = defenderLuck(attackerLuckResult.dealedDamage, target);
-    
-    const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
-    const normalPercentage = successPercentage - criticalPercentage;
     const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
+    const normalPercentage = successPercentage - criticalPercentage;
     const failedPercentage = (100 - fumblePercentage) - successPercentage;
+
+    // Get the attack damage and attack type
+    const attackResult = attack(target, attacker, attackRoll, successPercentage, criticalPercentage, weaponRoll);
     
-    //ATTACKER DATA
-    const attackerHasLuck = attackerLuckResult.attackerHasLuck;
-    const attackerLuckRolls = attackerLuckResult.attackerLuckRolls;
-    const attackerLuckMessage = attackerLuckResult.attackerLuckMessage;
+    // Execute attacker luck
+    const attackerLuckResult: Luck = attackerLuck(attacker, target, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+    
+    // Execute defender luck
+    const defenderLuckResult: Luck = defenderLuck(attackerLuckResult.dealedDamage, target);
+    dealedDamage = defenderLuckResult.dealedDamage;
 
-    //DEFENDER DATA
-    const defenderHasLuck = defenderLuckResult.defenderHasLuck;
-    const defenderLuckRolls = defenderLuckResult.defenderLuckRolls;
-    const defenderLuckMessage = defenderLuckResult.defenderLuckMessage;
+    // Construct the return data JSON.
+    const percentages: Percentages = {
+      critical: criticalPercentage,
+      normal: normalPercentage,
+      failed: failedPercentage,
+      fumble: fumblePercentage
+    };
 
-    const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
     
     // method to change the player attributes in ONLINE_USERS
 

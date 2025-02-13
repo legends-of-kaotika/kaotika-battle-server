@@ -6,7 +6,7 @@ import { returnLoyalsAndBetrayers } from '../../helpers/game.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
 import { Attribute } from '../../interfaces/Attribute.ts';
-import { Attack } from '../../interfaces/Attack.ts';
+import { AttackJson } from '../../interfaces/AttackJson.ts';
 
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = (io: Server, users: Player[]): void => {
@@ -77,7 +77,7 @@ export const gameStartToAll = (io: Server): void => {
 // };
 
 // Sends the target players(id) with the attributes updated and the total damage
-export const sendAttackInformationToWeb = (io: Server, attackJSON: Attack): void => {
+export const sendAttackInformationToWeb = (io: Server, attackJSON: AttackJson): void => {
   logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message, with attack information`);
   io.emit(SOCKETS.ATTACK_INFORMATION, {attackInformation: attackJSON });
 };

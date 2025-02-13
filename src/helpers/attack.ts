@@ -5,7 +5,9 @@ import { Player } from '../interfaces/Player.ts';
 import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES, CRITICAL_MOD1, CRITICAL_MOD2 } from '../constants/combatRules.ts';
 import { Equipment } from '../interfaces/Equipment.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
-import { Attack } from '../interfaces/Attack.ts';
+import { AttackJson } from '../interfaces/AttackJson.ts';
+import { Luck } from '../interfaces/Luck.ts';
+import { Percentages } from '../interfaces/Percentages.ts';
 
 
 export const adjustAtributes = (player: Player): Player => {
@@ -116,61 +118,59 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
   return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2 + attackMod2Increase, defenseMod);
 };
 
+// ---- MAIN FLOW FUNCTION ---- // 
+
 export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number, weaponRoll: number) => {
   target = adjustAtributes(attacker);
   attacker = adjustAtributes(target);
 
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
-  let hitDamage: number;
+  let dealedDamage: number;
   let attackType: AttackTypes;
   if (attackRoll <= criticalPercentage) {
     const critMod1 = getCriticalAttackModifier1(attackRoll, criticalPercentage);
     const critMod2 = getCriticalAttackModifier2(attackRoll, criticalPercentage);
-    hitDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
+    dealedDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
     attackType = 'CRITICAL';
   }
   else if (attackRoll <= successPercentage) {
     const totalDefense = attacker.attributes.defense + attacker.equipment.armor.defense;
     const defMod = getDefenseModificator(totalDefense);
-    hitDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, defMod);
+    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, defMod);
     attackType = 'NORMAL';
   }
   else if (attackRoll <= 100 - fumblePercentage) {
-    hitDamage = 0;
+    dealedDamage = 0;
     attackType = 'FAILED';
   }
   else {
-    hitDamage = 0;
+    dealedDamage = 0;
     attackType = 'FUMBLE';
   }
-  return {hitDamage, attackType};
+  
+  return {dealedDamage, attackType};
 };
 
-export const attackData = (targetPlayerId: string, hit_points: number,criticalPercentage: number,normalPercentage: number,failedPercentage: number,fumblePercentage: number,attackerHasLuck: boolean,attackerLuckRolls: number[],defenderHasLuck: boolean,defenderLuckRolls: number[],attackerLuckMessage: string | undefined ,defenderLuckMessage: string | undefined, attackRoll: number, attackerDealedDamage: number): Attack => {
-  const attackJSON: Attack = 
+export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number): AttackJson => {
+  const attackJSON: AttackJson = 
     {
       attack: {
         targetPlayerId: targetPlayerId,
         hit_points: hit_points,
-        percentages: {
-          critical: criticalPercentage,
-          normal: normalPercentage,
-          failed: failedPercentage,
-          fumble: fumblePercentage
-        },
+        percentages: percentages,
         dieRoll: attackRoll,
         dealedDamage: attackerDealedDamage
       },
       luck: {
         attacker: {
-          hasLuck: attackerHasLuck,
-          luckRolls: attackerLuckRolls,
-          luckRollMessage: attackerLuckMessage
+          hasLuck: attackerLuckResult.hasLuck,
+          luckRolls: attackerLuckResult.luckRolls,
+          luckRollMessage: attackerLuckResult.luckMessage,
         },
         defender: {
-          hasLuck: defenderHasLuck,
-          luckRolls: defenderLuckRolls,
-          luckRollMessage: defenderLuckMessage
+          hasLuck: defenderLuckResult.hasLuck,
+          luckRolls: defenderLuckResult.luckRolls,
+          luckRollMessage: defenderLuckResult.luckMessage
         }
       }
     }
