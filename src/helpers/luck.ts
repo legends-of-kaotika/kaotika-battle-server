@@ -9,6 +9,7 @@ import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { Player } from '../interfaces/Player.ts';
 import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
 import { nextRoundStartFirst, noDamageReceived } from './game.ts';
+import { ApplyAttackLuck } from '../interfaces/ApplyAttackLuck.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
