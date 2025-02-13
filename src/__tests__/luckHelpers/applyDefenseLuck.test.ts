@@ -34,8 +34,8 @@ describe('applyDefenseLuck function', () => {
   it('should call modify the damageReceived to 0 and return the correct string', () => {
     (Die100.roll as jest.Mock).mockReturnValue(15); 
     const res = applyDefenseLuck(2,playerMock);
-    expect(res.damageReceived).toBe(0);
-    expect(res.rollMessage).toEqual('The attack has been dodged');
+    expect(res.dealedDamage).toBe(0);
+    expect(res.luckMessage).toEqual('The attack has been dodged');
     
   });
 
@@ -43,7 +43,7 @@ describe('applyDefenseLuck function', () => {
     (Die100.roll as jest.Mock).mockReturnValue(98); 
     const res = applyDefenseLuck(1,playerMock);
     expect(setPlayerFirstTurnId).toHaveBeenCalled();
-    expect(res.rollMessage).toEqual('The player will start first in the next round');
+    expect(res.luckMessage).toEqual('The player will start first in the next round');
     
   });
 
@@ -52,6 +52,6 @@ describe('applyDefenseLuck function', () => {
     const res = applyDefenseLuck(3,playerMock);
     expect(noDamageReceived).not.toHaveBeenCalled();
     expect(setPlayerFirstTurnId).not.toHaveBeenCalled();
-    expect(res.rollMessage).toEqual('The luck roll has no effect');
+    expect(res.luckMessage).toEqual('The luck roll has no effect');
   });
 });
