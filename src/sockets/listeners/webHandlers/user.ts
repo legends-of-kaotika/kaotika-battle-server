@@ -31,19 +31,22 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   });
 
   // When attack animation ends, receives whose values changed in animation
-  socket.on(WEB_TARGET_PLAYER, async (DefenderId: string, AttackerId: string ) => {
-    console.log(`web attack animation end socket of ${AttackerId} message listened`);
+  socket.on(WEB_TARGET_PLAYER, async (defenderId: string) => {
 
-    const updatedPlayer = findPlayerById(DefenderId);
+    console.log(`${WEB_TARGET_PLAYER} socket listened: web attack animation ended`);
+
+    const updatedPlayer = findPlayerById(defenderId);
     const updatedPlayerAttributes = updatedPlayer?.attributes;
+
+    // Send the updated player's attributes to mobile
     if(updatedPlayerAttributes){
-      sendUpdatedPlayerToMobile(io, DefenderId, updatedPlayerAttributes);
+      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes);
     }
 
-    //DEATH
-    const player = findPlayerDead(ONLINE_USERS);
-    if (player?._id) {
-      handlePlayerDeath(player._id, ONLINE_USERS);
+    // Death
+    const deadPlayer = findPlayerDead();
+    if (deadPlayer?._id) {
+      handlePlayerDeath(deadPlayer._id);
     }
   });
 };
