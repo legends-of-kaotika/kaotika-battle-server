@@ -195,10 +195,6 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     // Send data to web
     sendAttackInformationToWeb(io, attackJSON);
 
-    // When web finishes animation , server listens to WEB_TARGET_PLAYER and emits to mobile the updatedPlayer
-    // ifPlayerDies
-    // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
-
   });
 
 };
