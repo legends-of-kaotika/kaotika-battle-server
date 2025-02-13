@@ -4,11 +4,11 @@ import { Die100 } from '../constants/dies.ts';
 import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
 import { DefenderLuck } from '../interfaces/DefenderLuck.ts';
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
-import { idPlayerFirstTurn, ONLINE_USERS, setPlayerFirstTurnId } from '../game.ts';
+import { idPlayerFirstTurn, setPlayerFirstTurnId } from '../game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { Player } from '../interfaces/Player.ts';
 import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
-import { nextRoundStartFirst, noDamageReceived } from './game.ts';
+import { noDamageReceived } from './game.ts';
 import { ApplyAttackLuck } from '../interfaces/ApplyAttackLuck.ts';
 
 export const luckRolls = (charisma: number): number[] => {
