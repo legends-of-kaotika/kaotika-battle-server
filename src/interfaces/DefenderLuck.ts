@@ -1,5 +1,5 @@
 export type DefenderLuck = {
-    defenderLuckMessage:string, 
+    defenderLuckMessage?:string, 
     defenderLuckRolls: number[], 
     defenderHasLuck: boolean
 };
