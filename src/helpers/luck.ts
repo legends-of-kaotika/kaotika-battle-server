@@ -1,11 +1,12 @@
-import { DEFENSE_LUCK_RULES, ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD } from '../constants/combatRules.ts';
+import { playerMock } from '../__mocks__/players.ts';
+import { ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD, DEFENSE_LUCK_RULES } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
+import { idPlayerFirstTurn, ONLINE_USERS, setPlayerFirstTurnId } from '../game.ts';
+import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { Player } from '../interfaces/Player.ts';
 import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
 import { nextRoundStartFirst, noDamageReceived } from './game.ts';
-import { AttackTypes } from '../interfaces/AttackTypes.ts';
-import { playerMock } from '../__mocks__/players.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -41,8 +42,11 @@ export const applyDefenseLuck = (defender: Player) => {
     break;
   
   case DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND:
-    nextRoundStartFirst(defender);
-    rollMessage = 'Defender start next round';
+    if(idPlayerFirstTurn === null){
+      setPlayerFirstTurnId(defender._id);
+      nextRoundStartFirst(defender._id, ONLINE_USERS);
+      rollMessage = 'Defender start next round';
+    }
     // defender start next round
     break;
 
@@ -84,8 +88,11 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   switch (attackLuckConstant) {
 
   case ATTACK_LUCK_EFFECTS.NEXT_ROUND_START_FIRST:
-    nextRoundStartFirst(attacker);
-    rollMessage = 'The player will start first in the next round';
+    if(idPlayerFirstTurn === null){
+      setPlayerFirstTurnId(attacker._id);
+      nextRoundStartFirst(attacker._id, ONLINE_USERS);
+      rollMessage = 'The player will start first in the next round';
+    }
     break;
 
   case ATTACK_LUCK_EFFECTS.NORMAL_TO_CRITICAL: {

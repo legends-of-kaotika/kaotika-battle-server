@@ -9,7 +9,7 @@ jest.mock('../../game', () => ({
 describe('test nextRoundStartFirst function', () => {
   it('should change the turns array correctly', () => {
     const newPlayer: Player = { ...playerMock, _id: '12345' };
-    nextRoundStartFirst(newPlayer);
+    nextRoundStartFirst(newPlayer._id, ONLINE_USERS_MOCK);
 
     expect(ONLINE_USERS_MOCK[0]).toEqual(newPlayer);
     expect(ONLINE_USERS_MOCK).toHaveLength(ONLINE_USERS_MOCK.length);

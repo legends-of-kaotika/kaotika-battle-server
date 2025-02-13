@@ -9,6 +9,7 @@ export let currentPlayer: Player | undefined;
 export let turn: number = 0;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
+export let idPlayerFirstTurn: string | null = null;
 
 //changes the websocketId
 export const setWebSocket = (socketId: string): void => {
@@ -56,4 +57,8 @@ export const resetInitialGameValues = (): void => {
   while (ONLINE_USERS.length > 0) {
     ONLINE_USERS.pop();
   };
+};
+
+export const setPlayerFirstTurnId =  (id: string) : void => {
+  idPlayerFirstTurn = id;
 };
