@@ -64,16 +64,9 @@ export function removePlayerFromConectedUsersById(id: string, onlinePlayers: Pla
   }
   onlinePlayers.splice(index, 1);
 }
-
-export const findIfIsDeath = (DefenderId: string, AttackerId: string) => {
-  const attacker = findPlayerById(AttackerId);
-  const defender = findPlayerById(DefenderId);
-  if(attacker?.attributes.hit_points === 0){
-    handlePlayerDeath(AttackerId,ONLINE_USERS);
-  }
-  if(defender?.attributes.hit_points === 0){
-    handlePlayerDeath(DefenderId,ONLINE_USERS);
-  }
+export const findPlayerDead = (onlinePlayers: Player[] ): Player | undefined => {
+  const player = onlinePlayers.find(player => player.attributes.hit_points <= 0);
+  return player;
 };
 
 export const isMortimerDisconnected = (socketId: string): boolean => {
@@ -81,7 +74,7 @@ export const isMortimerDisconnected = (socketId: string): boolean => {
   return isMortimerDisconnected;
 };
 
-export const applyDamageToPlayer = (id: string, damage: number): void => {
+export const applyDamage = (id: string, damage: number): void => {
   const player = findPlayerById(id);
   if (player) {player.attributes.hit_points -= damage;}
 };
