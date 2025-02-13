@@ -29,9 +29,10 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage } from '../../../helpers/attack.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, attackData, getFumblePercentage } from '../../../helpers/attack.ts';
 import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
 import { AttackerLuck } from '../../../interfaces/AttackerLuck.ts';
+import { DefenderLuck } from '../../../interfaces/DefenderLuck.ts';
 
 
 
@@ -159,10 +160,27 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
     const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
     const attackerLuckResult: AttackerLuck = attackerLuck(attackResult.hitDamage,attacker,attackRoll,criticalPercentage);
-    defenderLuck(target);
-    //Emits the attack results to mobile clients
+    const defenderLuckResult: DefenderLuck = defenderLuck(target);
+    
     const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
-    sendUpdatedPlayerToAll(io, target._id, target.attributes,attackerDealedDamage, target.isBetrayer);
+
+    const normalPercentage = successPercentage - criticalPercentage;
+    const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
+    const failedPercentage = (100 - fumblePercentage) - successPercentage;
+    
+    //ATTACKER DATA
+    const attackerHasLuck = attackerLuckResult.attackerHasLuck;
+    const attackerLuckRolls = attackerLuckResult.attackerLuckRolls;
+    const attackerLuckMessage = attackerLuckResult.attackerLuckMessage;
+
+    //DEFENDER DATA
+    const defenderHasLuck = defenderLuckResult.defenderHasLuck;
+    const defenderLuckRolls = defenderLuckResult.defenderLuckRolls;
+    const defenderLuckMessage = defenderLuckResult.defenderLuckMessage;
+
+    const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
+    //Emits the attack results to mobile clients
+    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
 
     // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
