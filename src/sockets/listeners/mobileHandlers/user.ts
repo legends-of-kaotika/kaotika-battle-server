@@ -12,7 +12,7 @@ import {
   sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
-  applyDamageToPlayer,
+  applyDamage,
   findPlayerById
 } from '../../../helpers/player.ts';
 import { checkStartGameRequirement } from '../../../helpers/game.ts';
@@ -151,8 +151,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    if (!target || !attacker) {
-      console.error('Either attacker or target not found');
+    if (!target) {
+      console.error('Target not found');
       return;
     }
 
@@ -173,9 +173,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     
     // Execute attacker luck
     const attackerLuckResult: Luck = attackerLuck(attacker, target, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
-    
+    dealedDamage = attackerLuckResult.dealedDamage;
+
     // Execute defender luck
-    const defenderLuckResult: Luck = defenderLuck(attackerLuckResult.dealedDamage, target);
+    const defenderLuckResult: Luck = defenderLuck(dealedDamage, target);
     dealedDamage = defenderLuckResult.dealedDamage;
 
     // Construct the return data JSON.
@@ -188,15 +189,13 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
     
-    // method to change the player attributes in ONLINE_USERS
-    const finalDamage = 20;
-    applyDamageToPlayer(target._id, finalDamage);
-    // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
-    sendAttackInformationToWeb(io,attackJSON);
-        
+    // Update player's attributes in ONLINE_USERS
+    applyDamage(target._id, dealedDamage);
+
+    // Send data to web
+    sendAttackInformationToWeb(io, attackJSON);
 
     // When web finishes animation , server listens to WEB_TARGET_PLAYER and emits to mobile the updatedPlayer
-
     // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
 

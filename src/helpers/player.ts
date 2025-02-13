@@ -81,7 +81,7 @@ export const isMortimerDisconnected = (socketId: string): boolean => {
   return isMortimerDisconnected;
 };
 
-export const applyDamageToPlayer = (id: string, damage: number): void => {
+export const applyDamage = (id: string, damage: number): void => {
   const player = findPlayerById(id);
   if (player) {player.attributes.hit_points -= damage;}
 };
