@@ -1,12 +1,13 @@
 import { DEFENSE_LUCK_RULES, ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
+import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
+import { DefenderLuck } from '../interfaces/DefenderLuck.ts';
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
 import { nextRoundStartFirst, noDamageReceived } from './game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { playerMock } from '../__mocks__/players.ts';
-import { AttackerLuck } from '../interfaces/AttackerLuck.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -32,7 +33,7 @@ export const hasLuck = (luckRolls: number[]): boolean => {
 export const applyDefenseLuck = (defender: Player) => {
   const roll = Die100.roll();
   const defenseLuck = getDefenseLuckConstant(roll);
-  let rollMessage;
+  let rollMessage = '';
   
   switch(defenseLuck){
   case DEFENSE_LUCK_EFFECTS.NO_DAMAGE_RECEIVED:
@@ -62,13 +63,14 @@ export const getAttackLuckConstant = (luckRoll: number): number => {
   return getValueFromRule(ATTACK_LUCK_RULES, luckRoll);
 };
 
-export const defenderLuck = (defender: Player) => {
-
+export const defenderLuck = (defender: Player): DefenderLuck => {
+  
   const defenderLuckRolls = luckRolls(defender.attributes.charisma);
   const defenderHasLuck = hasLuck(defenderLuckRolls);
   if(defenderHasLuck){
     const applyLuckResult = applyDefenseLuck(defender);
-    return {defenderLuckRolls,defenderHasLuck, applyLuckResult};
+    const defenderLuckMessage = applyLuckResult;
+    return {defenderLuckRolls,defenderHasLuck, defenderLuckMessage};
   }
 };
 

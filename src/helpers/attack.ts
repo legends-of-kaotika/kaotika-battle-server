@@ -5,6 +5,7 @@ import { Player } from '../interfaces/Player.ts';
 import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES, CRITICAL_MOD1, CRITICAL_MOD2 } from '../constants/combatRules.ts';
 import { Equipment } from '../interfaces/Equipment.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
+import { Attack } from '../interfaces/Attack.ts';
 
 
 export const adjustAtributes = (player: Player): Player => {
@@ -142,5 +143,37 @@ export const attack = (target: Player, attacker: Player, attackRoll: number, suc
     hitDamage = 0;
     attackType = 'FUMBLE';
   }
-  return { hitDamage, attackType };
+  return {hitDamage, attackType};
+};
+
+export const attackData = (targetPlayerId: string, hit_points: number,criticalPercentage: number,normalPercentage: number,failedPercentage: number,fumblePercentage: number,attackerHasLuck: boolean,attackerLuckRolls: number[],defenderHasLuck: boolean,defenderLuckRolls: number[],attackerLuckMessage: string,defenderLuckMessage: string, attackRoll: number, attackerDealedDamage: number): Attack[] => {
+  const attackJSON: Attack[] = [
+    {
+      attack: {
+        targetPlayerId: targetPlayerId,
+        hit_points: hit_points,
+        percentages: {
+          critical: criticalPercentage,
+          normal: normalPercentage,
+          failed: failedPercentage,
+          fumble: fumblePercentage
+        },
+        dieRoll: attackRoll,
+        dealedDamage: attackerDealedDamage
+      },
+      luck: {
+        attacker: {
+          hasLuck: attackerHasLuck,
+          luckRolls: attackerLuckRolls,
+          luckRollMessage: attackerLuckMessage
+        },
+        defender: {
+          hasLuck: defenderHasLuck,
+          luckRolls: defenderLuckRolls,
+          luckRollMessage: defenderLuckMessage
+        }
+      }
+    }
+  ];
+  return attackJSON;
 };
