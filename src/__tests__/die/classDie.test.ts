@@ -11,16 +11,20 @@ describe('Test Die class ant its methods', () => {
       expect(die10['modifier']).toBe(2);
     });
 
-    it('should roll the die correctly', () => {
-      const roll = die10.roll();
-      expect(roll).toBeGreaterThanOrEqual(2);
-      expect(roll).toBeLessThanOrEqual(9);
+    it('should roll the die correctly multiple times', () => {
+      for (let i = 0; i < 100; i++) {
+        const roll = die10.roll();
+        expect(roll).toBeGreaterThanOrEqual(3); // Minimum possible roll (1 * num_die)
+        expect(roll).toBeLessThanOrEqual(9); // Maximum possible roll (num_faces * num_die)
+      }
     });
 
-    it('should roll the die correctly with modifier', () => {
-      const rollWithModifier = die10.rollWithModifier();
-      expect(rollWithModifier).toBeGreaterThanOrEqual(5);
-      expect(rollWithModifier).toBeLessThanOrEqual(11);
+    it('should roll the die correctly with modifier multiple times', () => {
+      for (let i = 0; i < 100; i++) {
+        const rollWithModifier = die10.rollWithModifier();
+        expect(rollWithModifier).toBeGreaterThanOrEqual(5); // Minimum possible roll + modifier
+        expect(rollWithModifier).toBeLessThanOrEqual(11); // Maximum possible roll + modifier
+      }
     });
   });
 });

@@ -10,6 +10,7 @@ import {
   sendUserDataToWeb,
   sendNotEnoughPlayers,
   sendUpdatedPlayerToAll,
+  sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
   findPlayerById
@@ -160,7 +161,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
     const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
-    const attackerLuckResult: AttackerLuck = attackerLuck(target,attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
+    const attackerLuckResult: AttackerLuck = attackerLuck(attacker, target, attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
     const defenderLuckResult: DefenderLuck = defenderLuck(target);
     
     const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
@@ -180,8 +181,9 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
     //Emits the attack results to mobile clients
-    // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
-  
+    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+    sendAttackInformationToWeb(io,attackJSON);
+        
     //sendAttackDataToWeb
 
     //There is a socket.on of web-targetPlayer that receives server when web finishes animation of attack . Once server listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.

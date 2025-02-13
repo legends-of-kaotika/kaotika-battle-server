@@ -15,12 +15,12 @@ export type Attack = {
    attacker: {
      hasLuck: boolean,
      luckRolls: number[],
-     luckRollMessage:string,
+     luckRollMessage?:string | undefined,
    },
    defender: {
      hasLuck: boolean,
      luckRolls:  number[],
-     luckRollMessage: string,
+     luckRollMessage: string | undefined,
    }
  }
 };
