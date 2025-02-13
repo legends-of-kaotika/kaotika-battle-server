@@ -162,7 +162,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
     const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
     const attackerLuckResult: AttackerLuck = attackerLuck(attacker, target, attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
-    const defenderLuckResult: DefenderLuck = defenderLuck(target);
+    const defenderLuckResult: DefenderLuck = defenderLuck(attackerLuckResult.dealedDamage, target);
     
     const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
     const normalPercentage = successPercentage - criticalPercentage;
