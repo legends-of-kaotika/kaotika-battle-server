@@ -1,5 +1,6 @@
 export type DefenderLuck = {
     defenderLuckMessage?:string, 
     defenderLuckRolls: number[], 
-    defenderHasLuck: boolean
+    defenderHasLuck: boolean,
+    receivedDamage: number
 };
