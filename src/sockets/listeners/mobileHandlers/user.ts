@@ -9,7 +9,6 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers,
-  sendUpdatedPlayerToAll,
   sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
@@ -44,7 +43,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if (newPlayerConnected) {
-      socket.join(SOCKETS.MOBILE);
+      socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
       sendUserDataToWeb(io, newPlayerConnected);
     }
   });
@@ -180,14 +179,14 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const defenderLuckMessage = defenderLuckResult.defenderLuckMessage;
 
     const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
-    //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+    
+    // method to change the player attributes in ONLINE_USERS
+
+    // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
     sendAttackInformationToWeb(io,attackJSON);
         
-    //sendAttackDataToWeb
 
-    //There is a socket.on of web-targetPlayer that receives server when wweb finishes animation of attack . Once web listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.
-
+    // When web finishes animation , server listens to server-targetPlayer and emits to mobile updatedPlayer
 
     // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
