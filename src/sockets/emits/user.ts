@@ -76,6 +76,12 @@ export const sendUpdatedPlayerToAll = (io: Server, id:string, updatedAttributes:
   io.emit(SOCKETS.UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage, isBetrayer: isBetrayer});
 };
 
+// Sends the target players(id) with the attributes updated and the total damage to mobile
+export const sendUpdatedPlayerToMobile = (io: Server, id:string, updatedAttributes:Attribute, totalDamage:number, isBetrayer:boolean): void => {
+  logUnlessTesting(`Emitting ${SOCKETS.UPDATE_PLAYER} socket message with ${id} id, the total damage, updated attributes and isBetrayer`);
+  io/*.to(mobileRoom)*/.emit(SOCKETS.UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage, isBetrayer: isBetrayer});
+};
+
 // Sends the players(id) that has been disconnected
 export const sendPlayerRemoved = (io: Server, player:Player): void => {
   logUnlessTesting(`Emitting ${SOCKETS.REMOVE_PLAYER} socket message with ${player._id} id`);

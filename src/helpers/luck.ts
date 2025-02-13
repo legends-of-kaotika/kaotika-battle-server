@@ -28,21 +28,21 @@ export const luckRolls = (charisma: number): number[] => {
 };
 
 export const hasLuck = (luckRolls: number[]): boolean => {
-  return luckRolls.some(roll => roll<20);
+  return luckRolls.some(roll => roll < 20);
 };
 
 export const applyDefenseLuck = (defender: Player) => {
   const roll = Die100.roll();
   const defenseLuck = getDefenseLuckConstant(roll);
   let rollMessage = '';
-  
-  switch(defenseLuck){
+
+  switch (defenseLuck) {
   case DEFENSE_LUCK_EFFECTS.NO_DAMAGE_RECEIVED:
     noDamageReceived();
     rollMessage = 'No damage receive';
     // No damage receiverd func
     break;
-  
+
   case DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND:
     if(idPlayerFirstTurn === null){
       setPlayerFirstTurnId(defender._id);
@@ -59,7 +59,7 @@ export const applyDefenseLuck = (defender: Player) => {
   return rollMessage;
 };
 
-export const getDefenseLuckConstant = (luckRoll: number) : number => {
+export const getDefenseLuckConstant = (luckRoll: number): number => {
   return getValueFromRule(DEFENSE_LUCK_RULES, luckRoll);
 };
 
@@ -68,20 +68,33 @@ export const getAttackLuckConstant = (luckRoll: number): number => {
 };
 
 export const defenderLuck = (defender: Player): DefenderLuck => {
-  
+
   const defenderLuckRolls = luckRolls(defender.attributes.charisma);
   const defenderHasLuck = hasLuck(defenderLuckRolls);
-  if(defenderHasLuck){
+  if (defenderHasLuck) {
     const applyLuckResult = applyDefenseLuck(defender);
     const defenderLuckMessage = applyLuckResult;
-    return {defenderLuckRolls,defenderHasLuck, defenderLuckMessage};
+    return { defenderLuckRolls, defenderHasLuck, defenderLuckMessage };
   }
+  return { defenderHasLuck, defenderLuckRolls };
+};
+export const attackerLuck = (defender: Player, dealedDamageWithOutLuck: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): AttackerLuck => {
+
+  const attackerLuckRolls = luckRolls(defender.attributes.charisma);
+  const attackerHasLuck = hasLuck(attackerLuckRolls);
+  if (attackerHasLuck) {
+    const applyLuckResult = applyAttackLuck(dealedDamageWithOutLuck, attackType, weaponRoll, attackPercentage, criticalPercentage);
+    const attackerLuckMessage = applyLuckResult.rollMessage;
+    const dealedDamage = applyLuckResult.dealedDamage;
+    return { attackerLuckRolls, attackerHasLuck, attackerLuckMessage, dealedDamage };
+  }
+  return { attackerHasLuck, attackerLuckRolls };
 };
 
 const attacker = playerMock;
 const defender = playerMock;
 
-export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): AttackerLuck => {
+export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): ApplyAttackLuck => {
 
   const roll = Die100.roll();
   let rollMessage = 'The luck roll has no effect';
@@ -103,7 +116,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     if (attackType !== 'NORMAL') {
       break;
     }
-    
+
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
     rollMessage = 'The attack has been transformed into critical.';
     break;
@@ -113,11 +126,11 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     const oldDealedDamage = dealedDamage;
     const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
-    rollMessage = `The attack has been increased +${dealedDamage-oldDealedDamage}`;
+    rollMessage = `The attack has been increased +${dealedDamage - oldDealedDamage}`;
 
     break;
 
-  } 
+  }
   }
 
   return {
