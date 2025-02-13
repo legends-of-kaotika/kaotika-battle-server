@@ -80,3 +80,8 @@ export const isMortimerDisconnected = (socketId: string): boolean => {
   const isMortimerDisconnected = ONLINE_USERS.some((user)=> (user.socketId === socketId && user.role === 'mortimer'));
   return isMortimerDisconnected;
 };
+
+export const applyDamageToPlayer = (id: string, damage: number): void => {
+  const player = findPlayerById(id);
+  if (player) {player.attributes.hit_points -= damage;}
+};

@@ -9,10 +9,10 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
   sendNotEnoughPlayers,
-  sendUpdatedPlayerToAll,
   sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
+  applyDamageToPlayer,
   findPlayerById
 } from '../../../helpers/player.ts';
 import { checkStartGameRequirement } from '../../../helpers/game.ts';
@@ -44,7 +44,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if (newPlayerConnected) {
-      socket.join(SOCKETS.MOBILE);
+      socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
       sendUserDataToWeb(io, newPlayerConnected);
     }
   });
@@ -162,7 +162,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
     const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
     const attackerLuckResult: AttackerLuck = attackerLuck(attacker, target, attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
-    const defenderLuckResult: DefenderLuck = defenderLuck(target);
+    const defenderLuckResult: DefenderLuck = defenderLuck(attackerLuckResult.dealedDamage, target);
     
     const attackerDealedDamage = attackerLuckResult.dealedDamage || 0;
     const normalPercentage = successPercentage - criticalPercentage;
@@ -181,12 +181,18 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     const attackJSON  = attackData(target._id,target.attributes.hit_points,criticalPercentage, normalPercentage, failedPercentage,fumblePercentage,attackerHasLuck,attackerLuckRolls,defenderHasLuck,defenderLuckRolls,attackerLuckMessage,defenderLuckMessage, attackRoll, attackerDealedDamage);
 
+    // method to change the player attributes in ONLINE_USERS
+    const finalDamage = 20;
+    applyDamageToPlayer(target._id, finalDamage);
+    // sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
     sendAttackInformationToWeb(io,attackJSON);
-    //Emits the attack results to mobile clients
-    sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
+        
 
+    // When web finishes animation , server listens to WEB_TARGET_PLAYER and emits to mobile the updatedPlayer
 
-    //There is a socket.on of web-targetPlayer that receives server when wweb finishes animation of attack . Once web listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.
+    // ifPlayerDies
+    // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
+
   });
 
 };

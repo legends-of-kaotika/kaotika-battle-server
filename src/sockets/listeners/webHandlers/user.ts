@@ -1,9 +1,10 @@
 import { Server, Socket } from 'socket.io';
-import { sendConnectedUsersArrayToWeb } from '../../emits/user.ts';
+import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
 import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
 import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_TARGET_PLAYER } from '../../../constants/sockets.ts';
-import { findIfIsDeath } from '../../../helpers/player.ts';
+import { findIfIsDeath, findPlayerById } from '../../../helpers/player.ts';
+
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
 
@@ -32,7 +33,12 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   // When attack animation ends, receives whose values changed in animation
   socket.on(WEB_TARGET_PLAYER, async (DefenderId: string, AttackerId: string ) => {
     console.log(`web attack animation end socket of ${AttackerId} message listened`);
-    // sendUpdatedPlayerToMobile();
+
+    const updatedPlayer = findPlayerById(DefenderId);
+    const updatedPlayerAttributes = updatedPlayer?.attributes;
+    if(updatedPlayerAttributes){
+      sendUpdatedPlayerToMobile(io, DefenderId, updatedPlayerAttributes);
+    }
 
     //DEATH
     findIfIsDeath(DefenderId,AttackerId);
