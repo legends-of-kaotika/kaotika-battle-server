@@ -36,20 +36,20 @@ export const applyDefenseLuck = (damageReceived: number, defender: Player) : app
 
   const roll = Die100.roll();
   const defenseLuck = getDefenseLuckConstant(roll);
-  let rollMessage = 'The roll has no effect';
+  let rollMessage = LUCK_MESSAGE.NO_EFFECT;
   
   switch(defenseLuck){
 
   case DEFENSE_LUCK_EFFECTS.NO_DAMAGE_RECEIVED:
     damageReceived = 0;
-    rollMessage = 'The attack has been dodged';
+    rollMessage = LUCK_MESSAGE.DODGE;
     break;
   
   case DEFENSE_LUCK_EFFECTS.START_NEXT_ROUND:
 
     if(idPlayerFirstTurn === null){
       setPlayerFirstTurnId(defender._id);
-      rollMessage = 'Defender start next round';
+      rollMessage = LUCK_MESSAGE.TURN_EFFECT;
     }
     break;
   }
@@ -128,7 +128,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
 
     const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
-    rollMessage = `${LUCK_MESSAGE.ATTACK_INCREASE}+${dealedDamage - oldDealedDamage}`;
+    rollMessage = `${LUCK_MESSAGE.ATTACK_INCREASE} +${dealedDamage - oldDealedDamage}`;
 
     break;
 
