@@ -79,6 +79,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
 
   const roll = Die100.roll();
   let rollMessage = 'The luck roll has no effect';
+  const oldDealedDamage = dealedDamage;
 
   const attackLuckConstant = getDefenseLuckConstant(roll);
 
@@ -96,12 +97,11 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     }
     
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
-    rollMessage = 'The attack has been transformed into critical.';
+    rollMessage = `The attack has been transformed into critical (+${dealedDamage-oldDealedDamage})`;
     break;
 
   } case ATTACK_LUCK_EFFECTS.NORMAL_ATTACK_INCREASE: {
 
-    const oldDealedDamage = dealedDamage;
     const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
     rollMessage = `The attack has been increased +${dealedDamage-oldDealedDamage}`;
