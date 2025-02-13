@@ -31,6 +31,7 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   // When attack animation ends, receives whose values changed in animation
   socket.on(WEB_TARGET_PLAYER, async (_id: string) => {
     console.log(`web attack animation end socket of ${_id} message listened`);
+    //get the updated player to send to mobile
     // sendUpdatedPlayerToMobile();
   });
 };

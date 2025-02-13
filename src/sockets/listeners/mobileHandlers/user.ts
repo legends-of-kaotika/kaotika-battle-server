@@ -43,7 +43,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if (newPlayerConnected) {
-      socket.join(SOCKETS.MOBILE);
+      socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
       sendUserDataToWeb(io, newPlayerConnected);
     }
   });
@@ -185,7 +185,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
         
     //sendAttackDataToWeb
 
-    //There is a socket.on of web-targetPlayer that receives server when wweb finishes animation of attack . Once web listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.
+    //There is a socket.on of web-targetPlayer that receives server when web finishes animation of attack . Once server listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.
 
 
     // ifPlayerDies
