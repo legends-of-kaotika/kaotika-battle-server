@@ -182,6 +182,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     //Emits the attack results to mobile clients
     sendUpdatedPlayerToAll(io, target._id, target.attributes, 20, target.isBetrayer);
 
+        
+    //sendAttackDataToWeb
+
+    //There is a socket.on of web-targetPlayer that receives server when wweb finishes animation of attack . Once web listens to that event, inside emits to mobile updated player. TALK WITH MENDIBURU FOR MORE INFO.
+
+
     // ifPlayerDies
     // sendKilledPlayer(io, '2345030d'); //sends to everyone ??
 
