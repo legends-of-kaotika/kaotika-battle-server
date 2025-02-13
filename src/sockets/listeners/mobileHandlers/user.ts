@@ -158,7 +158,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage);
+    const attackResult = attack(target,attacker,attackRoll,successPercentage,criticalPercentage,weaponRoll);
     const attackerLuckResult: AttackerLuck = applyAttackLuck(attackResult.hitDamage,attackResult.attackType,weaponRoll,attackRoll,criticalPercentage);
     defenderLuck(target);
     //Emits the attack results to mobile clients
