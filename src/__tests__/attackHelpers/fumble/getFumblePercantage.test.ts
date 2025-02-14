@@ -2,29 +2,20 @@
 import { getFumblePercentage } from '../../../helpers/attack.ts';
 
 describe('getFumblePercentage', () => {
+
   it('should return the correct Fumble percentage', () => {
-    const successPercentage = 20;
-    const result = getFumblePercentage(31, successPercentage);
-    expect(result).toBe(75);
+    const result = getFumblePercentage(31, 20); // Result 6.2
+    expect(result).toBe(6);
   });
 
   it('should handle zero CFP correctly', () => {
-    const successPercentage = 20;
-    const result = getFumblePercentage(0, successPercentage);
-    expect(result).toBe(100);
+    const result = getFumblePercentage(0, 20);
+    expect(result).toBe(0);
   });
 
   it('should handle zero success percentage correctly', () => {
-    const successPercentage = 0;
-    const result = getFumblePercentage(31, successPercentage);
-    expect(result).toBe(69);
+    const result = getFumblePercentage(31, 0);
+    expect(result).toBe(0);
   });
 
-
-  it('should always round down to the nearest integer', () => {
-    const successPercentage = 20;
-    const result = getFumblePercentage(31, successPercentage);
-    // 100-(100-20)*31/100 = 75.2
-    expect(result).toBe(75);
-  });
 });

@@ -1,16 +1,15 @@
-import { GAME_ONLINE_USERS_MOCK, gamePlayerMock } from '../../__mocks__/game/gamePlayerMock.ts';
 import { removePlayerFromConectedUsersById } from '../../helpers/player.ts';
+import { ONLINE_USERS } from '../../game.ts';
+import { GAME_ONLINE_USERS_MOCK } from '../../__mocks__/game/gamePlayerMock.ts';
 
+describe('Test removePlayerFromConectedUsersById', () => {
+  beforeEach(() => {
+    ONLINE_USERS.splice(0, ONLINE_USERS.length, ...GAME_ONLINE_USERS_MOCK);
+  });
 
-describe('test function the removePlayerFromOnline associated to handlePlayerDeath', () => {
-
-  it('should remove correctly from the ONLINE_USER array', () => {
-    GAME_ONLINE_USERS_MOCK.push(gamePlayerMock);
-
-    removePlayerFromConectedUsersById('12345', GAME_ONLINE_USERS_MOCK);
-    expect(GAME_ONLINE_USERS_MOCK).toHaveLength(3);
-    expect(GAME_ONLINE_USERS_MOCK[0]).not.toEqual(gamePlayerMock);
-    expect(GAME_ONLINE_USERS_MOCK[1]).not.toEqual(gamePlayerMock);
-    expect(GAME_ONLINE_USERS_MOCK[2]).not.toEqual(gamePlayerMock);
+  it('should remove correctly from the ONLINE_USERS array', () => {
+    removePlayerFromConectedUsersById('12345');
+    expect(ONLINE_USERS).toHaveLength(3);
+    expect(ONLINE_USERS.find(player => player._id === '12345')).toBeUndefined();
   });
 });

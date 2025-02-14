@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
-import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
+import { isGameStarted, ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
 import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_TARGET_PLAYER } from '../../../constants/sockets.ts';
 import {  findPlayerById, findPlayerDead, handlePlayerDeath } from '../../../helpers/player.ts';
@@ -24,10 +24,14 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   // When the turn ends
   socket.on(WEB_TURN_END, async () => {
     console.log('web-turnEnd socket message listened. Check if the game has to end.');
-    if (eachSideHasPlayers(io, ONLINE_USERS)) {
-      console.log('Changing to the next turn.');
-      changeTurn();
+ 
+    if (isGameStarted) {
+      if (eachSideHasPlayers(io, ONLINE_USERS)) {
+        console.log('Changing to the next turn.');
+        changeTurn();
+      }
     }
+
   });
 
   // When attack animation ends, receives whose values changed in animation
@@ -36,13 +40,14 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`${WEB_TARGET_PLAYER} socket listened: web attack animation ended`);
 
     const updatedPlayer = findPlayerById(defenderId);
-    const updatedPlayerAttributes = updatedPlayer?.attributes;
+    if (updatedPlayer){
+      const updatedPlayerAttributes = updatedPlayer.attributes;
+      const updatedPlayerIsBetrayer = updatedPlayer.isBetrayer;
 
-    // Send the updated player's attributes to mobile
-    if(updatedPlayerAttributes){
-      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes);
+      // Send the updated player's attributes to mobile
+      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
     }
-
+    
     // Death
     const deadPlayer = findPlayerDead();
     if (deadPlayer?._id) {

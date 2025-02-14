@@ -213,6 +213,7 @@ export const gamePlayerMock: Player =
   },
   inventory: { healing_potions: [], antidote_potions: [], enhancer_potions: [] },
   status: { ethaziumCurse: false, common_diseases: [], tired: false },
+  isAlive: true
 };
 
 export const GAME_ONLINE_USERS_MOCK = [...ONLINE_USERS_MOCK];

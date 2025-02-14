@@ -20,9 +20,9 @@ export const REMOVE_PLAYER = 'removePlayer';
 export const GAME_END = 'gameEnd';
 export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
 export const KILLED_PLAYER = 'send-killedPlayer';
-export const CURRENT_ROUND = 'send-currentRound';
+export const WEB_CURRENT_ROUND = 'web-currentRound';
 export const ATTACK_INFORMATION = 'web-attackInformation';
-export const RESET_GAME = 'gameReset';
+export const GAME_RESET = 'gameReset';
 
 // ---- LISTENERS ---- //
 
@@ -35,6 +35,8 @@ export const MOBILE_SELECT_HEAL = 'mobile-selectHeal';
 export const MOBILE_SELECT_CURSE = 'mobile-selectCurse';
 export const MOBILE_SELECT_USE_POTION = 'mobile-selectUsePotion';
 export const MOBILE_ATTACK = 'mobile-attack';
+export const MOBILE_RESET_GAME = 'mobile-gameReset';
+
 
 // Web
 

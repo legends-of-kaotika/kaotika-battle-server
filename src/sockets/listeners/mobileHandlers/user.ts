@@ -22,6 +22,7 @@ import { startTimer } from '../../../timer/timer.ts';
 import {
   ONLINE_USERS,
   currentPlayer,
+  resetInitialGameValues,
   round,
   setCurrentPlayer,
   setGameStarted,
@@ -30,14 +31,17 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage } from '../../../helpers/attack.ts';
-import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
+import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
+import { logUnlessTesting } from '../../../helpers/utils.ts';
 
 
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
+  sendResetGame(socket, io);
+
 
   // Receive socketId + email from clientMobile
   socket.on(SOCKETS.MOBILE_SEND_SOCKET_ID, async (email: string) => {
@@ -156,6 +160,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
+    // Adjust player attributes
+    adjustAtributes(attacker);
+    adjustAtributes(target);
+
     // Get general variables.
     const attackRoll = getAttackRoll();
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
@@ -169,14 +177,20 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const failedPercentage = (100 - fumblePercentage) - successPercentage;
 
     // Get the attack damage and attack type
-    const attackResult = attack(target, attacker, attackRoll, successPercentage, criticalPercentage, weaponRoll);
+    const attackerReduced = attackerReducedForAttack(attacker);
+    const defenderReduced = defenderReducedForAttack(target);
+    const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
     
+    // Construct attacker and defender player reduced
+    const luckAttacker = attackerReducedForLuck(attacker);
+    const luckDefender = defenderReducedForLuck(target);
+
     // Execute attacker luck
-    const attackerLuckResult: Luck = attackerLuck(attacker, target, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+    const attackerLuckResult: Luck = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
     dealedDamage = attackerLuckResult.dealedDamage;
 
     // Execute defender luck
-    const defenderLuckResult: Luck = defenderLuck(dealedDamage, target);
+    const defenderLuckResult: Luck = defenderLuck(dealedDamage, luckDefender);
     dealedDamage = defenderLuckResult.dealedDamage;
 
     // Construct the return data JSON.
@@ -187,7 +201,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       fumble: fumblePercentage
     };
 
-    const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
     
     // Update player's attributes in ONLINE_USERS
     applyDamage(target._id, dealedDamage);
@@ -197,4 +211,14 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
   });
 
+};
+
+const sendResetGame = (socket : Socket, io: Server) : void => {
+  socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
+    resetInitialGameValues();
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_RESET_GAME} to all`);
+    io.emit(SOCKETS.GAME_RESET, () => {
+      logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
+    });
+  });
 };
