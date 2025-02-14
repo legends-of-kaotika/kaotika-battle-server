@@ -8,7 +8,7 @@ import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { AttackJson } from '../interfaces/AttackJson.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
-
+import { ATTACK_TYPES } from '../constants/combatRules.ts';
 
 export const adjustAtributes = (player: Player): Player => {
 
@@ -120,32 +120,46 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
 
 // ---- MAIN FLOW FUNCTION ---- // 
 
+const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage:number, fumblePercentage: number) => {
+
+  let attackType: AttackTypes;
+
+  if (attackRoll <= criticalPercentage) {
+    attackType = ATTACK_TYPES.CRITICAL;
+  } else if (attackRoll <= successPercentage) {
+    attackType = ATTACK_TYPES.NORMAL;
+  } else if (attackRoll <= 100 - fumblePercentage) {
+    attackType = ATTACK_TYPES.FAILED;
+  } else {
+    attackType = ATTACK_TYPES.FUMBLE;
+  }
+
+  return attackType;
+
+};
+
 export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number, weaponRoll: number) => {
   target = adjustAtributes(attacker);
   attacker = adjustAtributes(target);
 
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
+
+  const attackType = getAttackType(attackRoll, successPercentage, criticalPercentage, fumblePercentage);
+
   let dealedDamage: number;
-  let attackType: AttackTypes;
-  if (attackRoll <= criticalPercentage) {
-    const critMod1 = getCriticalAttackModifier1(attackRoll, criticalPercentage);
-    const critMod2 = getCriticalAttackModifier2(attackRoll, criticalPercentage);
-    dealedDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, critMod1, critMod2);
-    attackType = 'CRITICAL';
+
+  switch(attackType) {
+  case ATTACK_TYPES.CRITICAL: {
+    dealedDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, attackRoll, criticalPercentage);
   }
-  else if (attackRoll <= successPercentage) {
-    const totalDefense = attacker.attributes.defense + attacker.equipment.armor.defense;
-    const defMod = getDefenseModificator(totalDefense);
-    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, defMod);
-    attackType = 'NORMAL';
+  case ATTACK_TYPES.NORMAL: {
+    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, target.attributes.defense);
   }
-  else if (attackRoll <= 100 - fumblePercentage) {
+  case ATTACK_TYPES.FAILED: {
     dealedDamage = 0;
-    attackType = 'FAILED';
   }
-  else {
+  case ATTACK_TYPES.FUMBLE: {
     dealedDamage = 0;
-    attackType = 'FUMBLE';
   }
   
   return {dealedDamage, attackType};
