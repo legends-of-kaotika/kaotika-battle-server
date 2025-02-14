@@ -83,9 +83,9 @@ export const sendAttackInformationToWeb = (io: Server, attackJSON: AttackJson): 
 };
 
 // Sends the target players(id) with the attributes updated and the total damage to mobile
-export const sendUpdatedPlayerToMobile = (io: Server, id:string, updatedAttributes:Attribute): void => {
+export const sendUpdatedPlayerToMobile = (io: Server, id:string, updatedAttributes:Attribute, isBetrayer: boolean): void => {
   logUnlessTesting(`Emitting ${SOCKETS.UPDATE_PLAYER} socket message with ${id} id, the total damage, updated attributes and isBetrayer`);
-  io.to(SOCKETS.MOBILE).emit(SOCKETS.UPDATE_PLAYER, { _id: id, attributes: updatedAttributes});
+  io.to(SOCKETS.MOBILE).emit(SOCKETS.UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, isBetrayer: isBetrayer});
 };
 
 // Sends the players(id) that has been disconnected
