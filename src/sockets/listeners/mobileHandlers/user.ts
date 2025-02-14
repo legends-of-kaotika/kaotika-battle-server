@@ -31,7 +31,7 @@ import {
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
-import { attackerLuck, attackerReducedToLuck, defenderLuck, defenderReducedToLuck } from '../../../helpers/luck.ts';
+import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
 
@@ -173,18 +173,20 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const failedPercentage = (100 - fumblePercentage) - successPercentage;
 
     // Get the attack damage and attack type
-    const attackResult = attack(target, attacker, attackRoll, successPercentage, criticalPercentage, weaponRoll);
+    const attackerReduced = attackerReducedForAttack(attacker);
+    const defenderReduced = defenderReducedForAttack(target);
+    const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
     
     // Construct attacker and defender player reduced
-    const attackerReduced = attackerReducedToLuck(attacker);
-    const defenderReduced = defenderReducedToLuck(target);
+    const luckAttacker = attackerReducedForLuck(attacker);
+    const luckDefender = defenderReducedForLuck(target);
 
     // Execute attacker luck
-    const attackerLuckResult: Luck = attackerLuck(attackerReduced, defenderReduced, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+    const attackerLuckResult: Luck = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
     dealedDamage = attackerLuckResult.dealedDamage;
 
     // Execute defender luck
-    const defenderLuckResult: Luck = defenderLuck(dealedDamage, defenderReduced);
+    const defenderLuckResult: Luck = defenderLuck(dealedDamage, luckDefender);
     dealedDamage = defenderLuckResult.dealedDamage;
 
     // Construct the return data JSON.

@@ -8,8 +8,10 @@ import { Player } from '../interfaces/Player.ts';
 import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
 import { ApplyLuck } from '../interfaces/ApplyLuck.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
-import { DefenderReduced as LuckDefender } from '../interfaces/LuckDefender.ts';
-import { AttackerReduced as LuckAttacker } from '../interfaces/LuckAttacker.ts';
+import { LuckDefender as LuckDefender } from '../interfaces/LuckDefender.ts';
+import { LuckAttacker as LuckAttacker } from '../interfaces/LuckAttacker.ts';
+import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
+import { ReducedDefender } from '../interfaces/ReducedDefender.ts';
 
 export const luckRolls = (charisma: number): number[] => {
 
@@ -139,7 +141,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
 
 };
 
-export const defenderReducedToLuck = (defender: Player): LuckDefender => {
+export const defenderReducedForLuck = (defender: Player): LuckDefender => {
 
   return {
     _id: defender._id,
@@ -151,7 +153,7 @@ export const defenderReducedToLuck = (defender: Player): LuckDefender => {
   };
 };
 
-export const attackerReducedToLuck = (attacker: Player): LuckAttacker => {
+export const attackerReducedForLuck = (attacker: Player): LuckAttacker => {
 
   return {
     _id: attacker._id,
@@ -160,5 +162,23 @@ export const attackerReducedToLuck = (attacker: Player): LuckAttacker => {
       BCFA: attacker.attributes.BCFA,
       attack: attacker.attributes.attack
     }
+  };
+};
+
+export const attackerReducedForAttack = (attacker: Player): ReducedAttacker => {
+  return {
+    attributes: {
+      BCFA: attacker.attributes.BCFA,
+      attack: attacker.attributes.attack
+    }
+  };
+};
+
+export const defenderReducedForAttack = (defender: Player): ReducedDefender => {
+  return {
+    attributes: {
+      defense: defender.attributes.defense
+    },
+    equipment: defender.equipment
   };
 };

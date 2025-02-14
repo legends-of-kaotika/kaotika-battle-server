@@ -9,6 +9,8 @@ import { AttackJson } from '../interfaces/AttackJson.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
+import { ReducedDefender } from '../interfaces/ReducedDefender.ts';
+import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
 
 export const adjustAtributes = (player: Player) => {
 
@@ -138,17 +140,14 @@ export const getAttackType = (attackRoll: number, successPercentage: number, cri
 
 };
 
-export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number, weaponRoll: number) => {
-
-  const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
+export const attack = (target: ReducedDefender, attacker: ReducedAttacker, attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number, weaponRoll: number) => {
 
   const attackType = getAttackType(attackRoll, successPercentage, criticalPercentage, fumblePercentage);
-
   let dealedDamage: number = 0;
 
   switch(attackType) {
   case ATTACK_TYPES.CRITICAL: 
-    dealedDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, attackRoll, criticalPercentage);
+    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackRoll, criticalPercentage);
     break;
   case ATTACK_TYPES.NORMAL: 
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, target.attributes.defense);

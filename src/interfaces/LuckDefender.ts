@@ -1,6 +1,6 @@
 import { Equipment } from './Equipment.ts';
 
-export type DefenderReduced = {
+export type LuckDefender = {
     _id: string,
     attributes: {
       charisma: number,
