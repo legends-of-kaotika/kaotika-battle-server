@@ -120,7 +120,7 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
 
 // ---- MAIN FLOW FUNCTION ---- // 
 
-const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage:number, fumblePercentage: number) => {
+export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage:number, fumblePercentage: number) => {
 
   let attackType: AttackTypes;
 
@@ -139,8 +139,8 @@ const getAttackType = (attackRoll: number, successPercentage: number, criticalPe
 };
 
 export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number, weaponRoll: number) => {
-  target = adjustAtributes(attacker);
-  attacker = adjustAtributes(target);
+  target = adjustAtributes(target);
+  attacker = adjustAtributes(attacker);
 
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
 
