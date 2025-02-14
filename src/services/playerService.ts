@@ -125,6 +125,7 @@ export const filterPlayerData = (data: PlayerPopulated): Player => {
       common_diseases: [],
       tired: false,
     },
+    isAlive : true
   };
   return player;
 };
