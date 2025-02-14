@@ -21,20 +21,20 @@ describe('adjustAtributes', () => {
       }
     } as Player;
     
-    const adjustedPlayer = adjustAtributes(player);
-    expect(adjustedPlayer.attributes.intelligence).toBe(11);
-    expect(adjustedPlayer.attributes.dexterity).toBe(5);
-    expect(adjustedPlayer.attributes.constitution).toBe(9);
-    expect(adjustedPlayer.attributes.insanity).toBe(100);
-    expect(adjustedPlayer.attributes.charisma).toBe(7);
-    expect(adjustedPlayer.attributes.strength).toBe(7);
-    expect(adjustedPlayer.attributes.hit_points).toBe(50);
-    expect(adjustedPlayer.attributes.attack).toBe(0);
-    expect(adjustedPlayer.attributes.defense).toBe(13);
-    expect(adjustedPlayer.attributes.magic_resistance).toBe(3);
-    expect(adjustedPlayer.attributes.CFP).toBe(13);
-    expect(adjustedPlayer.attributes.BCFA).toBe(8);
-    expect(adjustedPlayer.attributes.resistance).toBe(5);
+    adjustAtributes(player);
+    expect(player.attributes.intelligence).toBe(11);
+    expect(player.attributes.dexterity).toBe(5);
+    expect(player.attributes.constitution).toBe(9);
+    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.charisma).toBe(7);
+    expect(player.attributes.strength).toBe(7);
+    expect(player.attributes.hit_points).toBe(50);
+    expect(player.attributes.attack).toBe(0);
+    expect(player.attributes.defense).toBe(13);
+    expect(player.attributes.magic_resistance).toBe(3);
+    expect(player.attributes.CFP).toBe(13);
+    expect(player.attributes.BCFA).toBe(8);
+    expect(player.attributes.resistance).toBe(5);
   });
 
   it('should enforce minimum value rules', () => {
@@ -56,19 +56,19 @@ describe('adjustAtributes', () => {
       }
     }as Player;
     
-    const adjustedPlayer = adjustAtributes(player);
-    expect(adjustedPlayer.attributes.intelligence).toBe(1);
-    expect(adjustedPlayer.attributes.dexterity).toBe(1);
-    expect(adjustedPlayer.attributes.constitution).toBe(1);
-    expect(adjustedPlayer.attributes.insanity).toBe(100);
-    expect(adjustedPlayer.attributes.charisma).toBe(1);
-    expect(adjustedPlayer.attributes.strength).toBe(1);
-    expect(adjustedPlayer.attributes.hit_points).toBe(1);
-    expect(adjustedPlayer.attributes.defense).toBe(1);
-    expect(adjustedPlayer.attributes.magic_resistance).toBe(1);
-    expect(adjustedPlayer.attributes.CFP).toBe(10);
-    expect(adjustedPlayer.attributes.BCFA).toBe(1);
-    expect(adjustedPlayer.attributes.resistance).toBe(1);
+    adjustAtributes(player);
+    expect(player.attributes.intelligence).toBe(1);
+    expect(player.attributes.dexterity).toBe(1);
+    expect(player.attributes.constitution).toBe(1);
+    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.charisma).toBe(1);
+    expect(player.attributes.strength).toBe(1);
+    expect(player.attributes.hit_points).toBe(1);
+    expect(player.attributes.defense).toBe(1);
+    expect(player.attributes.magic_resistance).toBe(1);
+    expect(player.attributes.CFP).toBe(10);
+    expect(player.attributes.BCFA).toBe(1);
+    expect(player.attributes.resistance).toBe(1);
   });
 
   it('should enforce minimum and maximum values for insanity', () => {
@@ -78,12 +78,12 @@ describe('adjustAtributes', () => {
       }
     }as Player;
     
-    const adjustedPlayer = adjustAtributes(player);
-    expect(adjustedPlayer.attributes.insanity).toBe(1);
+    adjustAtributes(player);
+    expect(player.attributes.insanity).toBe(1);
 
     player.attributes.insanity = 150;
-    const adjustedPlayerMax = adjustAtributes(player);
-    expect(adjustedPlayerMax.attributes.insanity).toBe(100);
+    adjustAtributes(player);
+    expect(player.attributes.insanity).toBe(100);
   });
 });
 
