@@ -187,7 +187,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       fumble: fumblePercentage
     };
 
-    const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
     
     // Update player's attributes in ONLINE_USERS
     applyDamage(target._id, dealedDamage);
