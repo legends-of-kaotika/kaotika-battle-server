@@ -1,5 +1,4 @@
-import { resetInitialGameValues } from '../../game.ts';
-import { isGameStarted, ONLINE_USERS, target, currentPlayer, turn, round } from '../../game.ts';
+import { currentPlayer, isGameStarted, ONLINE_USERS, resetInitialGameValues, round, target, turn } from '../../game.ts';
 
 describe('test the resetInitialGameValues', () => {
   it('should reset the game values', () => {
@@ -11,4 +10,4 @@ describe('test the resetInitialGameValues', () => {
     expect(turn).toBe(0);
     expect(round).toBe(1);
   });
-});
+}); 

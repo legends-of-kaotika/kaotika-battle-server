@@ -27,7 +27,6 @@ export const adjustAtributes = (player: Player) => {
       player.attributes[key] = Math.max(1, Math.min(100, player.attributes[key] as number));
     }
   });
-
 };
 
 export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
