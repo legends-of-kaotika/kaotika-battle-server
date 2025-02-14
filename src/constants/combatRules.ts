@@ -1,4 +1,12 @@
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from './game.ts';
+import { AttackTypes } from '../interfaces/AttackTypes.ts';
+
+export const ATTACK_TYPES: Record<string, AttackTypes> = {
+  NORMAL: 'NORMAL',
+  CRITICAL: 'CRITICAL',
+  FUMBLE: 'FUMBLE',
+  FAILED: 'FAILED'
+};
 
 export const DEFENSE_RULES = [
   {max: 100, value: 0},

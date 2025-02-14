@@ -43,29 +43,29 @@ export const isPlayerConnected = (email: string): boolean => {
   return ONLINE_USERS.some((player) => (player.email === email));
 };
 
-export const isPlayerConnectedById = (id : string, onlinePlayers: Player[]) : boolean => {
-  return onlinePlayers.some((player) => player._id === id);
+export const isPlayerConnectedById = (id : string) : boolean => {
+  return ONLINE_USERS.some((player) => player._id === id);
 };
 
-export function handlePlayerDeath(id: string, onlinePlayers: Player[]) : void{
-  const isConnected = isPlayerConnectedById(id, onlinePlayers);
+export function handlePlayerDeath(id: string) : void{
 
+  const isConnected = isPlayerConnectedById(id);
   if(!isConnected) return;
 
   sendKilledPlayer(io, id);
-  removePlayerFromConectedUsersById(id, onlinePlayers);
+  removePlayerFromConectedUsersById(id);
 }
 
-export function removePlayerFromConectedUsersById(id: string, onlinePlayers: Player[]) : void{
-  const index = onlinePlayers.findIndex(player => player._id === id);
+export function removePlayerFromConectedUsersById(id: string) : void{
+  const index = ONLINE_USERS.findIndex(player => player._id === id);
   if(index === -1){
     logUnlessTesting(`FAILED to delete player with the id ${id} dont exist in ONLINE USER array`);
     return;
   }
-  onlinePlayers.splice(index, 1);
+  ONLINE_USERS.splice(index, 1);
 }
-export const findPlayerDead = (onlinePlayers: Player[] ): Player | undefined => {
-  const player = onlinePlayers.find(player => player.attributes.hit_points <= 0);
+export const findPlayerDead = (): Player | undefined => {
+  const player = ONLINE_USERS.find(player => player.attributes.hit_points <= 0);
   return player;
 };
 

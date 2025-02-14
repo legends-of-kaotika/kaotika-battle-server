@@ -20,7 +20,7 @@ export const REMOVE_PLAYER = 'removePlayer';
 export const GAME_END = 'gameEnd';
 export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
 export const KILLED_PLAYER = 'send-killedPlayer';
-export const CURRENT_ROUND = 'send-currentRound';
+export const WEB_CURRENT_ROUND = 'web-currentRound';
 export const ATTACK_INFORMATION = 'web-attackInformation';
 export const GAME_RESET = 'gameReset';
 
