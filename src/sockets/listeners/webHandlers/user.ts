@@ -3,7 +3,7 @@ import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../e
 import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
 import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_TARGET_PLAYER } from '../../../constants/sockets.ts';
-import { findIfIsDeath, findPlayerById } from '../../../helpers/player.ts';
+import {  findPlayerById, findPlayerDead, handlePlayerDeath } from '../../../helpers/player.ts';
 
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
@@ -31,16 +31,23 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   });
 
   // When attack animation ends, receives whose values changed in animation
-  socket.on(WEB_TARGET_PLAYER, async (DefenderId: string, AttackerId: string ) => {
-    console.log(`web attack animation end socket of ${AttackerId} message listened`);
+  socket.on(WEB_TARGET_PLAYER, async (defenderId: string) => {
 
-    const updatedPlayer = findPlayerById(DefenderId);
-    const updatedPlayerAttributes = updatedPlayer?.attributes;
-    if(updatedPlayerAttributes){
-      sendUpdatedPlayerToMobile(io, DefenderId, updatedPlayerAttributes);
+    console.log(`${WEB_TARGET_PLAYER} socket listened: web attack animation ended`);
+
+    const updatedPlayer = findPlayerById(defenderId);
+    if (updatedPlayer){
+      const updatedPlayerAttributes = updatedPlayer.attributes;
+      const updatedPlayerIsBetrayer = updatedPlayer.isBetrayer;
+
+      // Send the updated player's attributes to mobile
+      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
     }
-
-    //DEATH
-    findIfIsDeath(DefenderId,AttackerId);
+    
+    // Death
+    const deadPlayer = findPlayerDead();
+    if (deadPlayer?._id) {
+      handlePlayerDeath(deadPlayer._id);
+    }
   });
 };

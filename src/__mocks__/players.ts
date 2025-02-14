@@ -1,5 +1,3 @@
- 
-
 import { Player } from '../interfaces/Player.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 
@@ -216,6 +214,7 @@ export const ONLINE_USERS_MOCK: Player[] =
     },
     inventory: { healing_potions: [], antidote_potions: [], enhancer_potions: [] },
     status: { ethaziumCurse: false, common_diseases: [], tired: false },
+    isAlive: true
   },
   {
     _id: '66decc4ff42d4a193db77e71',
@@ -428,6 +427,7 @@ export const ONLINE_USERS_MOCK: Player[] =
     },
     inventory: { healing_potions: [], antidote_potions: [], enhancer_potions: [] },
     status: { ethaziumCurse: false, common_diseases: [], tired: false },
+    isAlive: true
   },
   {
     _id: '66dec6ab4c27dff822d80066',
@@ -642,6 +642,7 @@ export const ONLINE_USERS_MOCK: Player[] =
     },
     inventory: { healing_potions: [], antidote_potions: [], enhancer_potions: [] },
     status: { ethaziumCurse: false, common_diseases: [], tired: false },
+    isAlive: true
   },
 ];
 
@@ -857,6 +858,7 @@ export const playerMock: Player =
   },
   inventory: { healing_potions: [], antidote_potions: [], enhancer_potions: [] },
   status: { ethaziumCurse: false, common_diseases: [], tired: false },
+  isAlive: true
 };
 
 export const attributesMock: Attribute = 

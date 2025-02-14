@@ -73,8 +73,4 @@ export const nextRoundStartFirst = (id: string, players: Player[]) : void => {
   players.unshift(player);
 };
 
-export const noDamageReceived = () : void => {
-  
-};
-
 

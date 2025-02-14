@@ -3,11 +3,12 @@ import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import Client from 'socket.io-client';
 import { ONLINE_USERS_MOCK, playerMock } from '../../__mocks__/players.ts';
-import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/sockets.ts';
+import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, WEB_CURRENT_ROUND, WEB_SEND_USER, WEB_SET_SELECTED_PLAYER } from '../../constants/sockets.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
 import { Player } from '../../interfaces/Player.ts';
 import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToAll, sendUserDataToWeb } from '../../sockets/emits/user.ts';
+import { sendCurrentRound } from '../../sockets/emits/game.ts';
 
 describe('Socket.IO server tests', () => {
   let io: Server;
@@ -100,6 +101,12 @@ describe('Socket.IO server tests', () => {
         expect(arg._id).toEqual(playerMock._id); // expect a player, check ids
       });
       sendUserDataToWeb(io, playerMock);
+    });
+    test('should return the actual round and ordered players in divided arrays', ()=> {
+      clientSocket.on(WEB_CURRENT_ROUND, (arg:number) => {
+        expect(arg).toEqual(2);
+      });
+      sendCurrentRound(io, 2);
     });
   });
 
