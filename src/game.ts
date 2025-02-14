@@ -54,7 +54,7 @@ export const resetInitialGameValues = (): void => {
   turn = 0;
   round = 1;
   // Empty the players array
-  while (ONLINE_USERS.length > 1) {
+  while (ONLINE_USERS.length > 0) {
     ONLINE_USERS.pop();
   };
 };

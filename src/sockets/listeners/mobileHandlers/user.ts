@@ -22,6 +22,7 @@ import { startTimer } from '../../../timer/timer.ts';
 import {
   ONLINE_USERS,
   currentPlayer,
+  resetInitialGameValues,
   round,
   setCurrentPlayer,
   setGameStarted,
@@ -34,10 +35,13 @@ import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, get
 import { attackerLuck, defenderLuck } from '../../../helpers/luck.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
+import { logUnlessTesting } from '../../../helpers/utils.ts';
 
 
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
+  sendResetGame(socket, io);
+
 
   // Receive socketId + email from clientMobile
   socket.on(SOCKETS.MOBILE_SEND_SOCKET_ID, async (email: string) => {
@@ -197,4 +201,14 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
   });
 
+};
+
+const sendResetGame = (socket : Socket, io: Server) : void => {
+  socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
+    resetInitialGameValues();
+    logUnlessTesting(`sendign the emit ${SOCKETS.MOBILE_RESET_GAME} to all`);
+    io.emit(SOCKETS.GAME_RESET, () => {
+      logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
+    });
+  });
 };
