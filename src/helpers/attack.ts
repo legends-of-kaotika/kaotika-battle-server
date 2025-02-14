@@ -146,22 +146,23 @@ export const attack = (target: Player, attacker: Player, attackRoll: number, suc
 
   const attackType = getAttackType(attackRoll, successPercentage, criticalPercentage, fumblePercentage);
 
-  let dealedDamage: number;
+  let dealedDamage: number = 0;
 
   switch(attackType) {
-  case ATTACK_TYPES.CRITICAL: {
+  case ATTACK_TYPES.CRITICAL: 
     dealedDamage = getCriticalHitDamage(target.attributes.BCFA, weaponRoll, attackRoll, criticalPercentage);
-  }
-  case ATTACK_TYPES.NORMAL: {
+    break;
+  case ATTACK_TYPES.NORMAL: 
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, target.attributes.defense);
-  }
-  case ATTACK_TYPES.FAILED: {
+    break;
+  case ATTACK_TYPES.FAILED:
     dealedDamage = 0;
-  }
-  case ATTACK_TYPES.FUMBLE: {
+    break;
+  case ATTACK_TYPES.FUMBLE:
     dealedDamage = 0;
+    break;
   }
-  
+
   return {dealedDamage, attackType};
 };
 
