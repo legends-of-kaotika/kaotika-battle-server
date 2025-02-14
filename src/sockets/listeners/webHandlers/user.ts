@@ -36,14 +36,14 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`${WEB_TARGET_PLAYER} socket listened: web attack animation ended`);
 
     const updatedPlayer = findPlayerById(defenderId);
-    const updatedPlayerAttributes = updatedPlayer?.attributes;
-    const updatedPlayerIsBetrayer = updatedPlayer?.isBetrayer;
+    if (updatedPlayer){
+      const updatedPlayerAttributes = updatedPlayer.attributes;
+      const updatedPlayerIsBetrayer = updatedPlayer.isBetrayer;
 
-    // Send the updated player's attributes to mobile
-    if(updatedPlayerAttributes && updatedPlayerIsBetrayer){
+      // Send the updated player's attributes to mobile
       sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
     }
-
+    
     // Death
     const deadPlayer = findPlayerDead();
     if (deadPlayer?._id) {
