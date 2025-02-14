@@ -37,10 +37,11 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
 
     const updatedPlayer = findPlayerById(defenderId);
     const updatedPlayerAttributes = updatedPlayer?.attributes;
+    const updatedPlayerIsBetrayer = updatedPlayer?.isBetrayer;
 
     // Send the updated player's attributes to mobile
-    if(updatedPlayerAttributes){
-      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes);
+    if(updatedPlayerAttributes && updatedPlayerIsBetrayer){
+      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
     }
 
     // Death
