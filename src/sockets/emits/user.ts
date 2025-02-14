@@ -71,12 +71,6 @@ export const gameStartToAll = (io: Server): void => {
 };
 
 // Sends the target players(id) with the attributes updated and the total damage
-// export const sendUpdatedPlayerToAll = (io: Server, id: string, updatedAttributes: Attribute, totalDamage: number, isBetrayer: boolean): void => {
-//   logUnlessTesting(`Emitting ${SOCKETS.UPDATE_PLAYER} socket message with ${id} id, the total damage, updated attributes and isBetrayer`);
-//   io.emit(SOCKETS.UPDATE_PLAYER, { _id: id, attributes: updatedAttributes, totalDamage: totalDamage, isBetrayer: isBetrayer });
-// };
-
-// Sends the target players(id) with the attributes updated and the total damage
 export const sendAttackInformationToWeb = (io: Server, attackJSON: AttackJson): void => {
   logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message, with attack information`);
   io.to(webSocketId).emit(SOCKETS.ATTACK_INFORMATION, attackJSON);
