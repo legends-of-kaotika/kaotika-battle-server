@@ -30,7 +30,7 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage } from '../../../helpers/attack.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
 import { attackerLuck, attackerReducedToLuck, defenderLuck, defenderReducedToLuck } from '../../../helpers/luck.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
@@ -155,6 +155,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       console.error('Target not found');
       return;
     }
+
+    // Adjust player attributes
+    adjustAtributes(attacker);
+    adjustAtributes(target);
 
     // Get general variables.
     const attackRoll = getAttackRoll();
