@@ -156,6 +156,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
+    // Adjust player attributes
+    adjustAtributes(attacker);
+    adjustAtributes(target);
+
     // Get general variables.
     const attackRoll = getAttackRoll();
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);

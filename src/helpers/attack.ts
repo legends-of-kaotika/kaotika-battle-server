@@ -10,7 +10,7 @@ import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 
-export const adjustAtributes = (player: Player): Player => {
+export const adjustAtributes = (player: Player) => {
 
   const attributes = Object.keys(player.attributes) as (keyof Player['attributes'])[];
 
@@ -25,7 +25,7 @@ export const adjustAtributes = (player: Player): Player => {
       player.attributes[key] = Math.max(1, Math.min(100, player.attributes[key] as number));
     }
   });
-  return player;
+
 };
 
 export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
@@ -139,8 +139,6 @@ export const getAttackType = (attackRoll: number, successPercentage: number, cri
 };
 
 export const attack = (target: Player, attacker: Player, attackRoll: number, successPercentage: number, criticalPercentage: number, weaponRoll: number) => {
-  target = adjustAtributes(attacker);
-  attacker = adjustAtributes(target);
 
   const fumblePercentage = getFumblePercentage(target.attributes.CFP, successPercentage);
 
