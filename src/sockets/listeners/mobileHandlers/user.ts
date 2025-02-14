@@ -206,7 +206,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 const sendResetGame = (socket : Socket, io: Server) : void => {
   socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
     resetInitialGameValues();
-    logUnlessTesting(`sendign the emit ${SOCKETS.MOBILE_RESET_GAME} to all`);
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_RESET_GAME} to all`);
     io.emit(SOCKETS.GAME_RESET, () => {
       logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
     });
