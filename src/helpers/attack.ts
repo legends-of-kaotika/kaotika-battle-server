@@ -56,7 +56,7 @@ export const getAttackRoll = (): number => {
 
 export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return weaponBasePercentage + Math.ceil(playerDexterity / 3) + insMod;
+  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 3) + insMod);
 };
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
@@ -122,7 +122,7 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
 
 // ---- MAIN FLOW FUNCTION ---- // 
 
-export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage:number, fumblePercentage: number) => {
+export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) => {
 
   let attackType: AttackTypes;
 
@@ -145,11 +145,11 @@ export const attack = (target: ReducedDefender, attacker: ReducedAttacker, attac
   const attackType = getAttackType(attackRoll, successPercentage, criticalPercentage, fumblePercentage);
   let dealedDamage: number = 0;
 
-  switch(attackType) {
-  case ATTACK_TYPES.CRITICAL: 
+  switch (attackType) {
+  case ATTACK_TYPES.CRITICAL:
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackRoll, criticalPercentage);
     break;
-  case ATTACK_TYPES.NORMAL: 
+  case ATTACK_TYPES.NORMAL:
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, target.attributes.defense);
     break;
   case ATTACK_TYPES.FAILED:
@@ -160,17 +160,18 @@ export const attack = (target: ReducedDefender, attacker: ReducedAttacker, attac
     break;
   }
 
-  return {dealedDamage, attackType};
+  return { dealedDamage, attackType };
 };
 
-export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number): AttackJson => {
+export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number, attackType: string): AttackJson => {
   return {
     attack: {
       targetPlayerId: targetPlayerId,
       hit_points: hit_points,
       percentages: percentages,
       dieRoll: attackRoll,
-      dealedDamage: attackerDealedDamage
+      dealedDamage: attackerDealedDamage,
+      attackType: attackType
     },
     luck: {
       attacker: {

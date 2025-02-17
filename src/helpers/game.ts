@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { io } from '../../index.ts';
-import { ONLINE_USERS, currentPlayer, increaseTurn, isGameStarted, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
+import { ONLINE_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
@@ -35,9 +35,11 @@ export const changeTurn = () => {
 
 // Check if there are at least 1 player from each side
 export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
+
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
-  if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0) && isGameStarted) {
+  
+  if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
     sendGameEnd(io, 'Draw');
     resetInitialGameValues();
     gameHasPlayers = false;
@@ -50,6 +52,7 @@ export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
     resetInitialGameValues();
     gameHasPlayers = false;
   }
+
   clearTimer();
   return gameHasPlayers;
 };
