@@ -31,7 +31,6 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
         changeTurn();
       }
     }
-
   });
 
   // When attack animation ends, receives whose values changed in animation

@@ -8,3 +8,10 @@ export const LUCK_MESSAGE = {
   ATTACKER_NO_LUCK: 'The attacker has no luck',
   DEFENDER_NO_LUCK: 'The defender has no luck'
 };
+
+export const FUMBLE_MESSAGE = {
+  slash: 'Is slash',
+  fairytale: 'Is fairytale',
+  hack: 'Is hack',
+  scythe: 'Is scythe'
+};

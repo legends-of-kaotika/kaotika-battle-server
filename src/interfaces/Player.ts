@@ -27,4 +27,5 @@ export interface Player {
   role: string,
   isBetrayer: boolean,
   isAlive: boolean
+  eruditoGlasses?: boolean,
 }

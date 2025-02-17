@@ -6,7 +6,6 @@ import { applyAttackLuck, attackerLuck, hasLuck, luckRolls } from '../../helpers
 import { AttackTypes } from '../../interfaces/AttackTypes.ts';
 import { Player } from '../../interfaces/Player.ts';
 
-// Mockeando solo las funciones específicas
 jest.spyOn(require('../../helpers/luck'), 'luckRolls').mockImplementation(() => [10, 15]);
 jest.spyOn(require('../../helpers/luck'), 'hasLuck').mockImplementation(() => true);
 jest.spyOn(require('../../helpers/luck'), 'applyAttackLuck').mockImplementation(() => ({
@@ -25,7 +24,7 @@ describe('attackerLuck function', () => {
   const criticalPercentage = 20;
 
   beforeEach(() => {
-    jest.clearAllMocks(); // Limpia los mocks antes de cada test
+    jest.clearAllMocks(); 
   });
 
   it('should apply attack luck when attacker has luck', () => {

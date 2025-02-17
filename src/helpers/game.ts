@@ -28,9 +28,11 @@ export const changeTurn = () => {
   increaseTurn();
   const nextPlayer = ONLINE_USERS[turn];
   setCurrentPlayer(nextPlayer);
-  assignTurn(io, currentPlayer!);
-  clearTimer();
-  startTimer();
+  if (currentPlayer) {
+    assignTurn(io, currentPlayer);
+    clearTimer();
+    startTimer();
+  }
 };
 
 // Check if there are at least 1 player from each side
