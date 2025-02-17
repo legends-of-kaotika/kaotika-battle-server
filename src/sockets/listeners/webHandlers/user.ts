@@ -25,11 +25,12 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   socket.on(WEB_TURN_END, async () => {
     console.log('web-turnEnd socket message listened. Check if the game has to end.');
  
-    if (eachSideHasPlayers(io, ONLINE_USERS)) {
-      console.log('Changing to the next turn.');
-      changeTurn();
+    if (isGameStarted) {
+      if (eachSideHasPlayers(io, ONLINE_USERS)) {
+        console.log('Changing to the next turn.');
+        changeTurn();
+      }
     }
-
   });
 
   // When attack animation ends, receives whose values changed in animation
