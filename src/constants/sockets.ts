@@ -1,6 +1,4 @@
 
-{/* SOCKET CONSTANTS */ }
-
 // ROOMS
 export const MOBILE = 'mobile';
 
@@ -21,6 +19,10 @@ export const UPDATE_PLAYER = 'updatePlayer';
 export const REMOVE_PLAYER = 'removePlayer';
 export const GAME_END = 'gameEnd';
 export const NOT_ENOUGH_PLAYERS = 'mobile-insufficientPlayers';
+export const KILLED_PLAYER = 'send-killedPlayer';
+export const WEB_CURRENT_ROUND = 'web-currentRound';
+export const ATTACK_INFORMATION = 'web-attackInformation';
+export const GAME_RESET = 'gameReset';
 
 // ---- LISTENERS ---- //
 
@@ -33,6 +35,8 @@ export const MOBILE_SELECT_HEAL = 'mobile-selectHeal';
 export const MOBILE_SELECT_CURSE = 'mobile-selectCurse';
 export const MOBILE_SELECT_USE_POTION = 'mobile-selectUsePotion';
 export const MOBILE_ATTACK = 'mobile-attack';
+export const MOBILE_RESET_GAME = 'mobile-gameReset';
+
 
 // Web
 
@@ -40,7 +44,5 @@ export const WEB_SEND_USERS = 'web-sendUsers';
 export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
+export const WEB_TARGET_PLAYER = 'web-targetPlayer';
 
-// Timer
-
-export const TURN_TIMER = 30;

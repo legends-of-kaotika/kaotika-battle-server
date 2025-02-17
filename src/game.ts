@@ -1,7 +1,10 @@
-import { ONLINE_USERS_MOCK } from './__mocks__/players.ts';
+import { io } from '../index.ts';
+import { nextRoundStartFirst } from './helpers/game.ts';
+import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
 import { Player } from './interfaces/Player.ts';
+import { sendCurrentRound } from './sockets/emits/game.ts';
 
-export const ONLINE_USERS: Player[] = [ONLINE_USERS_MOCK[0]];
+export const ONLINE_USERS: Player[] = [];
 export let webSocketId: string = '';
 
 export let target: Player | undefined;
@@ -9,6 +12,7 @@ export let currentPlayer: Player | undefined;
 export let turn: number = 0;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
+export let idPlayerFirstTurn: string | null = null;
 
 //changes the websocketId
 export const setWebSocket = (socketId: string): void => {
@@ -28,7 +32,7 @@ export const setCurrentPlayer = (player: Player): void => {
 //changes the turn number
 export const increaseTurn = (): void => {
   turn++;
-  if (turn === (ONLINE_USERS.length)) { // if last player turn, follow with the first player of the array
+  if (turn >= (ONLINE_USERS.length)) { // if last player turn, follow with the first player of the array
     turn = 0;
     increaseRound();
   }
@@ -38,6 +42,16 @@ export const increaseTurn = (): void => {
 export const increaseRound = (): void => {
   round++;
   console.log('Round: ', round, ' Fight!');
+  sendCurrentRound(io,round);
+  // Sort players by successes, charisma, dexterity
+  const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
+  sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
+  // Sort player if got luck
+  if (idPlayerFirstTurn) {
+    nextRoundStartFirst(idPlayerFirstTurn, ONLINE_USERS);
+    // Reset player first by luck
+    idPlayerFirstTurn = null;
+  }
 };
 
 // Sets the game state
@@ -56,4 +70,8 @@ export const resetInitialGameValues = (): void => {
   while (ONLINE_USERS.length > 0) {
     ONLINE_USERS.pop();
   };
+};
+
+export const setPlayerFirstTurnId =  (id: string | null) : void => {
+  idPlayerFirstTurn = id;
 };

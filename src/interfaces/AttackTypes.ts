@@ -1,0 +1,1 @@
+export type AttackTypes = 'NORMAL' | 'CRITICAL' | 'FUMBLE' | 'FAILED'

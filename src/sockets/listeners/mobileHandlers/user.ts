@@ -8,19 +8,21 @@ import {
   sendSelectedPlayerIdToWeb,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
-  sendNotEnoughPlayers
+  sendNotEnoughPlayers,
+  sendAttackInformationToWeb,
 } from '../../emits/user.ts';
 import {
-  checkStartGameRequirement,
-  findPlayerById,
-  insertSocketId,
-  sortPlayersByCharisma
-} from '../../../helpers/helper.ts';
-import * as SOCKETS from '../../../constants/constants.ts';
+  applyDamage,
+  findPlayerById
+} from '../../../helpers/player.ts';
+import { checkStartGameRequirement } from '../../../helpers/game.ts';
+import { insertSocketId } from '../../../helpers/socket.ts';
+import * as SOCKETS from '../../../constants/sockets.ts';
 import { startTimer } from '../../../timer/timer.ts';
 import {
   ONLINE_USERS,
   currentPlayer,
+  resetInitialGameValues,
   round,
   setCurrentPlayer,
   setGameStarted,
@@ -28,17 +30,25 @@ import {
   target,
   turn,
 } from '../../../game.ts';
+import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
+import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
+import { Luck } from '../../../interfaces/Luck.ts';
+import { Percentages } from '../../../interfaces/Percentages.ts';
+import { logUnlessTesting } from '../../../helpers/utils.ts';
 
 
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
+  sendResetGame(socket, io);
+
 
   // Receive socketId + email from clientMobile
   socket.on(SOCKETS.MOBILE_SEND_SOCKET_ID, async (email: string) => {
     console.log(`new player with socketId: ${socket.id} ${email}`);
     const newPlayerConnected = insertSocketId(email, socket.id);
     if (newPlayerConnected) {
-      socket.join(SOCKETS.MOBILE);
+      socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
       sendUserDataToWeb(io, newPlayerConnected);
     }
   });
@@ -48,7 +58,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     console.log(`Socket ${SOCKETS.MOBILE_GAME_START} received`);
 
-    //Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
+    // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (checkStartGameRequirement() === false) {
       console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
       sendNotEnoughPlayers(io, socket.id);
@@ -58,20 +68,23 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       // Set game as started
       setGameStarted(true);
     
-      //sort players by charisma
-      sortPlayersByCharisma(ONLINE_USERS);
+      // Sort players by successes, charisma, dexterity
+      const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
+      sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
 
-      //assign the first player
+      // Assign the first player
       console.log('Round: ', round);
       setCurrentPlayer(ONLINE_USERS[turn]);
 
-      //divide players by loyalty
-      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
+      if (currentPlayer) {
+        // Divide players by loyalty
+        sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
-      //emit first turn player id
-      assignTurn(io, currentPlayer!);
-      gameStartToAll(io);
-      startTimer();
+        // Emit first turn player id
+        assignTurn(io, currentPlayer);
+        gameStartToAll(io);
+        startTimer();
+      }
     }
     
   });
@@ -144,13 +157,70 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       return;
     }
 
-    if (!target || !attacker) {
-      console.error('Either attacker or target not found');
+    if (!target) {
+      console.error('Target not found');
       return;
     }
 
-    //Emits the attack results to mobile clients
-    // sendUpdatedPlayerToAll(io, target._id, target.attributes, totalDmg, target.isBetrayer);
+    // Adjust player attributes
+    adjustAtributes(attacker);
+    adjustAtributes(target);
 
+    // Get general variables.
+    const attackRoll = getAttackRoll();
+    const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
+    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    let dealedDamage: number = 0;
+
+    // Get the percentages of attack types.
+    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
+    const normalPercentage = successPercentage - criticalPercentage;
+    const failedPercentage = (100 - fumblePercentage) - successPercentage;
+
+    // Get the attack damage and attack type
+    const attackerReduced = attackerReducedForAttack(attacker);
+    const defenderReduced = defenderReducedForAttack(target);
+    const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
+    const attackType = attackResult.attackType;
+    // Construct attacker and defender player reduced
+    const luckAttacker = attackerReducedForLuck(attacker);
+    const luckDefender = defenderReducedForLuck(target);
+
+    // Execute attacker luck
+    const attackerLuckResult: Luck = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+    dealedDamage = attackerLuckResult.dealedDamage;
+
+    // Execute defender luck
+    const defenderLuckResult: Luck = defenderLuck(dealedDamage, luckDefender);
+    dealedDamage = defenderLuckResult.dealedDamage;
+
+    // Construct the return data JSON.
+    const percentages: Percentages = {
+      critical: criticalPercentage,
+      normal: normalPercentage,
+      failed: failedPercentage,
+      fumble: fumblePercentage
+    };
+
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage, attackType);
+    
+    // Update player's attributes in ONLINE_USERS
+    applyDamage(target._id, dealedDamage);
+
+    // Send data to web
+    sendAttackInformationToWeb(io, attackJSON);
+
+  });
+
+};
+
+const sendResetGame = (socket : Socket, io: Server) : void => {
+  socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
+    resetInitialGameValues();
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_RESET_GAME} to all`);
+    io.emit(SOCKETS.GAME_RESET, () => {
+      logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
+    });
   });
 };

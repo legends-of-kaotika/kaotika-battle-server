@@ -1,12 +1,5 @@
 import { getInsanityModificator } from '../../helpers/attack.ts';
 
-// ----INS MOD RESULTS---- //
-// 95-100 = 15
-// 90-94 = 10
-// 85-89 = 7
-// 80-84 = 5
-// 35-79 = 0
-// 1-34 = -5
 
 describe('getInsanityModificator',() =>{
   it('should return the rigth percentage of modificator ', () => {
