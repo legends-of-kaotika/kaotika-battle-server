@@ -1,5 +1,5 @@
 import { DEFENSE_RULES } from '../../constants/combatRules.ts';
-import { getValueFromRule, calculateTotalDefense } from '../../helpers/attack.ts';
+import { calculateTotalDefense, getValueFromRule } from '../../helpers/attack.ts';
 
 describe('test de calculate defense mod' , () => {
   it('should calculate correctly the total defense', () => {

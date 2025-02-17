@@ -5,6 +5,7 @@ import { ONLINE_USERS } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -13,7 +14,7 @@ export const findPlayerById = (_id: string): Player | undefined => {
 };
 
 // Returns a player searched by socketid
-export const findPlayerBySocketId = (id: string): Player | undefined => {  
+export const findPlayerBySocketId = (id: string): Player | undefined => {
   const user = ONLINE_USERS.find((player) => player.socketId === id);
   return user;
 };
@@ -24,8 +25,8 @@ export const removePlayerConnected = (socket: Socket, socketId: string): void =>
   if (userIndex != -1) {
     console.log('Player with email', ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId, 'disconnected');
     socket.leave(MOBILE);
-    sendPlayerRemoved(io,ONLINE_USERS[userIndex]);
-    sendPlayerDisconnectedToWeb(io,ONLINE_USERS[userIndex].nickname);
+    sendPlayerRemoved(io, ONLINE_USERS[userIndex]);
+    sendPlayerDisconnectedToWeb(io, ONLINE_USERS[userIndex].nickname);
     ONLINE_USERS.splice(userIndex, 1);
   } else {
     console.log('No players found with the received socket');
@@ -43,22 +44,22 @@ export const isPlayerConnected = (email: string): boolean => {
   return ONLINE_USERS.some((player) => (player.email === email));
 };
 
-export const isPlayerConnectedById = (id : string) : boolean => {
+export const isPlayerConnectedById = (id: string): boolean => {
   return ONLINE_USERS.some((player) => player._id === id);
 };
 
-export function handlePlayerDeath(id: string) : void{
+export function handlePlayerDeath(id: string): void {
 
   const isConnected = isPlayerConnectedById(id);
-  if(!isConnected) return;
+  if (!isConnected) return;
 
   sendKilledPlayer(io, id);
   removePlayerFromConectedUsersById(id);
 }
 
-export function removePlayerFromConectedUsersById(id: string) : void{
+export function removePlayerFromConectedUsersById(id: string): void {
   const index = ONLINE_USERS.findIndex(player => player._id === id);
-  if(index === -1){
+  if (index === -1) {
     logUnlessTesting(`FAILED to delete player with the id ${id} dont exist in ONLINE USER array`);
     return;
   }
@@ -70,11 +71,21 @@ export const findPlayerDead = (): Player | undefined => {
 };
 
 export const isMortimerDisconnected = (socketId: string): boolean => {
-  const isMortimerDisconnected = ONLINE_USERS.some((user)=> (user.socketId === socketId && user.role === 'mortimer'));
+  const isMortimerDisconnected = ONLINE_USERS.some((user) => (user.socketId === socketId && user.role === 'mortimer'));
   return isMortimerDisconnected;
 };
 
 export const applyDamage = (id: string, damage: number): void => {
   const player = findPlayerById(id);
-  if (player) {player.attributes.hit_points -= damage;}
+  if (player) { player.attributes.hit_points -= damage; }
+};
+
+// type NombresAtributos = "intelligence" | "dexterity" | "constitution" | "insanity" | "charisma" | "strength" | "hit_points" | "attack" | "defense" | "magic_resistance" | "CFP" | "BCFA" | "resistance";
+export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribute>) : void => {
+
+  const player = findPlayerById(id);
+
+  if (player) {
+    player.attributes = { ...player.attributes, ...modifiedAttributes};
+  }
 };
