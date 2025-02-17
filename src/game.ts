@@ -1,11 +1,10 @@
 import { io } from '../index.ts';
-import { ONLINE_USERS_MOCK } from './__mocks__/players.ts';
 import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
 import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
 
-export const ONLINE_USERS: Player[] = [ONLINE_USERS_MOCK[0]];
+export const ONLINE_USERS: Player[] = [];
 export let webSocketId: string = '';
 
 export let target: Player | undefined;
