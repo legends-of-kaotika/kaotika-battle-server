@@ -7,7 +7,7 @@ import { EFFECTS_FUMBLE } from '../constants/combatRules.ts';
 export type FumbleType = 'slash'| 'fairytale' | 'hack' | 'scythe';
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
-  return Math.floor(100 -(100 - successPercentage) * playerCFP /100);
+  return Math.floor((100 -(100 - successPercentage)) * playerCFP /100);
 };
 
 export const getCalculationFumbleDamage = (bcfa: number , weaponDieRoll: number ): number => {

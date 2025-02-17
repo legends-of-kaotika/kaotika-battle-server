@@ -31,12 +31,12 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, adjustAtributes } from '../../../helpers/attack.ts';
 import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
-import { applyFumble, getCalculationFumblePercentile, getFumbleEffect } from '../../../helpers/fumble.ts';
+import { applyFumble, getCalculationFumblePercentile, getFumbleEffect, getFumblePercentage } from '../../../helpers/fumble.ts';
 import { Fumble } from '../../../interfaces/Fumble.ts';
 
 
@@ -228,17 +228,16 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       failed: failedPercentage,
       fumble: fumblePercentage
     };
-
-    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage, attackType);
     
     // Update player's attributes in ONLINE_USERS
     applyDamage(target._id, dealedDamage);
+
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage, attackType);
 
     // Send data to web
     sendAttackInformationToWeb(io, attackJSON);
 
   });
-
 };
 
 const sendResetGame = (socket : Socket, io: Server) : void => {

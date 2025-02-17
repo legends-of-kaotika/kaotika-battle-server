@@ -62,9 +62,6 @@ export const getSuccessPercentage = (weaponBasePercentage: number, playerDexteri
   return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 3) + insMod);
 };
 
-export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
-  return Math.floor((100 - (100 - successPercentage)) * playerCFP / 100);
-};
 export const getDefenseModificator = (value: number): number => {
   return getValueFromRule(DEFENSE_RULES, value);
 };
