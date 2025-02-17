@@ -12,6 +12,8 @@ describe('applyFumble method', () => {
     jest.spyOn(fumbleHelpers, 'applyFairytaleDamage').mockReturnValue({eruditoGlasses: true});
     jest.spyOn(fumbleHelpers, 'applyHackDamage').mockReturnValue({dexterity: 20});
     jest.spyOn(fumbleHelpers, 'applyScytheDamage').mockReturnValue({hit_points: 30});
+
+    jest.spyOn(fumbleHelpers, 'getCalculationFumbleDamage').mockReturnValue(20);
   });
 
   afterEach(() => {

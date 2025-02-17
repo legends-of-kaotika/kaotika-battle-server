@@ -33,9 +33,11 @@ import {
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
 import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
-import { Luck } from '../../../interfaces/Luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
+import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
+import { applyFumble, getCalculationFumblePercentile, getFumbleEffect } from '../../../helpers/fumble.ts';
+import { Fumble } from '../../../interfaces/Fumble.ts';
 
 
 
@@ -171,6 +173,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
     let dealedDamage: number = 0;
+    // let dealedObjectDamage: Damage | null = null;
+    let fumble: Fumble | null;
+    // let attackerLuckResult: Luck | null;
+    // let defenderLuckResult: Luck | null;
 
     // Get the percentages of attack types.
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
@@ -183,17 +189,37 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const defenderReduced = defenderReducedForAttack(target);
     const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
     const attackType = attackResult.attackType;
+
+    //----------------------------fumble-----------------------------//
+    if (attackType === ATTACK_TYPES.FUMBLE) {
+      const fumblePercentile = getCalculationFumblePercentile(fumblePercentage, attackRoll);
+      const fumbleEffect = getFumbleEffect(fumblePercentile);
+
+      if (currentPlayer) {
+        fumble = applyFumble(fumbleEffect, currentPlayer.attributes, weaponRoll, fumblePercentile);
+        if (fumble) {
+          // dealedObjectDamage = fumble.damage;
+        }
+      }
+    }
+
+    //----------------------normal, critical, failed------------------//
+    // else {
     // Construct attacker and defender player reduced
     const luckAttacker = attackerReducedForLuck(attacker);
     const luckDefender = defenderReducedForLuck(target);
 
     // Execute attacker luck
-    const attackerLuckResult: Luck = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+    const attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
     dealedDamage = attackerLuckResult.dealedDamage;
 
     // Execute defender luck
-    const defenderLuckResult: Luck = defenderLuck(dealedDamage, luckDefender);
+    const defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
     dealedDamage = defenderLuckResult.dealedDamage;
+
+    // Dealed damage to objectDamage
+    // dealedObjectDamage = {hit_points: dealedDamage};
+    // }
 
     // Construct the return data JSON.
     const percentages: Percentages = {
