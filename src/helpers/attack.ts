@@ -22,11 +22,14 @@ export const adjustAtributes = (player: Player) => {
     // Remaining attributes will have a minimum value of 1
     if (key !== 'insanity' && key !== 'attack') {
       player.attributes[key] = Math.max(1, player.attributes[key] as number);
-      //INS: min 1 - max 100
-    } else if (key === 'insanity') {
-      player.attributes[key] = Math.max(1, Math.min(100, player.attributes[key] as number));
+      //INS: min 1 - max 80
+    } 
+    if (key === 'insanity' || key === 'CFP') {
+      player.attributes[key] = Math.max(1, Math.min(80, player.attributes[key] as number));
     }
   });
+  //adjust BCFA
+  player.attributes['BCFA'] = player.attributes['insanity'] + player.attributes['strength'];
 };
 
 export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
