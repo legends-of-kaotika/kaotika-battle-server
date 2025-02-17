@@ -182,7 +182,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const attackerReduced = attackerReducedForAttack(attacker);
     const defenderReduced = defenderReducedForAttack(target);
     const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
-    
+    const attackType = attackResult.attackType;
     // Construct attacker and defender player reduced
     const luckAttacker = attackerReducedForLuck(attacker);
     const luckDefender = defenderReducedForLuck(target);
@@ -203,7 +203,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       fumble: fumblePercentage
     };
 
-    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage);
+    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage, attackType);
     
     // Update player's attributes in ONLINE_USERS
     applyDamage(target._id, dealedDamage);

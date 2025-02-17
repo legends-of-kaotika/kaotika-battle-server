@@ -6,7 +6,8 @@ export type AttackJson = {
     hit_points: number,
     percentages: Percentages,
     dieRoll: number,
-    dealedDamage: number
+    dealedDamage: number,
+    attackType: string
   },
   luck: {
     attacker: {

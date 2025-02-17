@@ -84,7 +84,13 @@ export const defenderLuck = (originalDealedDamage: number, defender: LuckDefende
 
 // ---- ATTACK  ---- // 
 
-export const attackerLuck = (attacker: LuckAttacker, defender: LuckDefender, baseDealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): Luck => {
+export const attackerLuck = ( attacker: LuckAttacker,
+  defender: LuckDefender,
+  baseDealedDamage: number, 
+  attackType: AttackTypes, 
+  weaponRoll: number, 
+  attackPercentage: number, 
+  criticalPercentage: number ): Luck => {
 
   const attackerLuckRolls = luckRolls(attacker.attributes.charisma);
   const attackerHasLuck = hasLuck(attackerLuckRolls);
