@@ -1,7 +1,6 @@
 import { playerMock } from '../../__mocks__/players.ts';
 import { Die100 } from '../../constants/dies.ts';
 import { DEFENSE_LUCK_EFFECTS } from '../../constants/game.ts';
-import { noDamageReceived } from '../../helpers/game.ts';
 import { setPlayerFirstTurnId } from '../../game.ts';
 import { applyDefenseLuck, getDefenseLuckConstant } from '../../helpers/luck.ts';
 
@@ -50,7 +49,6 @@ describe('applyDefenseLuck function', () => {
   it('should do nothing when defenseLuck is NO_EFFECTS', () => {
     (Die100.roll as jest.Mock).mockReturnValue(34); 
     const res = applyDefenseLuck(3,playerMock);
-    expect(noDamageReceived).not.toHaveBeenCalled();
     expect(setPlayerFirstTurnId).not.toHaveBeenCalled();
     expect(res.luckMessage).toEqual('The luck roll has no effect');
   });

@@ -79,12 +79,18 @@ export const defenderLuck = (originalDealedDamage: number, defender: LuckDefende
     return { hasLuck: defenderHasLuck, luckRolls: defenderLuckRolls, dealedDamage, luckMessage };
   }
 
-  return { hasLuck: defenderHasLuck, luckRolls: defenderLuckRolls, dealedDamage: originalDealedDamage, luckMessage: 'The defender has no luck' };
+  return { hasLuck: defenderHasLuck, luckRolls: defenderLuckRolls, dealedDamage: originalDealedDamage, luckMessage: LUCK_MESSAGE.DEFENDER_NO_LUCK };
 };
 
 // ---- ATTACK  ---- // 
 
-export const attackerLuck = (attacker: LuckAttacker, defender: LuckDefender, baseDealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number): Luck => {
+export const attackerLuck = ( attacker: LuckAttacker,
+  defender: LuckDefender,
+  baseDealedDamage: number, 
+  attackType: AttackTypes, 
+  weaponRoll: number, 
+  attackPercentage: number, 
+  criticalPercentage: number ): Luck => {
 
   const attackerLuckRolls = luckRolls(attacker.attributes.charisma);
   const attackerHasLuck = hasLuck(attackerLuckRolls);
@@ -94,7 +100,7 @@ export const attackerLuck = (attacker: LuckAttacker, defender: LuckDefender, bas
     return { hasLuck: attackerHasLuck, luckRolls: attackerLuckRolls, luckMessage, dealedDamage };
   }
 
-  return { hasLuck: attackerHasLuck, luckRolls: attackerLuckRolls, dealedDamage: baseDealedDamage, luckMessage: 'The attacker has no luck'};
+  return { hasLuck: attackerHasLuck, luckRolls: attackerLuckRolls, dealedDamage: baseDealedDamage, luckMessage: LUCK_MESSAGE.ATTACKER_NO_LUCK};
 };
 
 export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number, attacker: LuckAttacker, defender: LuckDefender): ApplyLuck => {
