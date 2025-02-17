@@ -76,13 +76,15 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       console.log('Round: ', round);
       setCurrentPlayer(ONLINE_USERS[turn]);
 
-      // Divide players by loyalty
-      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
+      if (currentPlayer) {
+        // Divide players by loyalty
+        sendConnectedUsersArrayToAll(io, ONLINE_USERS);
 
-      // Emit first turn player id
-      assignTurn(io, currentPlayer!);
-      gameStartToAll(io);
-      startTimer();
+        // Emit first turn player id
+        assignTurn(io, currentPlayer);
+        gameStartToAll(io);
+        startTimer();
+      }
     }
     
   });

@@ -33,7 +33,7 @@ export const setCurrentPlayer = (player: Player): void => {
 //changes the turn number
 export const increaseTurn = (): void => {
   turn++;
-  if (turn === (ONLINE_USERS.length)) { // if last player turn, follow with the first player of the array
+  if (turn >= (ONLINE_USERS.length)) { // if last player turn, follow with the first player of the array
     turn = 0;
     increaseRound();
   }
