@@ -1,14 +1,14 @@
-import { applyHack} from '../../../helpers/fumble.ts';
+import { applyHackDamage} from '../../../helpers/fumble.ts';
 
 const dexMock = 20;
 
 describe('applyHack method', ()=> {
   it('should return correct amount', ()=> {
-    const hackResult = applyHack(dexMock);
-    expect(hackResult).toBe(10);
+    const hackResult = applyHackDamage(dexMock);
+    expect(hackResult).toEqual({dexterity: 10});
   });
   it('should return at least 1', ()=> {
-    const hackResult = applyHack(1);
-    expect(hackResult).toBe(1);
+    const hackResult = applyHackDamage(1);
+    expect(hackResult).toEqual({dexterity: 1});
   });
 });
