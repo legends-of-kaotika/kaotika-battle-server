@@ -1,4 +1,4 @@
-import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from './game.ts';
+import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS, FUMBLE_EFFECTS } from './game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 
 export const ATTACK_TYPES: Record<string, AttackTypes> = {
@@ -82,4 +82,11 @@ export const ATTACK_RULES_LUCK_MOD = [
   {max: 35, value: 0.2},
   {max: 49, value: 0.4},
   {max: Infinity, value: 0.8}
+];
+
+export const EFFECTS_FUMBLE = [
+  {max: 30, effect: FUMBLE_EFFECTS.SLASH},
+  {max: 60, effect: FUMBLE_EFFECTS.FAIRYTALE},
+  {max: 80, effect: FUMBLE_EFFECTS.HACK},
+  {max: Infinity, effect: FUMBLE_EFFECTS.SCYTHE}
 ];
