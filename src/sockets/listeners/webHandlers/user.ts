@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
-import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
+import { isGameStarted, ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
 import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_TARGET_PLAYER } from '../../../constants/sockets.ts';
 import {  findPlayerById, findPlayerDead, handlePlayerDeath } from '../../../helpers/player.ts';
