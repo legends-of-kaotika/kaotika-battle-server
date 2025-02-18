@@ -5,6 +5,8 @@ import { ONLINE_USERS } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
+import { FumbleDamage } from '../interfaces/Fumble.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 
 // Returns a player searched by id
@@ -75,9 +77,12 @@ export const isMortimerDisconnected = (socketId: string): boolean => {
   return isMortimerDisconnected;
 };
 
-export const applyDamage = (id: string, damage: number): void => {
+export const applyDamage = (id: string, damage: FumbleDamage | null): void => {
   const player = findPlayerById(id);
-  if (player) { player.attributes.hit_points -= damage; }
+  if (damage) {
+    const attributeKey = Object.keys(damage)[0] as keyof Attribute;
+    const attributeValue = Object.values(damage)[0];
+    if (player) { player.attributes[attributeKey] -= attributeValue; }
 };
 
 export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribute>) : void => {
@@ -86,5 +91,6 @@ export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribu
 
   if (player) {
     player.attributes = { ...player.attributes, ...modifiedAttributes};
+  }
   }
 };

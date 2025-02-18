@@ -4,7 +4,7 @@ import * as playerHelpers from '../../helpers/player.ts';
 const mockPlayer = {...ONLINE_USERS_MOCK[0]};
 
 const id = '66decc4ff42d4a193db77e71';
-const damage = 10;
+const damage = {hit_points: 10};
 
 describe('applyDamage method', () => {
 
