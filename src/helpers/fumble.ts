@@ -3,6 +3,7 @@ import { FumbleDamage, Fumble } from '../interfaces/Fumble.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FUMBLE_EFFECTS } from '../constants/game.ts';
 import { EFFECTS_FUMBLE } from '../constants/combatRules.ts';
+import { Player } from '../interfaces/Player.ts';
 
 export type FumbleType = 'slash'| 'fairytale' | 'hack' | 'smash';
 
@@ -30,45 +31,45 @@ export const getFumbleEffect = (fumblePercentile: number ): FumbleType => {
 //----------------------helper for getting fumble-----------------------------//
 
 //apply self damage to the player
-export const applySlashDamage = (calculationFumbleDamage: number): Record <string, number> => {
+export const getSlashDamage = (calculationFumbleDamage: number): Partial<Attribute> => {
   const slashResult = Math.ceil(calculationFumbleDamage / 2);
   return {hit_points: slashResult};
 };
 
 //add erudite glasses to player
-export const applyFairytaleDamage = (): Record <string, boolean> => {
+export const getFairytaleDamage = (): Partial<Player> => {
   return {eruditoGlasses: true};
 };
 
 //halve the dex of currentPlayer forever
-export const applyHackDamage = (currentPlayerDex: number): Record<string, number> => {
+export const getHackDamage = (currentPlayerDex: number): Partial<Attribute> => {
   const hackResult = Math.ceil(currentPlayerDex / 2);
   return {dexterity: hackResult};
 };
 
-export const getFumble = (percentileFumble: number, typeFumble: FumbleType, damageFumble: FumbleDamage): Fumble => {
+export const getFumbleObject = (percentileFumble: number, typeFumble: FumbleType, damageFumble: FumbleDamage): Fumble => {
   return {percentile: percentileFumble, message: FUMBLE_MESSAGE[typeFumble],type: typeFumble, damage: damageFumble};
 };
 
-export const applyFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Attribute, weaponDieRoll: number, percentile: number) => {
+export const getFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Attribute, weaponDieRoll: number, percentile: number) => {
   const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
   switch (fumbleEffect) {
   case FUMBLE_EFFECTS.SLASH: {
-    const slashDamage = applySlashDamage(calculationFumbleDamage);
-    return getFumble(percentile, fumbleEffect, slashDamage); 
+    const slashDamage = getSlashDamage(calculationFumbleDamage);
+    return getFumbleObject(percentile, fumbleEffect, slashDamage); 
   }
   case FUMBLE_EFFECTS.FAIRYTALE: { //change later on 
     const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
-    const slashDamage = applySlashDamage(calculationFumbleDamage);
-    return getFumble(percentile, FUMBLE_EFFECTS.SLASH, slashDamage);
+    const slashDamage = getSlashDamage(calculationFumbleDamage);
+    return getFumbleObject(percentile, FUMBLE_EFFECTS.SLASH, slashDamage);
   }
   case FUMBLE_EFFECTS.HACK: {
-    const hackDamage = applyHackDamage(currentPlayerAttributes.dexterity);
-    return getFumble(percentile, fumbleEffect, hackDamage); 
+    const hackDamage = getHackDamage(currentPlayerAttributes.dexterity);
+    return getFumbleObject(percentile, fumbleEffect, hackDamage); 
   }
   case FUMBLE_EFFECTS.SMASH: {
     const smashDamage = {hit_points: calculationFumbleDamage};
-    return getFumble(percentile, fumbleEffect, smashDamage); 
+    return getFumbleObject(percentile, fumbleEffect, smashDamage); 
   }
   default:
     console.log('Unknown fumble effect');

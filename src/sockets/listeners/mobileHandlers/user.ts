@@ -36,7 +36,7 @@ import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForL
 import { Percentages } from '../../../interfaces/Percentages.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
-import { applyFumble, getCalculationFumblePercentile, getFumbleEffect, getFumblePercentage } from '../../../helpers/fumble.ts';
+import { getCalculationFumblePercentile, getFumble, getFumbleEffect, getFumblePercentage } from '../../../helpers/fumble.ts';
 import { FumbleDamage, Fumble } from '../../../interfaces/Fumble.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 
@@ -198,7 +198,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
       if (attacker) {
         setTarget(attacker); //change target to attacker self player
-        fumble = applyFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
+        fumble = getFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
         if (fumble) {
           dealedObjectDamage = fumble.damage;
         }
