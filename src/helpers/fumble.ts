@@ -62,8 +62,10 @@ export const applyFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: A
     const slashDamage = applySlashDamage(calculationFumbleDamage);
     return getFumble(percentile, fumbleEffect, slashDamage); 
   }
-  case FUMBLE_EFFECTS.FAIRYTALE: {
-    return null;
+  case FUMBLE_EFFECTS.FAIRYTALE: { //change later on 
+    const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
+    const slashDamage = applySlashDamage(calculationFumbleDamage);
+    return getFumble(percentile, FUMBLE_EFFECTS.SLASH, slashDamage);
   }
   case FUMBLE_EFFECTS.HACK: {
     const hackDamage = applyHackDamage(currentPlayerAttributes.dexterity);
@@ -75,7 +77,7 @@ export const applyFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: A
   }
   default:
     console.log('Unknown fumble effect');
-    return null;
+    return undefined;
   }
 };
 

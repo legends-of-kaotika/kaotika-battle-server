@@ -11,6 +11,8 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { ReducedDefender } from '../interfaces/ReducedDefender.ts';
 import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
+import { Damage, Fumble } from '../interfaces/Fumble.ts';
 
 export const adjustAtributes = (player: Player) => {
 
@@ -163,28 +165,44 @@ export const attack = (target: ReducedDefender, attacker: ReducedAttacker, attac
   return { dealedDamage, attackType };
 };
 
-export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number, attackType: string): AttackJson => {
-  return {
+export const parseAttackData = (targetPlayerId: string,
+  targetAttributes: Attribute,
+  percentages: Percentages,
+  attackRoll: number,
+  dealedTargetDamage: Damage | null,
+  attackType: string,
+  attackerLuckResult?: Luck, 
+  defenderLuckResult?: Luck, 
+  fumble?: Fumble 
+// eslint-disable-next-line function-paren-newline
+): AttackJson => {
+  const attackJson: AttackJson = {
     attack: {
       targetPlayerId: targetPlayerId,
-      hit_points: hit_points,
+      attributes: targetAttributes,
       percentages: percentages,
       dieRoll: attackRoll,
-      dealedDamage: attackerDealedDamage,
+      dealedDamage: dealedTargetDamage,
       attackType: attackType
     },
-    luck: {
+  };
+
+  if (attackType !== ATTACK_TYPES.FUMBLE && attackerLuckResult && defenderLuckResult) {
+    attackJson.luck = {
       attacker: {
         hasLuck: attackerLuckResult.hasLuck,
         luckRolls: attackerLuckResult.luckRolls,
         luckRollMessage: attackerLuckResult.luckMessage,
       },
       defender: {
-        hasLuck: defenderLuckResult.hasLuck,
-        luckRolls: defenderLuckResult.luckRolls,
+        hasLuck: defenderLuckResult?.hasLuck,
+        luckRolls: defenderLuckResult?.luckRolls,
         luckRollMessage: defenderLuckResult.luckMessage
       }
-    }
+    };
+  } else if (fumble) {
+    attackJson.fumble = fumble;
   }
-  ;
+
+  return attackJson;
 };

@@ -5,6 +5,8 @@ import { ONLINE_USERS } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
+import { Damage } from '../interfaces/Fumble.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -74,7 +76,11 @@ export const isMortimerDisconnected = (socketId: string): boolean => {
   return isMortimerDisconnected;
 };
 
-export const applyDamage = (id: string, damage: number): void => {
+export const applyDamage = (id: string, damage: Damage | null): void => {
   const player = findPlayerById(id);
-  if (player) {player.attributes.hit_points -= damage;}
+  if (damage) {
+    const attributeKey = Object.keys(damage)[0] as keyof Attribute;
+    const attributeValue = Object.values(damage)[0];
+    if (player) {player.attributes[attributeKey] -= attributeValue;}
+  }
 };

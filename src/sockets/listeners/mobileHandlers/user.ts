@@ -37,7 +37,8 @@ import { Percentages } from '../../../interfaces/Percentages.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
 import { applyFumble, getCalculationFumblePercentile, getFumbleEffect, getFumblePercentage } from '../../../helpers/fumble.ts';
-import { Fumble } from '../../../interfaces/Fumble.ts';
+import { Damage, Fumble } from '../../../interfaces/Fumble.ts';
+import { Luck } from '../../../interfaces/Luck.ts';
 
 
 
@@ -173,10 +174,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
     let dealedDamage: number = 0;
-    // let dealedObjectDamage: Damage | null = null;
-    let fumble: Fumble | null;
-    // let attackerLuckResult: Luck | null;
-    // let defenderLuckResult: Luck | null;
+    let dealedObjectDamage: Damage | null = null;
+    let fumble: Fumble | undefined = undefined;
+    let attackerLuckResult: Luck | undefined = undefined;
+    let defenderLuckResult: Luck | undefined = undefined;
 
     // Get the percentages of attack types.
     const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
@@ -196,31 +197,38 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       const fumbleEffect = getFumbleEffect(fumblePercentile);
 
       if (currentPlayer) {
-        fumble = applyFumble(fumbleEffect, currentPlayer.attributes, weaponRoll, fumblePercentile);
+        setTarget(currentPlayer); //change target to attacker self player
+        fumble = applyFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
         if (fumble) {
-          // dealedObjectDamage = fumble.damage;
+          dealedObjectDamage = fumble.damage;
         }
       }
     }
 
     //----------------------normal, critical, failed------------------//
-    // else {
+    else {
     // Construct attacker and defender player reduced
-    const luckAttacker = attackerReducedForLuck(attacker);
-    const luckDefender = defenderReducedForLuck(target);
+      const luckAttacker = attackerReducedForLuck(attacker);
+      const luckDefender = defenderReducedForLuck(target);
 
-    // Execute attacker luck
-    const attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
-    dealedDamage = attackerLuckResult.dealedDamage;
+      // Execute attacker luck
+      attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+      dealedDamage = attackerLuckResult.dealedDamage;
 
-    // Execute defender luck
-    const defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
-    dealedDamage = defenderLuckResult.dealedDamage;
+      // Execute defender luck
+      defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
+      dealedDamage = defenderLuckResult.dealedDamage;
 
-    // Dealed damage to objectDamage
-    // dealedObjectDamage = {hit_points: dealedDamage};
-    // }
+      //Dealed damage to objectDamage
+      dealedObjectDamage = {hit_points: dealedDamage};
+    }
 
+    //-----------------------------------------------------------------------------//
+    
+    // Update player's attributes in ONLINE_USERS
+    applyDamage(target._id, dealedObjectDamage);
+
+    //---------------------------send JSON to web-----------------------------------//
     // Construct the return data JSON.
     const percentages: Percentages = {
       critical: criticalPercentage,
@@ -228,15 +236,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       failed: failedPercentage,
       fumble: fumblePercentage
     };
-    
-    // Update player's attributes in ONLINE_USERS
-    applyDamage(target._id, dealedDamage);
 
-    const attackJSON = parseAttackData(target._id, target.attributes.hit_points, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage, attackType);
+    const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumble);
 
     // Send data to web
-    sendAttackInformationToWeb(io, attackJSON);
-
+    sendAttackInformationToWeb(io, attackJSON); //PON EL EL DOCUMENTO DE DRIVE 
+    //--------------------------------------------------------------------------------//
   });
 };
 

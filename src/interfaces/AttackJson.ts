@@ -1,15 +1,17 @@
+import { Attribute } from './Attribute.ts';
+import { Damage, Fumble } from './Fumble.ts';
 import { Percentages } from './Percentages.ts';
 
 export type AttackJson = {
   attack: {
     targetPlayerId: string,
-    hit_points: number,
+    attributes: Attribute,
     percentages: Percentages,
     dieRoll: number,
-    dealedDamage: number,
+    dealedDamage: Damage | null,
     attackType: string
   },
-  luck: {
+  luck?: {
     attacker: {
       hasLuck: boolean,
       luckRolls: number[],
@@ -20,6 +22,7 @@ export type AttackJson = {
       luckRolls: number[],
       luckRollMessage: string | undefined,
     }
-  }
+  },
+  fumble?: Fumble
 };
 
