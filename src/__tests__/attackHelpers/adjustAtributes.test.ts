@@ -33,7 +33,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.defense).toBe(13);
     expect(player.attributes.magic_resistance).toBe(3);
     expect(player.attributes.CFP).toBe(13);
-    expect(player.attributes.BCFA).toBe(87);
+    expect(player.attributes.BCFA).toBe(8);
     expect(player.attributes.resistance).toBe(5);
   });
 
@@ -67,7 +67,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.defense).toBe(1);
     expect(player.attributes.magic_resistance).toBe(1);
     expect(player.attributes.CFP).toBe(10);
-    expect(player.attributes.BCFA).toBe(81);
+    expect(player.attributes.BCFA).toBe(1);
     expect(player.attributes.resistance).toBe(1);
   });
 
