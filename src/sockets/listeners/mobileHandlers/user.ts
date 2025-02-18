@@ -23,7 +23,8 @@ import {
 import { insertSocketId } from '../../../helpers/socket.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
-import { Fumble, FumbleDamage } from '../../../interfaces/Fumble.ts';
+import { Fumble, FumbleWeb } from '../../../interfaces/Fumble.ts';
+import { DealedDamage } from '../../../interfaces/DealedDamage.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
 import { startTimer } from '../../../timer/timer.ts';
@@ -39,8 +40,6 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
 } from '../../emits/user.ts';
-
-
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
@@ -174,10 +173,11 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity);
     let dealedDamage: number = 0;
-    let dealedObjectDamage: FumbleDamage | null = null;
+    let dealedObjectDamage: DealedDamage | null = null;
     let fumble: Fumble | undefined = undefined;
     let attackerLuckResult: Luck | undefined = undefined;
     let defenderLuckResult: Luck | undefined = undefined;
+    let fumbleToWeb: FumbleWeb | undefined = undefined;
 
     // Get the percentages of attack types.
     const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
@@ -201,6 +201,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
         fumble = getFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
         if (fumble) {
           dealedObjectDamage = fumble.damage;
+          fumbleToWeb = fumble;
+          delete fumbleToWeb['damage'];
         }
       }
     }
@@ -236,7 +238,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       fumble: fumblePercentage
     };
 
-    const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumble);
+    const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
 
     // Send data to web
     sendAttackInformationToWeb(io, attackJSON); //PON EL EL DOCUMENTO DE DRIVE 
