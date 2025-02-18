@@ -1,5 +1,5 @@
 
-import { getFumblePercentage } from '../../../helpers/fumble.ts';
+import { getFumblePercentage } from '../../../helpers/attack.ts';
 
 describe('getFumblePercentage', () => {
 

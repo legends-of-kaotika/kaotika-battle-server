@@ -31,12 +31,12 @@ import {
   turn,
 } from '../../../game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, adjustAtributes } from '../../../helpers/attack.ts';
+import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, adjustAtributes, getFumblePercentage } from '../../../helpers/attack.ts';
 import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
 import { Percentages } from '../../../interfaces/Percentages.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
-import { getCalculationFumblePercentile, getFumble, getFumbleEffect, getFumblePercentage } from '../../../helpers/fumble.ts';
+import { getCalculationFumblePercentile, getFumble, getFumbleEffect} from '../../../helpers/fumble.ts';
 import { FumbleDamage, Fumble } from '../../../interfaces/Fumble.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 

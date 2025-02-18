@@ -7,10 +7,6 @@ import { Player } from '../interfaces/Player.ts';
 
 export type FumbleType = 'slash'| 'fairytale' | 'hack' | 'smash';
 
-export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
-  return Math.floor((100 -(100 - successPercentage)) * playerCFP /100);
-};
-
 export const getCalculationFumbleDamage = (bcfa: number , weaponDieRoll: number ): number => {
   return Math.ceil((bcfa + weaponDieRoll) / 5);
 };
