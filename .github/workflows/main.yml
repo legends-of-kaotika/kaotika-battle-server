@@ -1,16 +1,48 @@
-name: Fly Deploy
+name: Deploy Kaotika Battle Server
+
 on:
   push:
     branches:
-      - main    # change to main if needed
+      - main  
+
 jobs:
-  deploy:
-    name: Deploy app
-    runs-on: ubuntu-latest
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+  build:
+    runs-on: self-hosted 
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Configuration
+      run: |
+        echo "Configuring Enviroment..."
+
+    - name: Verify cloned repo
+      run: |
+        if [ -d "$GITHUB_WORKSPACE/.git" ]; then
+          echo "Repository exists, updating..."
+          cd $GITHUB_WORKSPACE
+          git pull origin main
+        else
+          echo "Repository not found, cloning..."
+          git clone git@github.com:legends-of-kaotika/kaotika-battle-server.git
+        fi
+
+    - name: Installing dependencies
+      run: |
+        cd $GITHUB_WORKSPACE
+        npm install
+
+    - name: Build application
+      run: |
+        cd $GITHUB_WORKSPACE
+        npm run build
+
+    - name: Deploy application on pm2
+      run: |
+        pm2 stop kaotika-battle-server || true
+        pm2 restart kaotika-battle-server
+
+    - name: Clean after deploy
+      run: |
+        pm2 save
+        echo "Deploy complete"
