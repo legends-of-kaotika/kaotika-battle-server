@@ -28,8 +28,6 @@ export const adjustAtributes = (player: Player) => {
       player.attributes[key] = Math.max(1, Math.min(80, player.attributes[key] as number));
     }
   });
-  //adjust BCFA
-  player.attributes['BCFA'] = player.attributes['insanity'] + player.attributes['strength'];
 };
 
 export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
