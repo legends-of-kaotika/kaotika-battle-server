@@ -5,6 +5,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import router from './src/routes/routes.ts';
+import { fetchNPCs } from './src/helpers/npc.ts';
 import { socketHandlers } from './src/sockets/handlers.ts';
 
 const app = express();
@@ -41,12 +42,15 @@ async function start() {
   // Start server only if NOT in test mode
   if (process.env.NODE_ENV !== 'test') {
     try {
+      
       server.listen(PORT, () => {
         console.log(`Socket is listening on port ${PORT}`);
         io.on('connection', onConnection);
       });
-    }
-    catch (error) {
+    
+      await fetchNPCs();
+    
+    } catch (error) {
       console.log(`Error starting the server: ${error.message}`);
     }
   }

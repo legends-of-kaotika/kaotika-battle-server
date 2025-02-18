@@ -66,9 +66,11 @@ export function removePlayerFromConectedUsersById(id: string): void {
   }
   ONLINE_USERS.splice(index, 1);
 }
-export const findPlayerDead = (): Player | undefined => {
-  const player = ONLINE_USERS.find(player => player.attributes.hit_points <= 0);
-  return player;
+
+export const findPlayerDeadId = (): string | null => {
+  const player = ONLINE_USERS.find(({attributes}) => attributes.hit_points <= 0 );
+  if(!player) return null;
+  return player._id;
 };
 
 export const applyDamage = (id: string, damage: FumbleDamage | null): void => {
@@ -89,8 +91,5 @@ export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribu
   }
 };
 
-export const selectKaotikaPlayerRandom = (): Player | undefined => {
-  const kaotikaPlayers = ONLINE_USERS.filter(player => !player.isBetrayer);
-  return kaotikaPlayers[Math.floor(Math.random() * kaotikaPlayers.length)];
-};
+
 
