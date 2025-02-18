@@ -241,7 +241,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
 
     // Send data to web
-    sendAttackInformationToWeb(io, attackJSON); //PON EL EL DOCUMENTO DE DRIVE 
+    sendAttackInformationToWeb(io, attackJSON);
     //--------------------------------------------------------------------------------//
   });
 };

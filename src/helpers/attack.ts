@@ -12,7 +12,8 @@ import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { ReducedDefender } from '../interfaces/ReducedDefender.ts';
 import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
-import { FumbleDamage, FumbleWeb } from '../interfaces/Fumble.ts';
+import { FumbleWeb } from '../interfaces/Fumble.ts';
+import { DealedDamage } from '../interfaces/DealedDamage.ts';
 
 export const adjustAtributes = (player: Player) => {
 
@@ -170,7 +171,7 @@ export const parseAttackData = (targetPlayerId: string,
   targetAttributes: Attribute,
   percentages: Percentages,
   attackRoll: number,
-  dealedTargetDamage: FumbleDamage | null,
+  dealedTargetDamage: DealedDamage | null,
   attackType: string,
   attackerLuckResult?: Luck, 
   defenderLuckResult?: Luck, 
