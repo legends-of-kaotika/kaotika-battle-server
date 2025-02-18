@@ -1,4 +1,4 @@
-import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from './game.ts';
+import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS, FUMBLE_EFFECTS } from './game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 
 export const ATTACK_TYPES: Record<string, AttackTypes> = {
@@ -19,12 +19,12 @@ export const DEFENSE_RULES = [
 ];
 
 export const INSANITY_RULES = [
-  {max:34, value:-5},
-  {max:79, value:0},
-  {max:84, value:5},
-  {max:89, value:7},
-  {max:94, value:10},
-  {max:Infinity, value:15},
+  {max:34, value:0},
+  {max:79, value:5},
+  {max:84, value:10},
+  {max:89, value:12},
+  {max:94, value:15},
+  {max:Infinity, value:25},
 ];
 
 export const ATTACK_RULES_MOD1 = [
@@ -61,7 +61,7 @@ export const ATTACK_LUCK_RULES = [
 ];
 
 export const CRITICAL_MOD1 = [
-  { max: 7, value: 999},
+  { max: 7, value: 0.35},
   { max: 14, value: 0.3},
   { max: 24, value: 0.25},
   { max: 40, value: 0.23},
@@ -70,7 +70,7 @@ export const CRITICAL_MOD1 = [
 ];
 
 export const CRITICAL_MOD2 = [
-  { max: 7,  value: 999},
+  { max: 7,  value: 30},
   { max: 14, value: 25 },
   { max: 24, value: 20 },
   { max: 40, value: 15 },
@@ -82,4 +82,11 @@ export const ATTACK_RULES_LUCK_MOD = [
   {max: 35, value: 0.2},
   {max: 49, value: 0.4},
   {max: Infinity, value: 0.8}
+];
+
+export const EFFECTS_FUMBLE = [
+  {max: 30, effect: FUMBLE_EFFECTS.SLASH},
+  {max: 60, effect: FUMBLE_EFFECTS.FAIRYTALE},
+  {max: 80, effect: FUMBLE_EFFECTS.HACK},
+  {max: Infinity, effect: FUMBLE_EFFECTS.SCYTHE}
 ];

@@ -15,3 +15,10 @@ export const ATTACK_LUCK_EFFECTS = {
   NORMAL_TO_CRITICAL: 2,
   NEXT_ROUND_START_FIRST: 3
 };
+
+export const FUMBLE_EFFECTS = {
+  SLASH: 'slash',
+  FAIRYTALE: 'fairytale',
+  HACK: 'hack',
+  SCYTHE: 'scythe'
+};

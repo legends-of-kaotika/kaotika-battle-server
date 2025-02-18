@@ -22,9 +22,10 @@ export const adjustAtributes = (player: Player) => {
     // Remaining attributes will have a minimum value of 1
     if (key !== 'insanity' && key !== 'attack') {
       player.attributes[key] = Math.max(1, player.attributes[key] as number);
-      //INS: min 1 - max 100
-    } else if (key === 'insanity') {
-      player.attributes[key] = Math.max(1, Math.min(100, player.attributes[key] as number));
+      //INS: min 1 - max 80
+    } 
+    if (key === 'insanity' || key === 'CFP') {
+      player.attributes[key] = Math.max(1, Math.min(80, player.attributes[key] as number));
     }
   });
 };
@@ -56,7 +57,7 @@ export const getAttackRoll = (): number => {
 
 export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 3) + insMod);
+  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod);
 };
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {

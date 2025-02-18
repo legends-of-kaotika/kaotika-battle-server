@@ -168,12 +168,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
     // Get general variables.
     const attackRoll = getAttackRoll();
-    const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
-    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
+    const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
+    const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity);
     let dealedDamage: number = 0;
 
     // Get the percentages of attack types.
-    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
     const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
     const normalPercentage = successPercentage - criticalPercentage;
     const failedPercentage = (100 - fumblePercentage) - successPercentage;

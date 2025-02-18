@@ -25,7 +25,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.intelligence).toBe(11);
     expect(player.attributes.dexterity).toBe(5);
     expect(player.attributes.constitution).toBe(9);
-    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.insanity).toBe(80);
     expect(player.attributes.charisma).toBe(7);
     expect(player.attributes.strength).toBe(7);
     expect(player.attributes.hit_points).toBe(50);
@@ -33,7 +33,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.defense).toBe(13);
     expect(player.attributes.magic_resistance).toBe(3);
     expect(player.attributes.CFP).toBe(13);
-    expect(player.attributes.BCFA).toBe(8);
+    expect(player.attributes.BCFA).toBe(87);
     expect(player.attributes.resistance).toBe(5);
   });
 
@@ -60,14 +60,14 @@ describe('adjustAtributes', () => {
     expect(player.attributes.intelligence).toBe(1);
     expect(player.attributes.dexterity).toBe(1);
     expect(player.attributes.constitution).toBe(1);
-    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.insanity).toBe(80);
     expect(player.attributes.charisma).toBe(1);
     expect(player.attributes.strength).toBe(1);
     expect(player.attributes.hit_points).toBe(1);
     expect(player.attributes.defense).toBe(1);
     expect(player.attributes.magic_resistance).toBe(1);
     expect(player.attributes.CFP).toBe(10);
-    expect(player.attributes.BCFA).toBe(1);
+    expect(player.attributes.BCFA).toBe(81);
     expect(player.attributes.resistance).toBe(1);
   });
 
@@ -83,7 +83,7 @@ describe('adjustAtributes', () => {
 
     player.attributes.insanity = 150;
     adjustAtributes(player);
-    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.insanity).toBe(80);
   });
 });
 
