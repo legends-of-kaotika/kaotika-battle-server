@@ -2,12 +2,11 @@ import { Socket } from 'socket.io';
 import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
 import { ONLINE_USERS } from '../game.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
+import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
-import { FumbleDamage } from '../interfaces/Fumble.ts';
-import { Attribute } from '../interfaces/Attribute.ts';
-import { Attribute } from '../interfaces/Attribute.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -83,6 +82,7 @@ export const applyDamage = (id: string, damage: FumbleDamage | null): void => {
     const attributeKey = Object.keys(damage)[0] as keyof Attribute;
     const attributeValue = Object.values(damage)[0];
     if (player) { player.attributes[attributeKey] -= attributeValue; }
+  };
 };
 
 export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribute>) : void => {
@@ -91,6 +91,5 @@ export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribu
 
   if (player) {
     player.attributes = { ...player.attributes, ...modifiedAttributes};
-  }
   }
 };
