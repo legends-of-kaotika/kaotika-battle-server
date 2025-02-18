@@ -84,3 +84,8 @@ export const applyDamage = (id: string, damage: FumbleDamage | null): void => {
     if (player) {player.attributes[attributeKey] -= attributeValue;}
   }
 };
+
+export const selectKaotikaPlayerRandom = (): Player | undefined => {
+  const kaotikaPlayers = ONLINE_USERS.filter(player => !player.isBetrayer);
+  return kaotikaPlayers[Math.floor(Math.random() * kaotikaPlayers.length)];
+};
