@@ -1,12 +1,12 @@
-import { luckRolls, hasLuck,applyDefenseLuck, defenderLuck} from '../../helpers/luck.ts';
-import { LuckDefender } from '../../interfaces/LuckDefender.ts';
+import { applyDefenseLuck, defenderLuck, hasLuck, luckRolls } from '../../../helpers/luck.ts';
+import { LuckDefender } from '../../../interfaces/LuckDefender.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-jest.spyOn(require('../../helpers/luck'), 'luckRolls').mockImplementation(() => [10, 15, 20]);
+jest.spyOn(require('../../../helpers/luck'), 'luckRolls').mockImplementation(() => [10, 15, 20]);
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-jest.spyOn(require('../../helpers/luck'), 'hasLuck').mockImplementation(() => true);
+jest.spyOn(require('../../../helpers/luck'), 'hasLuck').mockImplementation(() => true);
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-jest.spyOn(require('../../helpers/luck'), 'applyDefenseLuck').mockImplementation(() => ({
+jest.spyOn(require('../../../helpers/luck'), 'applyDefenseLuck').mockImplementation(() => ({
   dealedDamage: 150,
   luckMessage: 'Defender reduced damage!',
 }));

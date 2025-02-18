@@ -1,4 +1,4 @@
-import { getCriticalAttackModifier1, getCriticalAttackModifier2 } from '../../helpers/attack.ts';
+import { getCriticalAttackModifier1, getCriticalAttackModifier2 } from '../../../helpers/attack.ts';
 
 describe('getCriticalAttackModifier1',() =>{
   it('should return the rigth value of modificator1 ', () => {

@@ -1,4 +1,4 @@
-import { getHackDamage} from '../../../helpers/fumble.ts';
+import { getHackDamage } from '../../../helpers/fumble.ts';
 
 const dexMock = 20;
 

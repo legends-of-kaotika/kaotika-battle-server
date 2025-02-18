@@ -1,4 +1,4 @@
-import { getAttackModificator1, getAttackModificator2 } from '../../helpers/attack.ts';
+import { getAttackModificator1, getAttackModificator2 } from '../../../helpers/attack.ts';
 
 
 describe('getAttackModificator1',() =>{

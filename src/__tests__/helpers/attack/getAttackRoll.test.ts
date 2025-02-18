@@ -1,4 +1,4 @@
-import { getAttackRoll } from '../../helpers/attack.ts';
+import { getAttackRoll } from '../../../helpers/attack.ts';
 
 describe ('getAttackRoll method', ()=> {
   it('should return the correct random value of 1D100', ()=> {

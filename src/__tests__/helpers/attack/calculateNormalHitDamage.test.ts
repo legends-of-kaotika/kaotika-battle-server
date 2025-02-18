@@ -1,4 +1,4 @@
-import { calculateNormalHitDamage } from '../../helpers/attack.ts';
+import { calculateNormalHitDamage } from '../../../helpers/attack.ts';
 
 describe('calculateNormalHitDamage', () => {
 

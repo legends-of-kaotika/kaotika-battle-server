@@ -1,9 +1,9 @@
-import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
-import { ATTACK_TYPES } from './../../constants/combatRules.ts';
-import { attack } from './../../helpers/attack.ts';
+import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
+import { attack } from '../../../helpers/attack.ts';
 
-jest.mock('./../../helpers/attack.ts', () => ({
-  ...jest.requireActual('./../../helpers/attack.ts'),
+jest.mock('./../../../helpers/attack.ts', () => ({
+  ...jest.requireActual('./../../../helpers/attack.ts'),
   getAttackType: jest.fn()
 }));
 

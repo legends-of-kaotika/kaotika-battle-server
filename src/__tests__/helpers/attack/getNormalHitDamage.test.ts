@@ -1,6 +1,6 @@
-import { getNormalHitDamage } from '../../helpers/attack.ts';
+import { getNormalHitDamage } from '../../../helpers/attack.ts';
 
-import { playerMock } from '../../__mocks__/players.ts';
+import { playerMock } from '../../../__mocks__/players.ts';
 
 describe('getNormalHitDamage', () => {
 

@@ -47,7 +47,7 @@ export const getFumbleObject = (percentileFumble: number, typeFumble: FumbleType
   return {percentile: percentileFumble, message: FUMBLE_MESSAGE[typeFumble],type: typeFumble, damage: damageFumble};
 };
 
-export const getFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Attribute, weaponDieRoll: number, percentile: number) => {
+export const getFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Attribute, weaponDieRoll: number, percentile: number) : Fumble | undefined => {
   const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
   switch (fumbleEffect) {
   case FUMBLE_EFFECTS.SLASH: {

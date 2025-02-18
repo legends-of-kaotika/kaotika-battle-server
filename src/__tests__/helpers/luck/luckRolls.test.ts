@@ -1,9 +1,9 @@
 
-import { luckRolls } from '../../helpers/luck.ts';
+import { luckRolls } from '../../../helpers/luck.ts';
 
 const dieRollMock = jest.fn();
 
-jest.mock('../../constants/dies', () => ({
+jest.mock('../../../constants/dies', () => ({
   Die100: {
     roll: () => dieRollMock(),
   },

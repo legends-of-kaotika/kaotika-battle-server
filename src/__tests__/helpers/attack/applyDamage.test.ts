@@ -1,5 +1,5 @@
-import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
-import * as playerHelpers from '../../helpers/player.ts';
+import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import * as playerHelpers from '../../../helpers/player.ts';
 
 const mockPlayer = {...ONLINE_USERS_MOCK[0]};
 

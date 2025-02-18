@@ -1,4 +1,4 @@
-import { calculateCriticalHitDamage } from '../../helpers/attack.ts';
+import { calculateCriticalHitDamage } from '../../../helpers/attack.ts';
 
 describe('calculateCriticalHitDamage', () => {
 

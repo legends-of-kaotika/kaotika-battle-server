@@ -1,4 +1,4 @@
-import { getWeaponDieRoll } from '../../helpers/attack.ts';
+import { getWeaponDieRoll } from '../../../helpers/attack.ts';
 
 const weaponDieFacesMock = 100;
 const weaponDieNumberMock = 1;

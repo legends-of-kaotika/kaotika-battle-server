@@ -1,5 +1,5 @@
 
-import { getCriticalPercentage } from '../../helpers/attack.ts';
+import { getCriticalPercentage } from '../../../helpers/attack.ts';
 
 describe('getCriticalPercentage', () => {
   it('should return the correct critical percentage', () => {

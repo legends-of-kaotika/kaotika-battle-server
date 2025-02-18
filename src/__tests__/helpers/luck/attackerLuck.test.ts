@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
-import { playerMock } from '../../__mocks__/players.ts';
-import { LUCK_MESSAGE } from '../../constants/messages.ts';
-import { applyAttackLuck, attackerLuck, hasLuck, luckRolls } from '../../helpers/luck.ts';
-import { AttackTypes } from '../../interfaces/AttackTypes.ts';
-import { Player } from '../../interfaces/Player.ts';
+import { playerMock } from '../../../__mocks__/players.ts';
+import { LUCK_MESSAGE } from '../../../constants/messages.ts';
+import { applyAttackLuck, attackerLuck, hasLuck, luckRolls } from '../../../helpers/luck.ts';
+import { AttackTypes } from '../../../interfaces/AttackTypes.ts';
+import { Player } from '../../../interfaces/Player.ts';
 
-jest.spyOn(require('../../helpers/luck'), 'luckRolls').mockImplementation(() => [10, 15]);
-jest.spyOn(require('../../helpers/luck'), 'hasLuck').mockImplementation(() => true);
-jest.spyOn(require('../../helpers/luck'), 'applyAttackLuck').mockImplementation(() => ({
+jest.spyOn(require('../../../helpers/luck'), 'luckRolls').mockImplementation(() => [10, 15]);
+jest.spyOn(require('../../../helpers/luck'), 'hasLuck').mockImplementation(() => true);
+jest.spyOn(require('../../../helpers/luck'), 'applyAttackLuck').mockImplementation(() => ({
   dealedDamage: 150,
   luckMessage: 'Critical hit!',
 }));

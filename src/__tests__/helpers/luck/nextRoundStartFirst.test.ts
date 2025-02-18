@@ -1,5 +1,5 @@
-import { nextRoundStartFirstMockPlayers, nextRoundStartFirstPlayer } from '../../__mocks__/luck/nextRoundStartFirstMock.ts';
-import { nextRoundStartFirst } from '../../helpers/game.ts';
+import { nextRoundStartFirstMockPlayers, nextRoundStartFirstPlayer } from '../../../__mocks__/luck/nextRoundStartFirstMock.ts';
+import { nextRoundStartFirst } from '../../../helpers/game.ts';
 
 describe('test nextRoundStartFirst function', () => {
   it('should change the turns array correctly', () => {

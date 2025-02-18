@@ -1,4 +1,4 @@
-import { getSuccessPercentage } from '../../helpers/attack.ts';
+import { getSuccessPercentage } from '../../../helpers/attack.ts';
 
 describe ('getSuccessPercentage method', ()=> {
   it ('should return the correct successPercentage', ()=> {

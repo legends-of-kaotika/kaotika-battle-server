@@ -1,5 +1,5 @@
-import { DEFENSE_LUCK_EFFECTS } from '../../constants/game.ts';
-import { getDefenseLuckConstant } from '../../helpers/luck.ts';
+import { DEFENSE_LUCK_EFFECTS } from '../../../constants/game.ts';
+import { getDefenseLuckConstant } from '../../../helpers/luck.ts';
 
 describe('test getDefenseLuckConstant', () => {
   it('should return the correct constant FOR NO DAMAGE_RECEIVED', () => {

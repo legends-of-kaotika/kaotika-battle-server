@@ -1,4 +1,4 @@
-import { getInsanityModificator } from '../../helpers/attack.ts';
+import { getInsanityModificator } from '../../../helpers/attack.ts';
 
 
 describe('getInsanityModificator',() =>{

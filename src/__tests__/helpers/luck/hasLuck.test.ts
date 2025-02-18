@@ -1,5 +1,5 @@
 
-import { hasLuck } from '../../helpers/luck.ts';
+import { hasLuck } from '../../../helpers/luck.ts';
 
 describe('hasLuck', () => {
 

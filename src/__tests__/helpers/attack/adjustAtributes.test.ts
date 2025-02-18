@@ -1,5 +1,5 @@
-import { adjustAtributes } from '../../helpers/attack.ts';
-import { Player } from '../../interfaces/Player.ts';
+import { adjustAtributes } from '../../../helpers/attack.ts';
+import { Player } from '../../../interfaces/Player.ts';
 
 describe('adjustAtributes', () => {
   it('should round all attributes to integers', () => {

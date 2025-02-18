@@ -1,6 +1,6 @@
-import { playerMock } from '../../__mocks__/players.ts';
-import { getEquipmentDefense } from '../../helpers/attack.ts';
-import { Equipment } from '../../interfaces/Equipment.ts';
+import { playerMock } from '../../../__mocks__/players.ts';
+import { getEquipmentDefense } from '../../../helpers/attack.ts';
+import { Equipment } from '../../../interfaces/Equipment.ts';
 
 describe('getEquipmentDefense', () => {
   it('calculates the total defense of the equipment correctly', () => {

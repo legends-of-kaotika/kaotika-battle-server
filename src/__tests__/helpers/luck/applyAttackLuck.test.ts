@@ -1,9 +1,9 @@
-import { applyAttackLuck } from '../../helpers/luck.ts';
-import { Die100 } from '../../constants/dies.ts';
-import { playerMock } from '../../__mocks__/players.ts';
-import { Player } from '../../interfaces/Player.ts';
+import { playerMock } from '../../../__mocks__/players.ts';
+import { Die100 } from '../../../constants/dies.ts';
+import { applyAttackLuck } from '../../../helpers/luck.ts';
+import { Player } from '../../../interfaces/Player.ts';
 
-jest.mock('../../constants/dies.ts', () => ({
+jest.mock('../../../constants/dies.ts', () => ({
   Die100: {
     roll: jest.fn(),
   },

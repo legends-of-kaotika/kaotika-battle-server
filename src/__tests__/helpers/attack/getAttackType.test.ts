@@ -1,6 +1,6 @@
 
-import { ATTACK_TYPES } from '../../constants/combatRules.ts';
-import { getAttackType } from '../../helpers/attack.ts';
+import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
+import { getAttackType } from '../../../helpers/attack.ts';
 
 describe('getAttackType', () => {
 
