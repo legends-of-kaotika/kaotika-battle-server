@@ -7,7 +7,6 @@ import { ONLINE_USERS } from '../../game.ts';
 describe('selectKaotikaPLayerRandom', () => {
 
   test('return undefined when ONLINE_USERS is empty', () => {
-    // ONLINE_USERS is empty
     expect(selectKaotikaPlayerRandom()).toBeUndefined();
   });
 

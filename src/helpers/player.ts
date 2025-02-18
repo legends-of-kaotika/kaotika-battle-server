@@ -91,6 +91,9 @@ export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribu
 
 export const selectKaotikaPlayerRandom = (): Player | undefined => {
   const kaotikaPlayers = ONLINE_USERS.filter(player => !player.isBetrayer);
+  if (kaotikaPlayers.length === 0){
+    return undefined;
+  }
   return kaotikaPlayers[Math.floor(Math.random() * kaotikaPlayers.length)];
 };
 
