@@ -80,7 +80,6 @@ export const applyDamage = (id: string, damage: number): void => {
   if (player) { player.attributes.hit_points -= damage; }
 };
 
-// type NombresAtributos = "intelligence" | "dexterity" | "constitution" | "insanity" | "charisma" | "strength" | "hit_points" | "attack" | "defense" | "magic_resistance" | "CFP" | "BCFA" | "resistance";
 export const modifyAttributes = (id: string, modifiedAttributes: Partial<Attribute>) : void => {
 
   const player = findPlayerById(id);
