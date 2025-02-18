@@ -173,7 +173,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     let dealedDamage: number = 0;
 
     // Get the percentages of attack types.
-    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
+    const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
     const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
     const normalPercentage = successPercentage - criticalPercentage;
     const failedPercentage = (100 - fumblePercentage) - successPercentage;
