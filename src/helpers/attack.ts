@@ -125,7 +125,7 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
 
 // ---- MAIN FLOW FUNCTION ---- // 
 
-export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) : string => {
+export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) : AttackTypes => {
 
   let attackType: AttackTypes;
 
