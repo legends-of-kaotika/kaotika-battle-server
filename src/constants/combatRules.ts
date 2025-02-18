@@ -19,12 +19,12 @@ export const DEFENSE_RULES = [
 ];
 
 export const INSANITY_RULES = [
-  {max:34, value:-5},
-  {max:79, value:0},
-  {max:84, value:5},
-  {max:89, value:7},
-  {max:94, value:10},
-  {max:Infinity, value:15},
+  {max:34, value:0},
+  {max:79, value:5},
+  {max:84, value:10},
+  {max:89, value:12},
+  {max:94, value:15},
+  {max:Infinity, value:25},
 ];
 
 export const ATTACK_RULES_MOD1 = [
@@ -61,7 +61,7 @@ export const ATTACK_LUCK_RULES = [
 ];
 
 export const CRITICAL_MOD1 = [
-  { max: 7, value: 999},
+  { max: 7, value: 0.35},
   { max: 14, value: 0.3},
   { max: 24, value: 0.25},
   { max: 40, value: 0.23},
@@ -70,7 +70,7 @@ export const CRITICAL_MOD1 = [
 ];
 
 export const CRITICAL_MOD2 = [
-  { max: 7,  value: 999},
+  { max: 7,  value: 30},
   { max: 14, value: 25 },
   { max: 24, value: 20 },
   { max: 40, value: 15 },

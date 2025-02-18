@@ -1,5 +1,5 @@
 import { FUMBLE_MESSAGE } from '../constants/messages.ts';
-import { Fumble } from '../interfaces/Fumble.ts';
+import { Damage, Fumble } from '../interfaces/Fumble.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FUMBLE_EFFECTS } from '../constants/game.ts';
 import { EFFECTS_FUMBLE } from '../constants/combatRules.ts';
@@ -51,7 +51,7 @@ export const applyScytheDamage = (currentPlayerHitPoints: number): Record<string
   return {hit_points: currentPlayerHitPoints + 1};
 };
 
-export const getFumble = (percentileFumble: number, typeFumble: FumbleType, damageFumble: Record <string, number>): Fumble => {
+export const getFumble = (percentileFumble: number, typeFumble: FumbleType, damageFumble: Damage): Fumble => {
   return {percentile: percentileFumble, message: FUMBLE_MESSAGE[typeFumble],type: typeFumble, damage: damageFumble};
 };
 

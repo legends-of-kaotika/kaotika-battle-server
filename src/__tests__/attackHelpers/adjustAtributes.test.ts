@@ -25,7 +25,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.intelligence).toBe(11);
     expect(player.attributes.dexterity).toBe(5);
     expect(player.attributes.constitution).toBe(9);
-    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.insanity).toBe(80);
     expect(player.attributes.charisma).toBe(7);
     expect(player.attributes.strength).toBe(7);
     expect(player.attributes.hit_points).toBe(50);
@@ -60,7 +60,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.intelligence).toBe(1);
     expect(player.attributes.dexterity).toBe(1);
     expect(player.attributes.constitution).toBe(1);
-    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.insanity).toBe(80);
     expect(player.attributes.charisma).toBe(1);
     expect(player.attributes.strength).toBe(1);
     expect(player.attributes.hit_points).toBe(1);
@@ -83,7 +83,7 @@ describe('adjustAtributes', () => {
 
     player.attributes.insanity = 150;
     adjustAtributes(player);
-    expect(player.attributes.insanity).toBe(100);
+    expect(player.attributes.insanity).toBe(80);
   });
 });
 

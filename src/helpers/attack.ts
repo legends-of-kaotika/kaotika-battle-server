@@ -28,8 +28,6 @@ export const adjustAtributes = (player: Player) => {
       player.attributes[key] = Math.max(1, Math.min(80, player.attributes[key] as number));
     }
   });
-  //adjust BCFA
-  player.attributes['BCFA'] = player.attributes['insanity'] + player.attributes['strength'];
 };
 
 export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
@@ -59,7 +57,7 @@ export const getAttackRoll = (): number => {
 
 export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 3) + insMod);
+  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod);
 };
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {

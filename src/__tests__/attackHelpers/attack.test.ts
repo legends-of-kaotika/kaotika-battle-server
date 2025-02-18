@@ -1,3 +1,5 @@
+import { attack } from './../../helpers/attack.ts';
+import { ATTACK_TYPES } from './../../constants/combatRules.ts';
 import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
 import { ATTACK_TYPES } from '../../constants/combatRules.ts';
 import { attack } from '../../helpers/attack.ts';
