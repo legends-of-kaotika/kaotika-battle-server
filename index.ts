@@ -1,12 +1,11 @@
-import { Socket } from 'socket.io';
-import express from 'express';
 import bodyParser from 'body-parser';
-import { socketHandlers } from './src/sockets/handlers.ts';
-import router from './src/routes/routes.ts';
-import dotenv from 'dotenv';
-import {createServer} from 'http';
-import {Server} from 'socket.io';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import { createServer } from 'http';
+import { Server, Socket } from 'socket.io';
+import router from './src/routes/routes.ts';
+import { socketHandlers } from './src/sockets/handlers.ts';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
