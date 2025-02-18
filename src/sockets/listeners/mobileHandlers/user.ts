@@ -196,15 +196,14 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       const fumblePercentile = getCalculationFumblePercentile(fumblePercentage, attackRoll);
       const fumbleEffect = getFumbleEffect(fumblePercentile);
 
-      if (currentPlayer) {
-        setTarget(currentPlayer); //change target to attacker self player
+      if (attacker) {
+        setTarget(attacker); //change target to attacker self player
         fumble = applyFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
         if (fumble) {
           dealedObjectDamage = fumble.damage;
         }
       }
     }
-
     //----------------------normal, critical, failed------------------//
     else {
     // Construct attacker and defender player reduced
