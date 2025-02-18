@@ -1,5 +1,5 @@
 import { Attribute } from './Attribute.ts';
-import { Damage, Fumble } from './Fumble.ts';
+import { FumbleDamage, Fumble } from './Fumble.ts';
 import { Percentages } from './Percentages.ts';
 
 export type AttackJson = {
@@ -8,7 +8,7 @@ export type AttackJson = {
     attributes: Attribute,
     percentages: Percentages,
     dieRoll: number,
-    dealedDamage: Damage | null,
+    dealedDamage: FumbleDamage | null,
     attackType: string
   },
   luck?: {

@@ -37,7 +37,7 @@ import { Percentages } from '../../../interfaces/Percentages.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
 import { applyFumble, getCalculationFumblePercentile, getFumbleEffect, getFumblePercentage } from '../../../helpers/fumble.ts';
-import { Damage, Fumble } from '../../../interfaces/Fumble.ts';
+import { FumbleDamage, Fumble } from '../../../interfaces/Fumble.ts';
 import { Luck } from '../../../interfaces/Luck.ts';
 
 
@@ -174,7 +174,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
     const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
     let dealedDamage: number = 0;
-    let dealedObjectDamage: Damage | null = null;
+    let dealedObjectDamage: FumbleDamage | null = null;
     let fumble: Fumble | undefined = undefined;
     let attackerLuckResult: Luck | undefined = undefined;
     let defenderLuckResult: Luck | undefined = undefined;

@@ -21,5 +21,5 @@ export const FUMBLE_EFFECTS : Record<string, FumbleType> = {
   SLASH: 'slash',
   FAIRYTALE: 'fairytale',
   HACK: 'hack',
-  SCYTHE: 'scythe'
+  SMASH: 'smash'
 };

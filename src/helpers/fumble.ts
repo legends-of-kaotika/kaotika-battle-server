@@ -1,10 +1,10 @@
 import { FUMBLE_MESSAGE } from '../constants/messages.ts';
-import { Damage, Fumble } from '../interfaces/Fumble.ts';
+import { FumbleDamage, Fumble } from '../interfaces/Fumble.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FUMBLE_EFFECTS } from '../constants/game.ts';
 import { EFFECTS_FUMBLE } from '../constants/combatRules.ts';
 
-export type FumbleType = 'slash'| 'fairytale' | 'hack' | 'scythe';
+export type FumbleType = 'slash'| 'fairytale' | 'hack' | 'smash';
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
   return Math.floor((100 -(100 - successPercentage)) * playerCFP /100);
@@ -46,19 +46,14 @@ export const applyHackDamage = (currentPlayerDex: number): Record<string, number
   return {dexterity: hackResult};
 };
 
-//kill the current player
-export const applyScytheDamage = (currentPlayerHitPoints: number): Record<string, number>=> {
-  return {hit_points: currentPlayerHitPoints + 1};
-};
-
-export const getFumble = (percentileFumble: number, typeFumble: FumbleType, damageFumble: Damage): Fumble => {
+export const getFumble = (percentileFumble: number, typeFumble: FumbleType, damageFumble: FumbleDamage): Fumble => {
   return {percentile: percentileFumble, message: FUMBLE_MESSAGE[typeFumble],type: typeFumble, damage: damageFumble};
 };
 
 export const applyFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Attribute, weaponDieRoll: number, percentile: number) => {
+  const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
   switch (fumbleEffect) {
   case FUMBLE_EFFECTS.SLASH: {
-    const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
     const slashDamage = applySlashDamage(calculationFumbleDamage);
     return getFumble(percentile, fumbleEffect, slashDamage); 
   }
@@ -71,9 +66,9 @@ export const applyFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: A
     const hackDamage = applyHackDamage(currentPlayerAttributes.dexterity);
     return getFumble(percentile, fumbleEffect, hackDamage); 
   }
-  case FUMBLE_EFFECTS.SCYTHE: {
-    const scytheDamage = applyScytheDamage(currentPlayerAttributes.hit_points);
-    return getFumble(percentile, fumbleEffect, scytheDamage); 
+  case FUMBLE_EFFECTS.SMASH: {
+    const smashDamage = {hit_points: calculationFumbleDamage};
+    return getFumble(percentile, fumbleEffect, smashDamage); 
   }
   default:
     console.log('Unknown fumble effect');
