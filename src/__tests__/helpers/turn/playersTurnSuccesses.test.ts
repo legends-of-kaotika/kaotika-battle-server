@@ -1,5 +1,5 @@
-import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
-import { getPlayersTurnSuccesses } from '../../helpers/turn.ts';
+import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { getPlayersTurnSuccesses } from '../../../helpers/turn.ts';
 
 const onlineUsersCopyMock = [...ONLINE_USERS_MOCK];
 

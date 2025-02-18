@@ -3,7 +3,7 @@ import { ONLINE_USERS } from '../../../game.ts';
 import { handlePlayerDeath } from '../../../helpers/player.ts';
 import { sendKilledPlayer } from '../../../sockets/emits/user.ts';
 
-jest.mock('../../sockets/emits/user', () => ({
+jest.mock('../../../sockets/emits/user', () => ({
   sendKilledPlayer: jest.fn()
 }));
 

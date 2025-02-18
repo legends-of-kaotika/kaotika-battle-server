@@ -1,6 +1,6 @@
-import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
-import { sortTurnPlayers } from '../../helpers/turn.ts';
-import { Player } from '../../interfaces/Player.ts';
+import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { sortTurnPlayers } from '../../../helpers/turn.ts';
+import { Player } from '../../../interfaces/Player.ts';
 
 
 //-----------------------------methods helpers-------------------------------//
