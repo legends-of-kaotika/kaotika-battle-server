@@ -10,8 +10,8 @@ export const LUCK_MESSAGE = {
 };
 
 export const FUMBLE_MESSAGE = {
-  slash: 'Is slash',
-  fairytale: 'Is fairytale',
-  hack: 'Is hack',
-  scythe: 'Is scythe'
+  slash: 'Is self-injured slightly',
+  fairytale: 'Player wears the glasses of Erudite',
+  hack: 'Self leg broken',
+  smash: 'Is self-injured heavily'
 };

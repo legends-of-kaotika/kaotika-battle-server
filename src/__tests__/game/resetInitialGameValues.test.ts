@@ -1,4 +1,5 @@
 import { currentPlayer, isGameStarted, ONLINE_USERS, resetInitialGameValues, round, target, turn } from '../../game.ts';
+import { turnTime } from '../../timer/timer.ts';
 
 describe('test the resetInitialGameValues', () => {
   it('should reset the game values', () => {
@@ -9,5 +10,6 @@ describe('test the resetInitialGameValues', () => {
     expect(currentPlayer).toBe(undefined);
     expect(turn).toBe(0);
     expect(round).toBe(1);
+    expect(turnTime).toBe(30);
   });
 }); 

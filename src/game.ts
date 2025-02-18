@@ -3,6 +3,7 @@ import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
 import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
+import { resetTimer } from './timer/timer.ts';
 
 export const ONLINE_USERS: Player[] = [];
 export let webSocketId: string = '';
@@ -70,6 +71,8 @@ export const resetInitialGameValues = (): void => {
   while (ONLINE_USERS.length > 0) {
     ONLINE_USERS.pop();
   };
+
+  resetTimer();
 };
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {

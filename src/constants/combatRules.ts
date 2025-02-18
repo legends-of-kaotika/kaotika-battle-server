@@ -88,5 +88,5 @@ export const EFFECTS_FUMBLE = [
   {max: 30, effect: FUMBLE_EFFECTS.SLASH},
   {max: 60, effect: FUMBLE_EFFECTS.FAIRYTALE},
   {max: 80, effect: FUMBLE_EFFECTS.HACK},
-  {max: Infinity, effect: FUMBLE_EFFECTS.SCYTHE}
+  {max: Infinity, effect: FUMBLE_EFFECTS.SMASH}
 ];
