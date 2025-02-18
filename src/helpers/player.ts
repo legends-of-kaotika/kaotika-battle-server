@@ -71,11 +71,6 @@ export const findPlayerDead = (): Player | undefined => {
   return player;
 };
 
-export const isMortimerDisconnected = (socketId: string): boolean => {
-  const isMortimerDisconnected = ONLINE_USERS.some((user) => (user.socketId === socketId && user.role === 'mortimer'));
-  return isMortimerDisconnected;
-};
-
 export const applyDamage = (id: string, damage: FumbleDamage | null): void => {
   const player = findPlayerById(id);
   if (damage) {
