@@ -113,7 +113,7 @@ export const calculateNormalHitDamage = (weaponRoll: number, attackMod1: number,
   return value || 1;
 };
 
-export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) => {
+export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) : number => {
   const attackMod1 = getAttackModificator1(attackAttribute);
   const attackMod2 = getAttackModificator2(attackAttribute);
   const equipmentDefense = getEquipmentDefense(targetEquipment);
@@ -125,7 +125,7 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
 
 // ---- MAIN FLOW FUNCTION ---- // 
 
-export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) => {
+export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) : string => {
 
   let attackType: AttackTypes;
 
