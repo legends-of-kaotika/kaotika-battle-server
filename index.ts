@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import {createServer} from 'http';
 import {Server} from 'socket.io';
 import cors from 'cors';
+import { fetchNPCs } from './src/helpers/npc.ts';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,12 +43,15 @@ async function start() {
   // Start server only if NOT in test mode
   if (process.env.NODE_ENV !== 'test') {
     try {
+      
       server.listen(PORT, () => {
         console.log(`Socket is listening on port ${PORT}`);
         io.on('connection', onConnection);
       });
-    }
-    catch (error) {
+    
+      await fetchNPCs();
+    
+    } catch (error) {
       console.log(`Error starting the server: ${error.message}`);
     }
   }
