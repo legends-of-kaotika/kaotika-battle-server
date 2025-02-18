@@ -1,5 +1,5 @@
-import { currentPlayer, isGameStarted, ONLINE_USERS, resetInitialGameValues, round, target, turn } from '../../game.ts';
-import { turnTime } from '../../timer/timer.ts';
+import { currentPlayer, isGameStarted, ONLINE_USERS, resetInitialGameValues, round, target, turn } from '../../../game.ts';
+import { turnTime } from '../../../timer/timer.ts';
 
 describe('test the resetInitialGameValues', () => {
   it('should reset the game values', () => {

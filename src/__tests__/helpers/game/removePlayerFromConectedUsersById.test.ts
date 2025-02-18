@@ -1,6 +1,6 @@
-import { removePlayerFromConectedUsersById } from '../../helpers/player.ts';
-import { ONLINE_USERS } from '../../game.ts';
-import { GAME_ONLINE_USERS_MOCK } from '../../__mocks__/game/gamePlayerMock.ts';
+import { GAME_ONLINE_USERS_MOCK } from '../../../__mocks__/game/gamePlayerMock.ts';
+import { ONLINE_USERS } from '../../../game.ts';
+import { removePlayerFromConectedUsersById } from '../../../helpers/player.ts';
 
 describe('Test removePlayerFromConectedUsersById', () => {
   beforeEach(() => {

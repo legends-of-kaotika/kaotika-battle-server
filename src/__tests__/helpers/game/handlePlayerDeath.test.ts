@@ -1,7 +1,7 @@
-import { GAME_ONLINE_USERS_MOCK } from '../../__mocks__/game/gamePlayerMock.ts';
-import { handlePlayerDeath } from '../../helpers/player.ts';
-import { sendKilledPlayer } from '../../sockets/emits/user.ts';
-import { ONLINE_USERS } from '../../game.ts';
+import { GAME_ONLINE_USERS_MOCK } from '../../../__mocks__/game/gamePlayerMock.ts';
+import { ONLINE_USERS } from '../../../game.ts';
+import { handlePlayerDeath } from '../../../helpers/player.ts';
+import { sendKilledPlayer } from '../../../sockets/emits/user.ts';
 
 jest.mock('../../sockets/emits/user', () => ({
   sendKilledPlayer: jest.fn()
