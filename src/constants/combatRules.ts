@@ -19,12 +19,12 @@ export const DEFENSE_RULES = [
 ];
 
 export const INSANITY_RULES = [
-  {max:34, value:-5},
-  {max:79, value:0},
-  {max:84, value:5},
-  {max:89, value:7},
-  {max:94, value:10},
-  {max:Infinity, value:15},
+  {max:34, value:0},
+  {max:79, value:5},
+  {max:84, value:10},
+  {max:89, value:12},
+  {max:94, value:15},
+  {max:Infinity, value:25},
 ];
 
 export const ATTACK_RULES_MOD1 = [

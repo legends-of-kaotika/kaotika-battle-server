@@ -59,7 +59,7 @@ export const getAttackRoll = (): number => {
 
 export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 3) + insMod);
+  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod);
 };
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
