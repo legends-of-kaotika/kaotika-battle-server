@@ -10,6 +10,7 @@ export type AttackJson = {
     dieRoll: number,
     dealedDamage: FumbleDamage | null,
     attackType: string
+    fumble: Fumble | undefined
   },
   luck?: {
     attacker: {
@@ -23,6 +24,5 @@ export type AttackJson = {
       luckRollMessage: string | undefined,
     }
   },
-  fumble?: Fumble
 };
 

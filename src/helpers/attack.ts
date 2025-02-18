@@ -174,9 +174,8 @@ export const parseAttackData = (targetPlayerId: string,
   attackType: string,
   attackerLuckResult?: Luck, 
   defenderLuckResult?: Luck, 
-  fumble?: Fumble 
-// eslint-disable-next-line function-paren-newline
-): AttackJson => {
+  fumble?: Fumble): AttackJson => {
+
   const attackJson: AttackJson = {
     attack: {
       targetPlayerId: targetPlayerId,
@@ -184,11 +183,12 @@ export const parseAttackData = (targetPlayerId: string,
       percentages: percentages,
       dieRoll: attackRoll,
       dealedDamage: dealedTargetDamage,
-      attackType: attackType
+      attackType: attackType,
+      fumble: fumble
     },
   };
 
-  if (attackType !== ATTACK_TYPES.FUMBLE && attackerLuckResult && defenderLuckResult) {
+  if (attackerLuckResult && defenderLuckResult) {
     attackJson.luck = {
       attacker: {
         hasLuck: attackerLuckResult.hasLuck,
@@ -201,8 +201,9 @@ export const parseAttackData = (targetPlayerId: string,
         luckRollMessage: defenderLuckResult.luckMessage
       }
     };
-  } else if (fumble) {
-    attackJson.fumble = fumble;
+  }
+  else {
+    attackJson.luck = undefined;
   }
 
   return attackJson;
