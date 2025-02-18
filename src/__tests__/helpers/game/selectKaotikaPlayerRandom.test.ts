@@ -1,7 +1,7 @@
-import { Player } from '../../interfaces/Player.ts';
-import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
-import { ONLINE_USERS } from '../../game.ts';
-import { selectKaotikaPlayerRandom } from '../../helpers/npc.ts';
+import { Player } from '../../../interfaces/Player.ts';
+import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { ONLINE_USERS } from '../../../game.ts';
+import { selectKaotikaPlayerRandom } from '../../../helpers/npc.ts';
 
 describe('selectKaotikaPLayerRandom', () => {
 
