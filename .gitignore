@@ -2,3 +2,4 @@
 node_modules
 #git rm -r --cached dist  (to stop tracking)
 dist/
+.vscode/
