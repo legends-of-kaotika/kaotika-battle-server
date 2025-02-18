@@ -46,8 +46,7 @@ async function start() {
         console.log(`Socket is listening on port ${PORT}`);
         io.on('connection', onConnection);
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.log(`Error starting the server: ${error.message}`);
     }
   }
