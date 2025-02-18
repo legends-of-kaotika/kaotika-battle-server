@@ -8,7 +8,7 @@ import { clearTimer, startTimer } from '../timer/timer.ts';
 import { findPlayerById } from './player.ts';
 
 // Returns a object of loyals and betrayers
-export const returnLoyalsAndBetrayers = (users:Player[]): DividedPlayers => {
+export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
     dravokar: [],
@@ -40,7 +40,7 @@ export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
 
   let gameHasPlayers: boolean = true;
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
-  
+
   if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
     sendGameEnd(io, 'Draw');
     resetInitialGameValues();
@@ -62,18 +62,17 @@ export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
 // Check if there is the minimum 1 player connected and of role acolyte no betrayer
 export const checkStartGameRequirement = () => {
   if (ONLINE_USERS.length >= 1) {
-    return ONLINE_USERS.some((user)=> (user.role === 'acolyte' && user.isBetrayer === false));
+    return ONLINE_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
   }
   return false;
 };
 
-export const nextRoundStartFirst = (id: string, players: Player[]) : void => {
+export const nextRoundStartFirst = (id: string, players: Player[]): void => {
   const player = findPlayerById(id);
   const i = players.findIndex(player => player._id === id);
 
-  if(i === -1) return;
-  if(player === undefined) return;
-  
+  if (i === -1 || !player)  return;
+
   players.splice(i, 1);
   players.unshift(player);
 };
