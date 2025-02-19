@@ -8,3 +8,10 @@ export const LUCK_MESSAGE = {
   ATTACKER_NO_LUCK: 'The attacker has no luck',
   DEFENDER_NO_LUCK: 'The defender has no luck'
 };
+
+export const FUMBLE_MESSAGE = {
+  slash: 'Is self-injured slightly',
+  fairytale: 'Player wears the glasses of Erudite',
+  hack: 'Self leg broken',
+  smash: 'Is self-injured heavily'
+};

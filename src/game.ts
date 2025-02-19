@@ -3,13 +3,16 @@ import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
 import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
+import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
+import { clearTimer } from './timer/timer.ts';
 
 export const ONLINE_USERS: Player[] = [];
+export const NPCS: Player[] = [];
 export let webSocketId: string = '';
 
 export let target: Player | undefined;
 export let currentPlayer: Player | undefined;
-export let turn: number = 0;
+export let turn: number = -1;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
@@ -61,15 +64,26 @@ export const setGameStarted = (status: boolean): void => {
 
 // Resets the values to the initals
 export const resetInitialGameValues = (): void => {
+
   isGameStarted = false;
   target = undefined;
   currentPlayer = undefined;
-  turn = 0;
+  turn = -1;
   round = 1;
+  idPlayerFirstTurn = null;
+  clearTimer();
+  
   // Empty the players array
   while (ONLINE_USERS.length > 0) {
     ONLINE_USERS.pop();
   };
+
+  // Insert the NPCS data into ONLINE_USERS.
+  ONLINE_USERS.push(...NPCS);
+
+  // Send the new users array to web to display them.
+  sendConnectedUsersArrayToWeb(io, ONLINE_USERS);
+
 };
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {

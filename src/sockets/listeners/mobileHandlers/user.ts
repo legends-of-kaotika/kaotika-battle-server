@@ -1,43 +1,31 @@
 import { Server, Socket } from 'socket.io';
+import * as SOCKETS from '../../../constants/sockets.ts';
 import {
-  assignTurn,
+  ONLINE_USERS,
+  resetInitialGameValues,
+  round,
+  setGameStarted,
+  setTarget,
+  target,
+} from '../../../game.ts';
+
+import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
+import {
+  findPlayerById
+} from '../../../helpers/player.ts';
+import { insertSocketId } from '../../../helpers/socket.ts';
+import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
+import { logUnlessTesting } from '../../../helpers/utils.ts';
+import {
   gameStartToAll,
   sendConnectedUsersArrayToAll,
   sendCurseSelectedToWeb,
   sendHealSelectedToWeb,
+  sendNotEnoughPlayers,
   sendSelectedPlayerIdToWeb,
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
-  sendNotEnoughPlayers,
-  sendAttackInformationToWeb,
 } from '../../emits/user.ts';
-import {
-  applyDamage,
-  findPlayerById
-} from '../../../helpers/player.ts';
-import { checkStartGameRequirement } from '../../../helpers/game.ts';
-import { insertSocketId } from '../../../helpers/socket.ts';
-import * as SOCKETS from '../../../constants/sockets.ts';
-import { startTimer } from '../../../timer/timer.ts';
-import {
-  ONLINE_USERS,
-  currentPlayer,
-  resetInitialGameValues,
-  round,
-  setCurrentPlayer,
-  setGameStarted,
-  setTarget,
-  target,
-  turn,
-} from '../../../game.ts';
-import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
-import { attack, getAttackRoll, getCriticalPercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getFumblePercentage, adjustAtributes } from '../../../helpers/attack.ts';
-import { attackerLuck, attackerReducedForLuck, defenderLuck, defenderReducedForLuck, attackerReducedForAttack, defenderReducedForAttack } from '../../../helpers/luck.ts';
-import { Luck } from '../../../interfaces/Luck.ts';
-import { Percentages } from '../../../interfaces/Percentages.ts';
-import { logUnlessTesting } from '../../../helpers/utils.ts';
-
-
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
@@ -71,20 +59,11 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       // Sort players by successes, charisma, dexterity
       const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
       sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
-
+      changeTurn();
+      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
+      gameStartToAll(io);
       // Assign the first player
       console.log('Round: ', round);
-      setCurrentPlayer(ONLINE_USERS[turn]);
-
-      if (currentPlayer) {
-        // Divide players by loyalty
-        sendConnectedUsersArrayToAll(io, ONLINE_USERS);
-
-        // Emit first turn player id
-        assignTurn(io, currentPlayer);
-        gameStartToAll(io);
-        startTimer();
-      }
     }
     
   });
@@ -129,90 +108,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sendUsePotionSelectedToWeb(io);
   });
 
-  socket.on(SOCKETS.MOBILE_ATTACK, async (_id) => {
+  socket.on(SOCKETS.MOBILE_ATTACK, async (_id: string) => {
 
     console.log(`${SOCKETS.MOBILE_ATTACK} socket message listened.`);
-
-    // Ensure that there's a target selected
-    if (!target) {
-      console.error('No target has been selected');
-      return;
-    }
-
-    // Attack the selected target vía their ID
-    console.log('Attacking the player: ', target?.nickname);
-
-    if (target._id !== _id) {
-      console.error(`Attack target mismatch. Expected: ${target._id}, Received: ${_id}`);
-      return;
-    }
+    attackFlow(_id);
     
-    // Define the current attacker, and ensure there's one
-    const attacker = currentPlayer;
-    
-    console.log('Target being attacked by the player: ', attacker?.nickname);
-    
-    if (!attacker) {
-      console.error('Attacker not found');
-      return;
-    }
-
-    if (!target) {
-      console.error('Target not found');
-      return;
-    }
-
-    // Adjust player attributes
-    adjustAtributes(attacker);
-    adjustAtributes(target);
-
-    // Get general variables.
-    const attackRoll = getAttackRoll();
-    const weaponRoll = getWeaponDieRoll(target.equipment.weapon.die_num, target.equipment.weapon.die_faces, target.equipment.weapon.die_modifier);
-    const successPercentage = getSuccessPercentage(target.equipment.weapon.base_percentage, target.attributes.dexterity, target.attributes.insanity);
-    let dealedDamage: number = 0;
-
-    // Get the percentages of attack types.
-    const criticalPercentage = getCriticalPercentage(target.attributes.CFP, successPercentage);
-    const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
-    const normalPercentage = successPercentage - criticalPercentage;
-    const failedPercentage = (100 - fumblePercentage) - successPercentage;
-
-    // Get the attack damage and attack type
-    const attackerReduced = attackerReducedForAttack(attacker);
-    const defenderReduced = defenderReducedForAttack(target);
-    const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
-    const attackType = attackResult.attackType;
-    // Construct attacker and defender player reduced
-    const luckAttacker = attackerReducedForLuck(attacker);
-    const luckDefender = defenderReducedForLuck(target);
-
-    // Execute attacker luck
-    const attackerLuckResult: Luck = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
-    dealedDamage = attackerLuckResult.dealedDamage;
-
-    // Execute defender luck
-    const defenderLuckResult: Luck = defenderLuck(dealedDamage, luckDefender);
-    dealedDamage = defenderLuckResult.dealedDamage;
-
-    // Construct the return data JSON.
-    const percentages: Percentages = {
-      critical: criticalPercentage,
-      normal: normalPercentage,
-      failed: failedPercentage,
-      fumble: fumblePercentage
-    };
-
-    const attackJSON = parseAttackData(target._id, target.attributes.hit_points-dealedDamage, percentages, attackerLuckResult, defenderLuckResult, attackRoll, dealedDamage, attackType);
-    
-    // Update player's attributes in ONLINE_USERS
-    applyDamage(target._id, dealedDamage);
-
-    // Send data to web
-    sendAttackInformationToWeb(io, attackJSON);
-
   });
-
 };
 
 const sendResetGame = (socket : Socket, io: Server) : void => {

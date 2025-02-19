@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io';
-import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
-import { isGameStarted, ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
+import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END } from '../../../constants/sockets.ts';
+import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
-import { WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_TARGET_PLAYER } from '../../../constants/sockets.ts';
-import {  findPlayerById, findPlayerDead, handlePlayerDeath } from '../../../helpers/player.ts';
+import { findPlayerById, findPlayerDeadId, handlePlayerDeath } from '../../../helpers/player.ts';
+import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
 
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
@@ -25,18 +25,16 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   socket.on(WEB_TURN_END, async () => {
     console.log('web-turnEnd socket message listened. Check if the game has to end.');
  
-    if (isGameStarted) {
-      if (eachSideHasPlayers(io, ONLINE_USERS)) {
-        console.log('Changing to the next turn.');
-        changeTurn();
-      }
+    if (eachSideHasPlayers(io, ONLINE_USERS)) {
+      console.log('Changing to the next turn.');
+      changeTurn();
     }
   });
 
   // When attack animation ends, receives whose values changed in animation
-  socket.on(WEB_TARGET_PLAYER, async (defenderId: string) => {
+  socket.on(WEB_ATTACK_ANIMATION_END, async (defenderId: string) => {
 
-    console.log(`${WEB_TARGET_PLAYER} socket listened: web attack animation ended`);
+    console.log(`${WEB_ATTACK_ANIMATION_END} socket listened: web attack animation ended`);
 
     const updatedPlayer = findPlayerById(defenderId);
     if (updatedPlayer){
@@ -48,9 +46,9 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
     }
     
     // Death
-    const deadPlayer = findPlayerDead();
-    if (deadPlayer?._id) {
-      handlePlayerDeath(deadPlayer._id);
+    const deadPlayerId = findPlayerDeadId();
+    if (deadPlayerId){
+      handlePlayerDeath(deadPlayerId);
     }
   });
 };

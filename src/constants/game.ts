@@ -1,3 +1,4 @@
+import { FumbleType } from '../helpers/fumble.ts';
 
 // Timer
 export const TURN_TIMER = 30;
@@ -14,4 +15,11 @@ export const ATTACK_LUCK_EFFECTS = {
   NORMAL_ATTACK_INCREASE: 1,
   NORMAL_TO_CRITICAL: 2,
   NEXT_ROUND_START_FIRST: 3
+};
+
+export const FUMBLE_EFFECTS : Record<string, FumbleType> = {
+  SLASH: 'slash',
+  FAIRYTALE: 'fairytale',
+  HACK: 'hack',
+  SMASH: 'smash'
 };

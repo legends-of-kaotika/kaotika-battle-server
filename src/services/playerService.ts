@@ -61,7 +61,7 @@ export const calculateBCFA = (attributes: Attribute): number => {
   return Math.floor(attributes.strength + attributes.insanity);
 };
 
-export const filterPlayerData = (data: PlayerPopulated): Player => {
+export const parsePlayerData = (data: PlayerPopulated): Player => {
   const baseAttributes = calculateBaseAttributes(data);
 
   const calculatedAttributes = {
@@ -145,19 +145,17 @@ export const assignRole = (email: string) => {
 
 export const initFetchPlayer = async (email: string) => {
   try {
-    const queryResponse = await fetch(`https://kaotika-server.fly.dev/players/email/${email}/`);
+    const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/players/email/${email}/`);
     const userData = await queryResponse.json();
     if (userData.status === 'NOT FOUND'){
       console.log(`player with email: ${email} not found`);
       return undefined;
     }
-    const role = assignRole(userData.data.email);
 
-    const user = filterPlayerData(userData.data);
-    user.role = role;
+    const user = parsePlayerData(userData.data);
     console.log('New User Created:');
     console.log('Email: ', email);
-    console.log('Role: ', role);
+    console.log('Role: ', user.role);
 
     return user;
   } catch (error) {
