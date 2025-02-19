@@ -49,7 +49,7 @@ export const npcAttack = async () => {
   
   console.log('Entered npcAttack() function...');
   
-  await sleep(3000);
+  await sleep(2000);
   console.log('The NPC is selecting a player to attack...');
   const npcSelectedPlayer = selectKaotikaPlayerRandom();
 
