@@ -145,6 +145,8 @@ export const assignRole = (email: string) => {
 
 export const initFetchPlayer = async (email: string) => {
   try {
+    console.log('initFetchPlayer()');
+    console.log(`${process.env.KAOTIKA_SERVER}/players/email/${email}/`);
     const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/players/email/${email}/`);
     const userData = await queryResponse.json();
     if (userData.status === 'NOT FOUND'){
