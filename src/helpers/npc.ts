@@ -1,7 +1,12 @@
+import { io } from '../../index.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { parsePlayerData } from '../services/playerService.ts';
-import { ONLINE_USERS } from '../game.ts';
+import { ONLINE_USERS, setTarget } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
+import { sleep } from './utils.ts';
+import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
+import { attackFlow } from './game.ts';
+
 
 export const fetchNPCs = async () => {
   
@@ -25,6 +30,9 @@ export const fetchNPCs = async () => {
     npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
     ONLINE_USERS.push(npc);
   });
+  
+  console.log(`${npcArray.length} NPCs have joined to the game.`);
+  sendConnectedUsersArrayToWeb(io, ONLINE_USERS);
 
 };
 
@@ -34,4 +42,21 @@ export const selectKaotikaPlayerRandom = (): Player | undefined => {
     return undefined;
   }
   return kaotikaPlayers[Math.floor(Math.random() * kaotikaPlayers.length)];
+};
+
+export const npcAttack = async () => {
+  
+  console.log('Entered npcAttack() function...');
+  
+  await sleep(3000);
+  console.log('The NPC is selecting a player to attack...');
+  const npcSelectedPlayer = selectKaotikaPlayerRandom();
+
+  if (npcSelectedPlayer) {
+    setTarget(npcSelectedPlayer);
+    sendSelectedPlayerIdToWeb(io, npcSelectedPlayer);
+    console.log(`The NPC selected ${npcSelectedPlayer.nickname}`);
+    await sleep(3000);
+    attackFlow(npcSelectedPlayer._id);
+  }
 };

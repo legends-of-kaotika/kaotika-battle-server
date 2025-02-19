@@ -16,6 +16,7 @@ import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
+import { npcAttack } from './npc.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
@@ -42,7 +43,13 @@ export const changeTurn = () : void => {
     assignTurn(io, currentPlayer);
     clearTimer();
     startTimer();
+
+    if (currentPlayer.role === 'npc') {
+      npcAttack();
+    }
+    
   }
+  
 };
 
 // Check if there are at least 1 player from each side
@@ -92,12 +99,9 @@ export const attackFlow = (targetId: string) => {
 
   // Ensure that there's a target selected
   if (!target) {
-    console.error('No target has been selected');
+    console.error('Target not found');
     return;
   }
-
-  // Attack the selected target vía their ID
-  console.log('Attacking the player: ', target?.nickname);
 
   if (target._id !== targetId) {
     console.error(`Attack target mismatch. Expected: ${target._id}, Received: ${targetId}`);
@@ -106,18 +110,14 @@ export const attackFlow = (targetId: string) => {
   
   // Define the current attacker, and ensure there's one
   const attacker = currentPlayer;
-  
-  console.log('Target being attacked by the player: ', attacker?.nickname);
-  
+    
   if (!attacker) {
     console.error('Attacker not found');
     return;
   }
 
-  if (!target) {
-    console.error('Target not found');
-    return;
-  }
+  console.log('Attacker: ', attacker.nickname);
+  console.log('Target: ', target.nickname);
 
   // Adjust player attributes
   adjustAtributes(attacker);
