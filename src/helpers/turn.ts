@@ -34,7 +34,7 @@ export const sortTurnPlayers = (playersTurnSuccesses: Record<string, number>, on
 
     const player1Successes = playersTurnSuccesses[player1._id]; // number
     const player2Successes = playersTurnSuccesses[player2._id]; // number
-    if (player1.role === 'npc'){return 10;}
+    
     if (player1Successes !== player2Successes) {
 
       // sort by successes
