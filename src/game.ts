@@ -10,7 +10,7 @@ export let webSocketId: string = '';
 
 export let target: Player | undefined;
 export let currentPlayer: Player | undefined;
-export let turn: number = 0;
+export let turn: number = -1;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
