@@ -197,6 +197,8 @@ export const attackFlow = (targetId: string) => {
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
 
   // Send data to web
+  console.log(attackJSON);
+  
   sendAttackInformationToWeb(io, attackJSON);
 
   //--------------------------------------------------------------------------------//

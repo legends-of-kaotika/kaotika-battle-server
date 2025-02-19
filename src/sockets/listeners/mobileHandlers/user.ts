@@ -2,14 +2,11 @@ import { Server, Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
   ONLINE_USERS,
-  currentPlayer,
   resetInitialGameValues,
   round,
-  setCurrentPlayer,
   setGameStarted,
   setTarget,
   target,
-  turn,
 } from '../../../game.ts';
 
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
@@ -19,9 +16,7 @@ import {
 import { insertSocketId } from '../../../helpers/socket.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
-import { startTimer } from '../../../timer/timer.ts';
 import {
-  assignTurn,
   gameStartToAll,
   sendConnectedUsersArrayToAll,
   sendCurseSelectedToWeb,
@@ -64,21 +59,11 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       // Sort players by successes, charisma, dexterity
       const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
       sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
-
+      changeTurn();
+      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
+      gameStartToAll(io);
       // Assign the first player
       console.log('Round: ', round);
-      changeTurn();
-
-
-      if (currentPlayer) {
-        // Divide players by loyalty
-        sendConnectedUsersArrayToAll(io, ONLINE_USERS);
-
-        // Emit first turn player id
-        assignTurn(io, currentPlayer);
-        gameStartToAll(io);
-        startTimer();
-      }
     }
     
   });
