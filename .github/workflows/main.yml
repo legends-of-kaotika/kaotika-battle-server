@@ -12,29 +12,22 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+    - name: Restaurar archivo .env
+      run: cp ~/server-actions-runner/.env $GITHUB_WORKSPACE/.env
     - name: Configuration
       run: |
         echo "Configuring Enviroment..."
 
-    - name: Verify cloned repo
+    - name: Pull changes from repo
       run: |
-        if [ -d "$GITHUB_WORKSPACE/.git" ]; then
-          echo "Repository exists, updating..."
-          cd $GITHUB_WORKSPACE
           git pull origin main
-        else
-          echo "Repository not found, cloning..."
-          git clone git@github.com:legends-of-kaotika/kaotika-battle-server.git
-        fi
-
+        
     - name: Installing dependencies
       run: |
-        cd $GITHUB_WORKSPACE
         npm install
 
     - name: Build application
       run: |
-        cd $GITHUB_WORKSPACE
         npm run build
 
     - name: Deploy application on pm2
