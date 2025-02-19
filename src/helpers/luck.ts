@@ -132,6 +132,10 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
 
   } case ATTACK_LUCK_EFFECTS.NORMAL_ATTACK_INCREASE: {
 
+    if (attackType !== 'NORMAL') {
+      break;
+    }
+    
     const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
     luckMessage = `${LUCK_MESSAGE.ATTACK_INCREASE} +${dealedDamage - oldDealedDamage}`;
