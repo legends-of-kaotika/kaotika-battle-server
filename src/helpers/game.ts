@@ -11,10 +11,11 @@ import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fu
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { applyDamage } from './player.ts';
 import { sendAttackInformationToWeb } from '../sockets/emits/user.ts';
-import { Fumble, FumbleDamage } from '../interfaces/Fumble.ts';
+import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
+import { DealedDamage } from '../interfaces/DealedDamage.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
@@ -127,10 +128,12 @@ export const attackFlow = (targetId: string) => {
   const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
   const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity);
   let dealedDamage: number = 0;
-  let dealedObjectDamage: FumbleDamage | null = null;
+  let dealedObjectDamage: DealedDamage | null = null;
   let fumble: Fumble | undefined = undefined;
   let attackerLuckResult: Luck | undefined = undefined;
   let defenderLuckResult: Luck | undefined = undefined;
+  let fumbleToWeb: FumbleWeb | undefined = undefined;
+  
 
   // Get the percentages of attack types.
   const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
@@ -154,6 +157,8 @@ export const attackFlow = (targetId: string) => {
       fumble = getFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
       if (fumble) {
         dealedObjectDamage = fumble.damage;
+        fumbleToWeb = fumble;
+        delete fumbleToWeb['damage'];
       }
     }
   }
@@ -189,10 +194,11 @@ export const attackFlow = (targetId: string) => {
     fumble: fumblePercentage
   };
 
-  const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumble);
+  const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
 
   // Send data to web
-  sendAttackInformationToWeb(io, attackJSON); //PON EL EL DOCUMENTO DE DRIVE 
+  sendAttackInformationToWeb(io, attackJSON);
+
   //--------------------------------------------------------------------------------//
 
 };

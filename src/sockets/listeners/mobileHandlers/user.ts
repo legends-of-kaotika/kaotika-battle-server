@@ -32,8 +32,6 @@ import {
   sendUserDataToWeb,
 } from '../../emits/user.ts';
 
-
-
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
 
