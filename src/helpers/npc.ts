@@ -1,7 +1,7 @@
 import { io } from '../../index.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { parsePlayerData } from '../services/playerService.ts';
-import { ONLINE_USERS, setTarget } from '../game.ts';
+import { NPCS, ONLINE_USERS, setTarget } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sleep } from './utils.ts';
 import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
@@ -28,6 +28,7 @@ export const fetchNPCs = async () => {
     const npc = parsePlayerData(fullNPC);
     npc.role = 'npc';
     npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
+    NPCS.push(npc);
     ONLINE_USERS.push(npc);
   });
   
