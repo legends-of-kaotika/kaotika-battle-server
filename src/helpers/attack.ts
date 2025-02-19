@@ -11,6 +11,9 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { ReducedDefender } from '../interfaces/ReducedDefender.ts';
 import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
+import { Attribute } from '../interfaces/Attribute.ts';
+import { FumbleWeb } from '../interfaces/Fumble.ts';
+import { DealedDamage } from '../interfaces/DealedDamage.ts';
 
 export const adjustAtributes = (player: Player) => {
 
@@ -61,7 +64,7 @@ export const getSuccessPercentage = (weaponBasePercentage: number, playerDexteri
 };
 
 export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
-  return Math.floor((100 - (100 - successPercentage)) * playerCFP / 100);
+  return Math.floor((100 - successPercentage) * playerCFP / 100);
 };
 export const getDefenseModificator = (value: number): number => {
   return getValueFromRule(DEFENSE_RULES, value);
@@ -111,7 +114,7 @@ export const calculateNormalHitDamage = (weaponRoll: number, attackMod1: number,
   return value || 1;
 };
 
-export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) => {
+export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) : number => {
   const attackMod1 = getAttackModificator1(attackAttribute);
   const attackMod2 = getAttackModificator2(attackAttribute);
   const equipmentDefense = getEquipmentDefense(targetEquipment);
@@ -123,7 +126,7 @@ export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, 
 
 // ---- MAIN FLOW FUNCTION ---- // 
 
-export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) => {
+export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) : AttackTypes => {
 
   let attackType: AttackTypes;
 
@@ -164,17 +167,30 @@ export const attack = (target: ReducedDefender, attacker: ReducedAttacker, attac
   return { dealedDamage, attackType };
 };
 
-export const parseAttackData = (targetPlayerId: string, hit_points: number, percentages: Percentages, attackerLuckResult: Luck, defenderLuckResult: Luck, attackRoll: number, attackerDealedDamage: number, attackType: string): AttackJson => {
-  return {
+export const parseAttackData = (targetPlayerId: string,
+  targetAttributes: Attribute,
+  percentages: Percentages,
+  attackRoll: number,
+  dealedTargetDamage: DealedDamage | null,
+  attackType: string,
+  attackerLuckResult?: Luck, 
+  defenderLuckResult?: Luck, 
+  fumble?: FumbleWeb): AttackJson => {
+
+  const attackJson: AttackJson = {
     attack: {
       targetPlayerId: targetPlayerId,
-      hit_points: hit_points,
+      attributes: targetAttributes,
       percentages: percentages,
       dieRoll: attackRoll,
-      dealedDamage: attackerDealedDamage,
-      attackType: attackType
+      dealedDamage: dealedTargetDamage,
+      attackType: attackType,
+      fumble: fumble
     },
-    luck: {
+  };
+
+  if (attackerLuckResult && defenderLuckResult) {
+    attackJson.luck = {
       attacker: {
         hasLuck: attackerLuckResult.hasLuck,
         luckRolls: attackerLuckResult.luckRolls,
@@ -185,7 +201,11 @@ export const parseAttackData = (targetPlayerId: string, hit_points: number, perc
         luckRolls: defenderLuckResult.luckRolls,
         luckRollMessage: defenderLuckResult.luckMessage
       }
-    }
+    };
   }
-  ;
+  else {
+    attackJson.luck = undefined;
+  }
+
+  return attackJson;
 };

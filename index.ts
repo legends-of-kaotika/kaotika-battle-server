@@ -1,12 +1,12 @@
-import { Socket } from 'socket.io';
-import express from 'express';
 import bodyParser from 'body-parser';
-import { socketHandlers } from './src/sockets/handlers.ts';
-import router from './src/routes/routes.ts';
-import dotenv from 'dotenv';
-import {createServer} from 'http';
-import {Server} from 'socket.io';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import { createServer } from 'http';
+import { Server, Socket } from 'socket.io';
+import router from './src/routes/routes.ts';
+import { fetchNPCs } from './src/helpers/npc.ts';
+import { socketHandlers } from './src/sockets/handlers.ts';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,12 +42,15 @@ async function start() {
   // Start server only if NOT in test mode
   if (process.env.NODE_ENV !== 'test') {
     try {
+      
       server.listen(PORT, () => {
         console.log(`Socket is listening on port ${PORT}`);
         io.on('connection', onConnection);
       });
-    }
-    catch (error) {
+    
+      await fetchNPCs();
+    
+    } catch (error) {
       console.log(`Error starting the server: ${error.message}`);
     }
   }

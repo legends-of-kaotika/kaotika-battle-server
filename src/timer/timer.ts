@@ -1,7 +1,7 @@
 import { clearInterval } from 'timers';
-import { sendTimerDataToAll } from '../sockets/emits/user.ts';
 import { io } from '../../index.ts';
 import { TURN_TIMER } from '../constants/game.ts';
+import { sendTimerDataToAll } from '../sockets/emits/user.ts';
 
 export let turnTime: number = TURN_TIMER;
 let intervalId: NodeJS.Timeout;
@@ -23,4 +23,8 @@ export const startTimer = () => {
 
 export const clearTimer = () => {
   clearInterval(intervalId);
+};
+
+export const resetTimer = () => {
+  turnTime = TURN_TIMER;
 };
