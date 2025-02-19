@@ -12,7 +12,7 @@ import {
   turn,
 } from '../../../game.ts';
 
-import { attackFlow, checkStartGameRequirement } from '../../../helpers/game.ts';
+import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
 import {
   findPlayerById
 } from '../../../helpers/player.ts';
@@ -67,7 +67,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
 
       // Assign the first player
       console.log('Round: ', round);
-      setCurrentPlayer(ONLINE_USERS[turn]);
+      changeTurn();
+
 
       if (currentPlayer) {
         // Divide players by loyalty
