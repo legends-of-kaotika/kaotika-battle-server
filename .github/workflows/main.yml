@@ -1,16 +1,41 @@
-name: Fly Deploy
+name: Deploy Kaotika Battle Server
+
 on:
   push:
     branches:
-      - main    # change to main if needed
+      - main  
+
 jobs:
-  deploy:
-    name: Deploy app
-    runs-on: ubuntu-latest
-    concurrency: deploy-group    # optional: ensure only one action runs at a time
+  build:
+    runs-on: self-hosted 
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Restaurar archivo .env
+      run: cp ~/server-actions-runner/.env $GITHUB_WORKSPACE/.env
+    - name: Configuration
+      run: |
+        echo "Configuring Enviroment..."
+
+    - name: Pull changes from repo
+      run: |
+          git pull origin main
+        
+    - name: Installing dependencies
+      run: |
+        npm install
+
+    - name: Build application
+      run: |
+        npm run build
+
+    - name: Deploy application on pm2
+      run: |
+        pm2 stop kaotika-battle-server || true
+        pm2 restart kaotika-battle-server
+
+    - name: Clean after deploy
+      run: |
+        pm2 save
+        echo "Deploy complete"
