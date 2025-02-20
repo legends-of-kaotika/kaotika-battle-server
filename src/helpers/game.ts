@@ -17,6 +17,7 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { npcAttack } from './npc.ts';
+import { LUCK_MESSAGE } from '../constants/messages.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
@@ -147,8 +148,8 @@ export const attackFlow = (targetId: string) => {
   const attackerReduced = attackerReducedForAttack(attacker);
   const defenderReduced = defenderReducedForAttack(target);
   const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
-  const attackType = attackResult.attackType;
-
+  let attackType = attackResult.attackType;   
+ 
   //----------------------------fumble-----------------------------//
   if (attackType === ATTACK_TYPES.FUMBLE) {
     const fumblePercentile = getCalculationFumblePercentile(fumblePercentage, attackRoll);
@@ -172,7 +173,11 @@ export const attackFlow = (targetId: string) => {
 
     // Execute attacker luck
     attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
-    dealedDamage = attackerLuckResult.dealedDamage;
+    dealedDamage = attackerLuckResult.dealedDamage;  
+
+    if (attackerLuckResult.luckMessage === LUCK_MESSAGE.CRITICAL_EFFECT) {
+      attackType = ATTACK_TYPES.CRITICAL;
+    }  
 
     // Execute defender luck
     defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
