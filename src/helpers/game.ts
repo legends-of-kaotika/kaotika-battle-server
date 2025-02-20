@@ -129,10 +129,10 @@ export const attackFlow = (targetId: string) => {
   const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity);
   let dealedDamage: number = 0;
   let dealedObjectDamage: DealedDamage | null = null;
-  let fumble: Fumble | undefined = undefined;
-  let attackerLuckResult: Luck | undefined = undefined;
-  let defenderLuckResult: Luck | undefined = undefined;
-  let fumbleToWeb: FumbleWeb | undefined = undefined;
+  let fumble: Fumble | null = null;
+  let attackerLuckResult: Luck | null = null;
+  let defenderLuckResult: Luck | null = null;
+  let fumbleToWeb: FumbleWeb | null = null;
   
 
   // Get the percentages of attack types.

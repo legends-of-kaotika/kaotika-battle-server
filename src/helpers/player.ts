@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
-import { ONLINE_USERS } from '../game.ts';
+import { idPlayerFirstTurn, ONLINE_USERS, setIdPlayerFirstTurn } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
@@ -56,6 +56,9 @@ export function handlePlayerDeath(id: string): void {
 
   sendKilledPlayer(io, id);
   removePlayerFromConectedUsersById(id);
+  
+  // If the dead player started first in the next round due to the luck, remove the condition.
+  if (idPlayerFirstTurn === id) setIdPlayerFirstTurn(null);
 }
 
 export function removePlayerFromConectedUsersById(id: string): void {
