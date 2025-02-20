@@ -34,11 +34,10 @@ export const resetTimer = () : void => {
   turnTime = TURN_TIMER;
 };
 
-export const handleTurnTimerExpiration = (turnTime: number): void => {
-
+export const handleTurnTimerExpiration = async (turnTime: number) => {
   if (turnTime === 0) {
     sendTurnTimeout();
-    sleep(5000);
+    await sleep(5000);
     changeTurn();
   }
 };
