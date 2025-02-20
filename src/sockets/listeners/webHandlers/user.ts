@@ -1,10 +1,10 @@
 import { Server, Socket } from 'socket.io';
-import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END } from '../../../constants/sockets.ts';
+import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_TURN_END, WEB_STOP_TIMER } from '../../../constants/sockets.ts';
 import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn, eachSideHasPlayers } from '../../../helpers/game.ts';
 import { findPlayerById, findPlayerDeadId, handlePlayerDeath } from '../../../helpers/player.ts';
 import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
-
+import { clearTimer } from '../../../timer/timer.ts';
 
 export const webUserHandlers = (io: Server, socket: Socket): void => { 
 
@@ -51,4 +51,11 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
       handlePlayerDeath(deadPlayerId);
     }
   });
+
+  socket.on(WEB_STOP_TIMER, () => {
+    console.log(`${WEB_STOP_TIMER} socket listened. Stopping the timer`);
+    clearTimer();
+  });
+
 };
+

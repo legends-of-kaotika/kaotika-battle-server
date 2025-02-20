@@ -5,6 +5,7 @@ import { sendTimerDataToAll } from '../sockets/emits/user.ts';
 
 export let turnTime: number = TURN_TIMER;
 let intervalId: NodeJS.Timeout;
+
 const decreaseTimer = (): void => {
   turnTime--;
   console.log('Time:' , turnTime);
