@@ -54,9 +54,9 @@ export const sendUserDataToWeb = (io: Server, player: Player): void => {
 };
 
 // Sends the player data to server
-export const sendTimerDataToAll = (io: Server, timer: number): void => {
-  logUnlessTesting(`Emitting ${SOCKETS.SEND_TIMER} socket message with turn time: ${timer} to all clients.`);
-  io.emit(SOCKETS.SEND_TIMER, timer);
+export const sendTimerDataToWeb = (io: Server, timer: number): void => {
+  logUnlessTesting(`Emitting ${SOCKETS.SEND_TIMER} socket message with turn time: ${timer} to web client`);
+  io.to(webSocketId).emit(SOCKETS.SEND_TIMER, timer);
 };
 
 // Sends the player data to server
