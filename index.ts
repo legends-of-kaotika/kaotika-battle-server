@@ -15,8 +15,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/api/player', router);
 
-dotenv.config();
-
 // Load .env file (only for non-test environments)
 if (process.env.NODE_ENV !== 'test') {
   dotenv.config(); // Load environment variables from .env file 
