@@ -72,7 +72,6 @@ export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
     gameHasPlayers = false;
   }
 
-  clearTimer();
   return gameHasPlayers;
 };
 
@@ -118,6 +117,9 @@ export const attackFlow = (targetId: string) => {
 
   console.log('Attacker: ', attacker.nickname);
   console.log('Target: ', target.nickname);
+
+  // Pause the timer when someone a player attacks.
+  clearTimer();
 
   // Adjust player attributes
   adjustAtributes(attacker);
