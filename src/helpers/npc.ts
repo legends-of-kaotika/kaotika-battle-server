@@ -3,7 +3,7 @@ import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { parsePlayerData } from '../services/playerService.ts';
 import { NPCS, ONLINE_USERS, setTarget } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
-import { sleep } from './utils.ts';
+import { logUnlessTesting, sleep } from './utils.ts';
 import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
 import { attackFlow } from './game.ts';
 
@@ -45,18 +45,18 @@ export const selectKaotikaPlayerRandom = (): Player | undefined => {
   return kaotikaPlayers[Math.floor(Math.random() * kaotikaPlayers.length)];
 };
 
-export const npcAttack = async () => {
+export const npcAttack = async () : Promise<void> => {
   
-  console.log('Entered npcAttack() function...');
+  logUnlessTesting('Entered npcAttack() function...');
   
   await sleep(2000);
-  console.log('The NPC is selecting a player to attack...');
+  logUnlessTesting('The NPC is selecting a player to attack...');
   const npcSelectedPlayer = selectKaotikaPlayerRandom();
 
   if (npcSelectedPlayer) {
     setTarget(npcSelectedPlayer);
     sendSelectedPlayerIdToWeb(io, npcSelectedPlayer);
-    console.log(`The NPC selected ${npcSelectedPlayer.nickname}`);
+    logUnlessTesting(`The NPC selected ${npcSelectedPlayer.nickname}`);
     await sleep(3000);
     attackFlow(npcSelectedPlayer._id);
   }
