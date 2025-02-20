@@ -17,6 +17,10 @@ export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
 
+export const setIdPlayerFirstTurn = (playerId: string | null): void => {
+  idPlayerFirstTurn = playerId;
+};
+
 //changes the websocketId
 export const setWebSocket = (socketId: string): void => {
   webSocketId = socketId;
@@ -53,7 +57,7 @@ export const increaseRound = (): void => {
   if (idPlayerFirstTurn) {
     nextRoundStartFirst(idPlayerFirstTurn, ONLINE_USERS);
     // Reset player first by luck
-    idPlayerFirstTurn = null;
+    setIdPlayerFirstTurn(null);
   }
 };
 
@@ -70,7 +74,7 @@ export const resetInitialGameValues = (): void => {
   currentPlayer = undefined;
   turn = -1;
   round = 1;
-  idPlayerFirstTurn = null;
+  setIdPlayerFirstTurn(null);
   clearTimer();
   
   // Empty the players array
@@ -87,5 +91,5 @@ export const resetInitialGameValues = (): void => {
 };
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {
-  idPlayerFirstTurn = id;
+  setIdPlayerFirstTurn(id);
 };
