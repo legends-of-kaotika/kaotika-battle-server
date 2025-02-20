@@ -37,7 +37,7 @@ export const resetTimer = () : void => {
 export const handleTurnTimerExpiration = async (turnTime: number) => {
   if (turnTime === 0) {
     sendTurnTimeout();
-    await sleep(5000);
+    await sleep(3000);
     changeTurn();
   }
 };
