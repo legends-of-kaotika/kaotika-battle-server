@@ -6,7 +6,7 @@ import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
 import { findPlayerById } from './player.ts';
-import { adjustAtributes, attack, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData } from './attack.ts';
+import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData } from './attack.ts';
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { applyDamage } from './player.ts';
