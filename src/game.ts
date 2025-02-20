@@ -49,7 +49,7 @@ export const increaseTurn = (): void => {
 export const increaseRound = (): void => {
   round++;
   console.log('Round: ', round, ' Fight!');
-  sendCurrentRound(io,round);
+  sendCurrentRound(round);
   // Sort players by successes, charisma, dexterity
   const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
   sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);

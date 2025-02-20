@@ -106,7 +106,7 @@ describe('Socket.IO server tests', () => {
       clientSocket.on(WEB_CURRENT_ROUND, (arg:number) => {
         expect(arg).toEqual(2);
       });
-      sendCurrentRound(io, 2);
+      sendCurrentRound(2);
     });
   });
 
