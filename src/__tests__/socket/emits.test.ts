@@ -7,7 +7,7 @@ import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, SEND_TIMER, WEB_CURRENT_ROUND
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
 import { Player } from '../../interfaces/Player.ts';
-import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToAll, sendUserDataToWeb } from '../../sockets/emits/user.ts';
+import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendTimerDataToWeb, sendUserDataToWeb } from '../../sockets/emits/user.ts';
 import { sendCurrentRound } from '../../sockets/emits/game.ts';
 
 describe('Socket.IO server tests', () => {
@@ -60,7 +60,7 @@ describe('Socket.IO server tests', () => {
         expect(arg).toEqual(timer); // expect a number
         done();
       });
-      sendTimerDataToAll(io, timer);
+      sendTimerDataToWeb(io, timer);
     });
     test('should send the _id of the player that has been assigned', (done) => {
       clientSocket.on(ASSIGN_TURN, (arg:string) => {

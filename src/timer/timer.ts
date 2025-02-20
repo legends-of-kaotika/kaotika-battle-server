@@ -1,17 +1,20 @@
 import { clearInterval } from 'timers';
 import { io } from '../../index.ts';
 import { TURN_TIMER } from '../constants/game.ts';
-import { sendTimerDataToAll } from '../sockets/emits/user.ts';
+import { sendTimerDataToWeb } from '../sockets/emits/user.ts';
+import { changeTurn } from '../helpers/game.ts';
 
 export let turnTime: number = TURN_TIMER;
 let intervalId: NodeJS.Timeout;
+
 const decreaseTimer = (): void => {
   turnTime--;
   console.log('Time:' , turnTime);
-  sendTimerDataToAll(io ,turnTime);
+  sendTimerDataToWeb(io ,turnTime);
+  handleTurnTimerExpiration(turnTime);
 };
 
-export const startTimer = () => {
+export const startTimer = () : void => {
   console.log('Turn started');
   turnTime = TURN_TIMER;
   console.log('turn time', turnTime);
@@ -21,10 +24,16 @@ export const startTimer = () => {
   }, 1000);
 };
 
-export const clearTimer = () => {
+export const clearTimer = () : void => {
   clearInterval(intervalId);
 };
 
-export const resetTimer = () => {
+export const resetTimer = () : void => {
   turnTime = TURN_TIMER;
+};
+
+export const handleTurnTimerExpiration = (turnTime: number): void => {
+  if(turnTime === 0){
+    changeTurn();
+  }
 };

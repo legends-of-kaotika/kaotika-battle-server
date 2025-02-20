@@ -65,7 +65,6 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       // Assign the first player
       console.log('Round: ', round);
     }
-    
   });
 
   // When the current turn player selects a player

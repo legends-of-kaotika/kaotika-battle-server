@@ -45,4 +45,5 @@ export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
 export const WEB_ATTACK_ANIMATION_END = 'web-attackAnimationEnd';
+export const WEB_STOP_TIMER = 'web-stopTimer';
 
