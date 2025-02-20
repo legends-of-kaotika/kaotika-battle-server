@@ -9,7 +9,7 @@ export const LUCK_MESSAGE = {
   DEFENDER_NO_LUCK: 'The defender has no luck'
 };
 export const ATTACK_INCREASE = {
-  SLIGTHLY: ' The attack has been increased Slightly',
+  SLIGTHLY: ' The attack has been increased slightly',
   NORMAL: ' The attack has been increased',
   BIG: ' The attack has been increased significantly!',
   
