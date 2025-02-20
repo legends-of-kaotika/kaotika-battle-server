@@ -127,7 +127,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     }
 
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
-    luckMessage = `${LUCK_MESSAGE.CRITICAL_EFFECT} (+${dealedDamage-oldDealedDamage})`;
+    luckMessage = `${LUCK_MESSAGE.CRITICAL_EFFECT}`;
     break;
 
   } case ATTACK_LUCK_EFFECTS.NORMAL_ATTACK_INCREASE: {
