@@ -23,6 +23,7 @@ export const KILLED_PLAYER = 'send-killedPlayer';
 export const WEB_CURRENT_ROUND = 'web-currentRound';
 export const ATTACK_INFORMATION = 'web-attackInformation';
 export const GAME_RESET = 'gameReset';
+export const WEB_TURN_TIMEOUT = 'web-turnTimeout';
 
 // ---- LISTENERS ---- //
 

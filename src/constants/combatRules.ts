@@ -1,5 +1,6 @@
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS, FUMBLE_EFFECTS } from './game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
+import { ATTACK_INCREASE } from './messages.ts';
 
 export const ATTACK_TYPES: Record<string, AttackTypes> = {
   NORMAL: 'NORMAL',
@@ -89,4 +90,9 @@ export const EFFECTS_FUMBLE = [
   {max: 60, effect: FUMBLE_EFFECTS.FAIRYTALE},
   {max: 80, effect: FUMBLE_EFFECTS.HACK},
   {max: Infinity, effect: FUMBLE_EFFECTS.SMASH}
+];
+export const LUCK_ATTACK_INCREEASE = [
+  {max: 35, effect: ATTACK_INCREASE.SLIGTHLY},
+  {max: 49, effect: ATTACK_INCREASE.NORMAL},
+  {max: 59, effect: ATTACK_INCREASE.BIG},
 ];
