@@ -1,4 +1,3 @@
-import { Server } from 'socket.io';
 import { io } from '../../index.ts';
 import { ONLINE_USERS, currentPlayer, target, setTarget, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
@@ -37,6 +36,7 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 
 // Changes the turn players
 export const changeTurn = () : void => {
+  eachSideHasPlayers();
   increaseTurn();
   const nextPlayer = ONLINE_USERS[turn];
   setCurrentPlayer(nextPlayer);
@@ -54,10 +54,10 @@ export const changeTurn = () : void => {
 };
 
 // Check if there are at least 1 player from each side
-export const eachSideHasPlayers = (io: Server, users: Player[]): boolean => {
+export const eachSideHasPlayers = (): boolean => {
 
   let gameHasPlayers: boolean = true;
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(ONLINE_USERS);
 
   if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
     sendGameEnd(io, 'Draw');
