@@ -118,7 +118,7 @@ export const attackFlow = (targetId: string) => {
   console.log('Attacker: ', attacker.nickname);
   console.log('Target: ', target.nickname);
 
-  // Pause the timer when someone a player attacks.
+  // Pause the timer when a player attacks.
   clearTimer();
 
   // Adjust player attributes
