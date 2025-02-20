@@ -36,7 +36,7 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 
 // Changes the turn players
 export const changeTurn = () : void => {
-  eachSideHasPlayers();
+  
   increaseTurn();
   const nextPlayer = ONLINE_USERS[turn];
   setCurrentPlayer(nextPlayer);
@@ -48,8 +48,8 @@ export const changeTurn = () : void => {
     if (currentPlayer.role === 'npc') {
       npcAttack();
     }
-    
   }
+  eachSideHasPlayers();
   
 };
 
