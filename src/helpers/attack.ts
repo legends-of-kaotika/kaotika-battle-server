@@ -173,9 +173,9 @@ export const parseAttackData = (targetPlayerId: string,
   attackRoll: number,
   dealedTargetDamage: DealedDamage | null,
   attackType: string,
-  attackerLuckResult?: Luck, 
-  defenderLuckResult?: Luck, 
-  fumble?: FumbleWeb): AttackJson => {
+  attackerLuckResult: Luck | null, 
+  defenderLuckResult: Luck | null, 
+  fumble: FumbleWeb | null): AttackJson => {
 
   const attackJson: AttackJson = {
     attack: {
