@@ -16,8 +16,8 @@ export const ATTACK_INCREASE = {
 };
 
 export const FUMBLE_MESSAGE = {
-  slash: 'Is self-injured slightly',
-  fairytale: 'Player wears the glasses of Erudite',
-  hack: 'Self leg broken',
-  smash: 'Is self-injured heavily'
+  slash: 'is self-injured slightly',
+  fairytale: 'wears the glasses of Erudite',
+  hack: 'leg got broken, losing dexterity',
+  smash: 'is self-injured heavily'
 };
