@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 
-export const controller = async (req: Request, res: Response) => {
+export const getMissions = async (req: Request, res: Response) => {
 
   try {
    
+      
+
     return res
       .status(200)
       .send({});
