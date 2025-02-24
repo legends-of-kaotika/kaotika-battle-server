@@ -1,4 +1,4 @@
-import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, assignRole} from '../../services/playerService.ts';
+import { calculateHitPoints, calculateAttack, calculateDefense, calculateMagicResistance, calculateCFP, calculateBCFA, assignRole} from '../../services/player.ts';
 import { Attribute } from '../../interfaces/Attribute.ts';
 
 describe('Attribute Calculation Functions', () => {

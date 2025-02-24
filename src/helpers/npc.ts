@@ -1,6 +1,6 @@
 import { io } from '../../index.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
-import { parsePlayerData } from '../services/playerService.ts';
+import { parsePlayerData } from '../services/player.ts';
 import { NPCS, ONLINE_USERS, setTarget } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { logUnlessTesting, sleep } from './utils.ts';
