@@ -1,14 +1,21 @@
 import { Request, Response } from 'express';
+import { fetchMissions } from '../helpers/api.ts';
 
 export const getMissions = async (req: Request, res: Response) => {
 
   try {
    
-      
+    const missions = await fetchMissions();
+    
+    if (missions === null) {
+      return res
+        .status(404)
+        .send({message: 'Not mission found'});
+    }
 
     return res
       .status(200)
-      .send({});
+      .send(missions);
 
   } catch (error) {
     res
