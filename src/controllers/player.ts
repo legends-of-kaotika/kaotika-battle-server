@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { isGameStarted, ONLINE_USERS } from '../game.ts';
-import { isPlayerConnected } from '../helpers/player.ts';
+import { isGameStarted } from '../game.ts';
 
 import { initFetchPlayer } from '../services/player.ts';
 import { Player } from '../interfaces/Player.ts';
@@ -35,17 +34,12 @@ export const initFetchPlayerController = async (req: Request, res: Response) => 
     if (!playerData) {
       return res.status(404).send({ message: 'Does not exist any player with this email' });
     }
-    // check if player is already connected
-    if (isPlayerConnected(playerData.email)) {
-      console.log(playerData.email, 'is already connected');
-      return res.status(409).send({ message: 'User is already connected'});
-    } else {
-      ONLINE_USERS.push(playerData);
-      // Return player data
-      return res
-        .status(200)
-        .send({ status: 'OK', data: playerData });
-    }
+  
+    // Return player data
+    return res
+      .status(200)
+      .send({ status: 'OK', data: playerData });
+      
   } catch (error) {
     res
       .status(error?.status || 500)
