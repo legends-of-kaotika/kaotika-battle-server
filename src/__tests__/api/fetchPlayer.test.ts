@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { initFetchPlayerController } from '../../controllers/playerController.ts';
-import { initFetchPlayer } from '../../services/playerService.ts';
+import { initFetchPlayerController } from '../../controllers/player.ts';
+import { initFetchPlayer } from '../../services/player.ts';
 import { ONLINE_USERS_MOCK } from '../../__mocks__/players.ts';
 
 jest.mock('../../services/playerService', () => ({
