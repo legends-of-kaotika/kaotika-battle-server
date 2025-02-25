@@ -1,7 +1,7 @@
-import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { GAME_USERS_MOCK } from '../../../__mocks__/players.ts';
 import * as fumbleHelpers from '../../../helpers/fumble.ts';
 
-const mockPlayer = {...ONLINE_USERS_MOCK[0]};
+const mockPlayer = {...GAME_USERS_MOCK[0]};
 
 describe('getFumble method', () => {
 

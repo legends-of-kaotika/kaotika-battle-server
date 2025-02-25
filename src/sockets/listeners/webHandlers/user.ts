@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS } from '../../../constants/sockets.ts';
-import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
+import { GAME_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn } from '../../../helpers/game.ts';
 import { findPlayerById, findPlayerDeadId, handlePlayerDeath } from '../../../helpers/player.ts';
 import { sleep } from '../../../helpers/utils.ts';
@@ -18,7 +18,7 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   //sends current online players
   socket.on(WEB_SEND_USERS, async () => {
     console.log('web-sendUsers socket message listened. Sending Online Users to everyone.');
-    sendConnectedUsersArrayToWeb(io, ONLINE_USERS);
+    sendConnectedUsersArrayToWeb(io, GAME_USERS);
   });
 
 

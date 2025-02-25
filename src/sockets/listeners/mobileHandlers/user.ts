@@ -3,7 +3,7 @@ import * as SOCKETS from '../../../constants/sockets.ts';
 import {
   BATTLES,
   CONNECTED_USERS,
-  ONLINE_USERS,
+  GAME_USERS,
   resetInitialGameValues,
   round,
   setGameStarted,
@@ -89,10 +89,10 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       setGameStarted(true);
     
       // Sort players by successes, charisma, dexterity
-      const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
-      sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
+      const playersTurnSuccesses = getPlayersTurnSuccesses(GAME_USERS);
+      sortTurnPlayers(playersTurnSuccesses, GAME_USERS);
       changeTurn();
-      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
+      sendConnectedUsersArrayToAll(io, GAME_USERS);
       gameStartToAll(io);
       // Assign the first player
       console.log('Round: ', round);
