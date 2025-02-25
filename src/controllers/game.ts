@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { fetchBattles } from '../helpers/api.ts';
-import { BATTLES } from '../game.ts';
 
 export const getBattles = async (req: Request, res: Response) => {
 
@@ -12,9 +11,6 @@ export const getBattles = async (req: Request, res: Response) => {
         .status(404)
         .send({message: 'Not mission found'});
     }
-
-    BATTLES.length = 0;
-    BATTLES.push(...battles);
 
     return res
       .status(200)
