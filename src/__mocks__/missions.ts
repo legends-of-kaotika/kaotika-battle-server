@@ -1,6 +1,6 @@
 import { Battle } from '../interfaces/Battles.ts';
 
-export const missions: Battle[] = 
+export const battles: Battle[] = 
     [
       {
         id: '8367893',
