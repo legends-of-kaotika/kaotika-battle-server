@@ -11,7 +11,7 @@ export const globalHandlers = (io: Server, socket: Socket): void => {
     console.log(`Disconnect socket message listened. Deleting user with socket: ${socket.id} from online users list.`);
     
     // Remove from connected users.
-    removePlayerConnected(socket, socket.id);
+    removePlayerConnected(socket);
 
     // Check if any team wins.
     if (isGameStarted) { 

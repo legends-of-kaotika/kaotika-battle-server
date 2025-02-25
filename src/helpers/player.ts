@@ -22,8 +22,8 @@ export const findPlayerBySocketId = (id: string): Player | undefined => {
 };
 
 // Removes the player that got disconnected from playerConnected[] global variable
-export const removePlayerConnected = (socket: Socket, socketId: string): void => {
-  const userIndex = ONLINE_USERS.findIndex((user) => user.socketId === socketId);
+export const removePlayerConnected = (socket: Socket): void => {
+  const userIndex = ONLINE_USERS.findIndex((user) => user.socketId === socket.id);
   if (userIndex != -1) {
     console.log('Player with email', ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId, 'disconnected');
     socket.leave(MOBILE);
@@ -41,18 +41,13 @@ export const findPlayerByEmail = (email: string): Player | undefined => {
   return user;
 };
 
-// Returns a boolean if a player is connected. searched by email
-export const isPlayerConnected = (email: string): boolean => {
-  return ONLINE_USERS.some((player) => (player.email === email));
-};
-
-export const isPlayerConnectedById = (id: string): boolean => {
+export const isPlayerAlive = (id: string): boolean => {
   return ONLINE_USERS.some((player) => player._id === id);
 };
 
 export function handlePlayerDeath(id: string): void {
 
-  const isConnected = isPlayerConnectedById(id);
+  const isConnected = isPlayerAlive(id);
   if (!isConnected) return;
 
   sendKilledPlayer(io, id);
