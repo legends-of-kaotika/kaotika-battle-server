@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
+  isGameCreated,
   ONLINE_USERS,
   resetInitialGameValues,
   round,
@@ -29,7 +30,7 @@ import {
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
-
+  listenMobileIsGameCreated(socket, io);
 
   // Receive socketId + email from clientMobile
   socket.on(SOCKETS.MOBILE_SEND_SOCKET_ID, async (email: string) => {
@@ -113,6 +114,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     attackFlow(_id);
     
   });
+
+
 };
 
 const sendResetGame = (socket : Socket, io: Server) : void => {
@@ -123,4 +126,16 @@ const sendResetGame = (socket : Socket, io: Server) : void => {
       logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
     });
   });
+};
+
+const listenMobileIsGameCreated = (socket : Socket, io: Server) : void => {
+  socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED} to all`);
+    sendIsGameCreated(io);
+  });
+};
+
+const sendIsGameCreated = (io: Server) : void => {
+  logUnlessTesting(`emit the ${SOCKETS.IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
+  io.emit(SOCKETS.IS_GAME_CREATED, isGameCreated);
 };

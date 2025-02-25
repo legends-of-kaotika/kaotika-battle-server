@@ -24,6 +24,7 @@ export const WEB_CURRENT_ROUND = 'web-currentRound';
 export const ATTACK_INFORMATION = 'web-attackInformation';
 export const GAME_RESET = 'gameReset';
 export const WEB_TURN_TIMEOUT = 'web-turnTimeout';
+export const IS_GAME_CREATED = 'isGameCreated';
 
 // ---- LISTENERS ---- //
 
@@ -37,6 +38,7 @@ export const MOBILE_SELECT_CURSE = 'mobile-selectCurse';
 export const MOBILE_SELECT_USE_POTION = 'mobile-selectUsePotion';
 export const MOBILE_ATTACK = 'mobile-attack';
 export const MOBILE_RESET_GAME = 'mobile-gameReset';
+export const MOBILE_IS_GAME_CREATED = 'mobile-isGameCreated';
 
 
 // Web
