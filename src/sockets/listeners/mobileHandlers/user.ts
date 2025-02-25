@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
+  BATTLES,
   ONLINE_USERS,
   resetInitialGameValues,
   round,
@@ -18,6 +19,7 @@ import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import {
   gameStartToAll,
+  sendBattlestoMobile,
   sendConnectedUsersArrayToAll,
   sendCreateBattleToWeb,
   sendCurseSelectedToWeb,
@@ -28,6 +30,7 @@ import {
   sendUserDataToWeb,
 } from '../../emits/user.ts';
 import { findBattleById } from '../../../helpers/battle.ts';
+import { fetchBattles } from '../../../helpers/api.ts';
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
@@ -119,6 +122,16 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
     sendCreateBattleToWeb(findBattleById(_id), io);
+  });
+
+  socket.on(SOCKETS.MOBILE_GET_BATTLES, async () => {
+    console.log(`${SOCKETS.MOBILE_GET_BATTLES} socket message listened.`);
+    const battles = await fetchBattles();
+
+    BATTLES.length = 0;
+    BATTLES.push(...battles);
+
+    sendBattlestoMobile(battles, io);
   });
 
 };
