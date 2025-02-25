@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import playerRouter from './src/routes/player.ts';
-import gameRouter from './src/routes/game.ts';
 import { fetchNPCs } from './src/helpers/npc.ts';
 import { socketHandlers } from './src/sockets/handlers.ts';
 
@@ -14,8 +12,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api/player', playerRouter);
-app.use('/api/game', gameRouter);
 
 // Load .env file
 dotenv.config();

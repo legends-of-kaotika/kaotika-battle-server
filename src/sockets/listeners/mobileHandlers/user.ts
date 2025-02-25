@@ -20,6 +20,7 @@ import { logUnlessTesting } from '../../../helpers/utils.ts';
 import {
   gameStartToAll,
   sendConnectedUsersArrayToAll,
+  sendCreateBattleToWeb,
   sendCurseSelectedToWeb,
   sendHealSelectedToWeb,
   sendNotEnoughPlayers,
@@ -27,6 +28,7 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
 } from '../../emits/user.ts';
+import { findBattleById } from '../../../helpers/battle.ts';
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
@@ -115,6 +117,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     
   });
 
+  socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
+    console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
+    sendCreateBattleToWeb(findBattleById(_id), io);
+  });
+
+
 
 };
 
@@ -127,6 +135,8 @@ const sendResetGame = (socket : Socket, io: Server) : void => {
     });
   });
 };
+
+
 
 const listenMobileIsGameCreated = (socket : Socket, io: Server) : void => {
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {

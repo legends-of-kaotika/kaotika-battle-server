@@ -1,21 +1,24 @@
 import { Request, Response } from 'express';
-import { fetchMissions } from '../helpers/api.ts';
+import { fetchBattles } from '../helpers/api.ts';
+import { BATTLES } from '../game.ts';
 
-export const getMissions = async (req: Request, res: Response) => {
+export const getBattles = async (req: Request, res: Response) => {
 
   try {
    
-    const missions = await fetchMissions();
-    
-    if (missions === null) {
+    const battles = await fetchBattles();
+    if (battles === null) {
       return res
         .status(404)
         .send({message: 'Not mission found'});
     }
 
+    BATTLES.length = 0;
+    BATTLES.push(...battles);
+
     return res
       .status(200)
-      .send(missions);
+      .send(battles);
 
   } catch (error) {
     res

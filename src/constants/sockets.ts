@@ -29,7 +29,6 @@ export const IS_GAME_CREATED = 'isGameCreated';
 // ---- LISTENERS ---- //
 
 // Mobile
-
 export const MOBILE_SEND_SOCKET_ID = 'mobile-sendSocketId';
 export const MOBILE_GAME_START = 'mobile-gameStart';
 export const MOBILE_SET_SELECTED_PLAYER = 'mobile-setSelectedPlayer';
@@ -38,6 +37,7 @@ export const MOBILE_SELECT_CURSE = 'mobile-selectCurse';
 export const MOBILE_SELECT_USE_POTION = 'mobile-selectUsePotion';
 export const MOBILE_ATTACK = 'mobile-attack';
 export const MOBILE_RESET_GAME = 'mobile-gameReset';
+export const MOBILE_CREATE_GAME = 'mobile-createGame';
 export const MOBILE_IS_GAME_CREATED = 'mobile-isGameCreated';
 
 
@@ -49,4 +49,5 @@ export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_TURN_END = 'web-turnEnd';
 export const WEB_ATTACK_ANIMATION_END = 'web-attackAnimationEnd';
 export const WEB_STOP_TIMER = 'web-stopTimer';
+export const WEB_CREATE_BATTLE = 'web-createdBattle';
 
