@@ -8,6 +8,7 @@ import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
 import { clearTimer } from './timer/timer.ts';
 
 export const ONLINE_USERS: Player[] = [];
+export const CONNECTED_USERS: Player[] = [];
 export const NPCS: Player[] = [];
 export const BATTLES: Battle[] = [];
 export let webSocketId: string = '';
@@ -19,6 +20,7 @@ export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
 export let selectedBattle: string | null = null;
+export let isGameCreated: boolean = false; 
 
 export const setIdPlayerFirstTurn = (playerId: string | null): void => {
   idPlayerFirstTurn = playerId;
@@ -99,4 +101,8 @@ export const resetInitialGameValues = (): void => {
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {
   setIdPlayerFirstTurn(id);
+};
+
+export const setIsGameCreated = (status: boolean): void => {
+  isGameCreated = status;
 };

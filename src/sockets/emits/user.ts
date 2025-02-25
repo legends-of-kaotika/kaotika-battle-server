@@ -115,5 +115,8 @@ export const sendKilledPlayer = (io: Server, id: string): void => {
 export const sendCreateBattleToWeb = (battle: Battle | undefined, io: Server): void => {
 
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battle);
-  io.emit(SOCKETS.GAME_CREATED, true);
+  io.emit(SOCKETS.IS_GAME_CREATED, true);
+};
+export const sendBattlestoMobile = (battles: Battle[], io: Server): void => {
+  io.to(SOCKETS.MOBILE).emit(SOCKETS.BATTLES, battles);
 };

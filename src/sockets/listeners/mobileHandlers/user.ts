@@ -1,6 +1,9 @@
 import { Server, Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
+  isGameCreated,
+  BATTLES,
+  CONNECTED_USERS,
   ONLINE_USERS,
   resetInitialGameValues,
   round,
@@ -14,11 +17,11 @@ import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../help
 import {
   findPlayerById
 } from '../../../helpers/player.ts';
-import { insertSocketId } from '../../../helpers/socket.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import {
   gameStartToAll,
+  sendBattlestoMobile,
   sendConnectedUsersArrayToAll,
   sendCreateBattleToWeb,
   sendCurseSelectedToWeb,
@@ -29,18 +32,48 @@ import {
   sendUserDataToWeb,
 } from '../../emits/user.ts';
 import { findBattleById } from '../../../helpers/battle.ts';
+import { fetchBattles } from '../../../helpers/api.ts';
 
+import { getPlayerDataByEmail } from '../../../helpers/api.ts';
+import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
+
+  
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
+  listenMobileIsGameCreated(socket, io);
 
-  // Receive socketId + email from clientMobile
-  socket.on(SOCKETS.MOBILE_SEND_SOCKET_ID, async (email: string) => {
-    console.log(`new player with socketId: ${socket.id} ${email}`);
-    const newPlayerConnected = insertSocketId(email, socket.id);
-    if (newPlayerConnected) {
-      socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
-      sendUserDataToWeb(io, newPlayerConnected);
+  // Mobile login.
+  // eslint-disable-next-line no-unused-vars
+  socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (response: MobileSignInResponse) => void) => {
+
+    console.log(`New player with socketId: ${socket.id} - ${email}`);
+
+    if (!callback) {
+      console.log(`No callback function received in socket ${SOCKETS.MOBILE_SIGN_IN}.`);
+      return;
     }
+
+    if (!email) {
+      callback({status: 'FAILED', error: `No email received in ${SOCKETS.MOBILE_SIGN_IN} socket! Player login cancelled.`});
+      return;
+    }
+
+    const playerData = await getPlayerDataByEmail(email);
+
+    if (!playerData) {
+      callback({status: 'FAILED', error: `No player found for email ${email}. Player login cancelled.`});
+      return;
+    }
+
+    playerData.socketId = socket.id;
+    CONNECTED_USERS.push(playerData);
+
+    socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
+    sendUserDataToWeb(io, playerData);
+    
+    // Send data to mobile.
+    callback({status: 'OK', player: playerData});
+
   });
 
   // When Mortimer presses the START Button
@@ -121,6 +154,18 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sendCreateBattleToWeb(findBattleById(_id), io);
   });
 
+  socket.on(SOCKETS.MOBILE_GET_BATTLES, async () => {
+    console.log(`${SOCKETS.MOBILE_GET_BATTLES} socket message listened.`);
+    const battles = await fetchBattles();
+
+    BATTLES.length = 0;
+    BATTLES.push(...battles);
+
+    sendBattlestoMobile(battles, io);
+  });
+
+
+
   socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_SELECTED_BATTLE} socket message listened.`);
     setSelectedBattle(_id);
@@ -139,3 +184,15 @@ const sendResetGame = (socket : Socket, io: Server) : void => {
 };
 
 
+
+const listenMobileIsGameCreated = (socket : Socket, io: Server) : void => {
+  socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED} to all`);
+    sendIsGameCreated(io);
+  });
+};
+
+const sendIsGameCreated = (io: Server) : void => {
+  logUnlessTesting(`emit the ${SOCKETS.IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
+  io.emit(SOCKETS.IS_GAME_CREATED, isGameCreated);
+};

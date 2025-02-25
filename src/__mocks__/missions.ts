@@ -1,6 +1,6 @@
 import { Battle } from '../interfaces/Battles.ts';
 
-export const missions: Battle[] = 
+export const battles: Battle[] = 
     [
       {
         id: '8367893',
@@ -27,4 +27,5 @@ export const missions: Battle[] =
         battle_background: 'ritual.webp',
         battle_animations: ['player.gif', 'warlock.gif', 'demon.gif'],
         end_of_battle_background: ['victory.webp', 'defeat.webp']
-      }];
+      }
+    ];
