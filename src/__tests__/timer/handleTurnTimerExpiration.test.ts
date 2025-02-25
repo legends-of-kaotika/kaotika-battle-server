@@ -22,7 +22,7 @@ describe('test handleTurnTimerExpiration', () => {
     // act
     await handleTurnTimerExpiration(turnTime);
     // assert
-    expect(sleep).toHaveBeenCalledWith(3000);
+    expect(sleep).toHaveBeenCalledWith(1000);
     expect(changeTurn).toHaveBeenCalled();
     expect(logUnlessTesting).toHaveBeenCalled();
   });
