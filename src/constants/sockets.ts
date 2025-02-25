@@ -29,7 +29,7 @@ export const WEB_TURN_TIMEOUT = 'web-turnTimeout';
 
 // Mobile
 
-export const MOBILE_SEND_SOCKET_ID = 'mobile-sendSocketId';
+export const MOBILE_SIGN_IN = 'mobile-signIn';
 export const MOBILE_GAME_START = 'mobile-gameStart';
 export const MOBILE_SET_SELECTED_PLAYER = 'mobile-setSelectedPlayer';
 export const MOBILE_SELECT_HEAL = 'mobile-selectHeal';

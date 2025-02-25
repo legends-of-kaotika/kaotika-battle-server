@@ -7,6 +7,7 @@ import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
 import { clearTimer } from './timer/timer.ts';
 
 export const ONLINE_USERS: Player[] = [];
+export const CONNECTED_USERS: Player[] = [];
 export const NPCS: Player[] = [];
 export let webSocketId: string = '';
 
