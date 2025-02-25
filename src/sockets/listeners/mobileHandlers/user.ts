@@ -1,6 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
+  isGameCreated,
+  BATTLES,
   CONNECTED_USERS,
   ONLINE_USERS,
   resetInitialGameValues,
@@ -18,7 +20,9 @@ import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import {
   gameStartToAll,
+  sendBattlestoMobile,
   sendConnectedUsersArrayToAll,
+  sendCreateBattleToWeb,
   sendCurseSelectedToWeb,
   sendHealSelectedToWeb,
   sendNotEnoughPlayers,
@@ -26,12 +30,16 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
 } from '../../emits/user.ts';
+import { findBattleById } from '../../../helpers/battle.ts';
+import { fetchBattles } from '../../../helpers/api.ts';
+
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
 
   
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
+  listenMobileIsGameCreated(socket, io);
 
   // Mobile login.
   // eslint-disable-next-line no-unused-vars
@@ -139,6 +147,24 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     attackFlow(_id);
     
   });
+
+  socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
+    console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
+    sendCreateBattleToWeb(findBattleById(_id), io);
+  });
+
+  socket.on(SOCKETS.MOBILE_GET_BATTLES, async () => {
+    console.log(`${SOCKETS.MOBILE_GET_BATTLES} socket message listened.`);
+    const battles = await fetchBattles();
+
+    BATTLES.length = 0;
+    BATTLES.push(...battles);
+
+    sendBattlestoMobile(battles, io);
+  });
+
+
+
 };
 
 const sendResetGame = (socket : Socket, io: Server) : void => {
@@ -149,4 +175,18 @@ const sendResetGame = (socket : Socket, io: Server) : void => {
       logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
     });
   });
+};
+
+
+
+const listenMobileIsGameCreated = (socket : Socket, io: Server) : void => {
+  socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED} to all`);
+    sendIsGameCreated(io);
+  });
+};
+
+const sendIsGameCreated = (io: Server) : void => {
+  logUnlessTesting(`emit the ${SOCKETS.IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
+  io.emit(SOCKETS.IS_GAME_CREATED, isGameCreated);
 };

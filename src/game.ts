@@ -1,6 +1,7 @@
 import { io } from '../index.ts';
 import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
+import { Battle } from './interfaces/Battles.ts';
 import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
 import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
@@ -9,6 +10,7 @@ import { clearTimer } from './timer/timer.ts';
 export const ONLINE_USERS: Player[] = [];
 export const CONNECTED_USERS: Player[] = [];
 export const NPCS: Player[] = [];
+export const BATTLES: Battle[] = [];
 export let webSocketId: string = '';
 
 export let target: Player | undefined;
@@ -17,6 +19,7 @@ export let turn: number = -1;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
+export let isGameCreated: boolean = false; 
 
 export const setIdPlayerFirstTurn = (playerId: string | null): void => {
   idPlayerFirstTurn = playerId;
@@ -93,4 +96,8 @@ export const resetInitialGameValues = (): void => {
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {
   setIdPlayerFirstTurn(id);
+};
+
+export const setIsGameCreated = (status: boolean): void => {
+  isGameCreated = status;
 };

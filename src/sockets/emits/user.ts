@@ -7,6 +7,7 @@ import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
 import { Attribute } from '../../interfaces/Attribute.ts';
 import { AttackJson } from '../../interfaces/AttackJson.ts';
+import { Battle } from '../../interfaces/Battles.ts';
 
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = (io: Server, users: Player[]): void => {
@@ -110,4 +111,12 @@ export const sendPlayerDisconnectedToWeb = (io: Server, name: string): void => {
 export const sendKilledPlayer = (io: Server, id: string): void => {
   logUnlessTesting(`Emitting to all connected devices that player with id: ${id} has been killed in the battle`);
   io.emit(SOCKETS.KILLED_PLAYER, id);
+};
+export const sendCreateBattleToWeb = (battle: Battle | undefined, io: Server): void => {
+
+  io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battle);
+  io.emit(SOCKETS.IS_GAME_CREATED, true);
+};
+export const sendBattlestoMobile = (battles: Battle[], io: Server): void => {
+  io.to(SOCKETS.MOBILE).emit(SOCKETS.BATTLES, battles);
 };

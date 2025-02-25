@@ -1,4 +1,5 @@
-export interface Missions {
+export interface Battle {
+        id: string;
         name: string;
         description: string;
         enemies: string[];
