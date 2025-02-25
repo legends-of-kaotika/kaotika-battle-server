@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
-  isGameCreated,
   BATTLES,
   CONNECTED_USERS,
   ONLINE_USERS,
@@ -35,11 +34,10 @@ import { fetchBattles } from '../../../helpers/api.ts';
 
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
+import { sendIsGameCreated } from '../../emits/game.ts';
 
   
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
-  sendResetGame(socket, io);
-  listenMobileIsGameCreated(socket, io);
 
   // Mobile login.
   // eslint-disable-next-line no-unused-vars
@@ -81,7 +79,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     console.log(`Socket ${SOCKETS.MOBILE_GAME_START} received`);
 
     // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
-    if (checkStartGameRequirement() === false) {
+    if (!checkStartGameRequirement()) {
       console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
       sendNotEnoughPlayers(io, socket.id);
     } else {
@@ -163,11 +161,6 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     sendBattlestoMobile(battles, io);
   });
 
-
-
-};
-
-const sendResetGame = (socket : Socket, io: Server) : void => {
   socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
     resetInitialGameValues();
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_RESET_GAME} to all`);
@@ -175,18 +168,10 @@ const sendResetGame = (socket : Socket, io: Server) : void => {
       logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
     });
   });
-};
 
-
-
-const listenMobileIsGameCreated = (socket : Socket, io: Server) : void => {
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
-    logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED} to all`);
-    sendIsGameCreated(io);
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED}.`);
+    sendIsGameCreated();
   });
-};
 
-const sendIsGameCreated = (io: Server) : void => {
-  logUnlessTesting(`emit the ${SOCKETS.IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
-  io.emit(SOCKETS.IS_GAME_CREATED, isGameCreated);
 };
