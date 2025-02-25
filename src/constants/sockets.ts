@@ -39,6 +39,7 @@ export const MOBILE_SELECT_USE_POTION = 'mobile-selectUsePotion';
 export const MOBILE_ATTACK = 'mobile-attack';
 export const MOBILE_RESET_GAME = 'mobile-gameReset';
 export const MOBILE_CREATE_GAME = 'mobile-createGame';
+export const MOBILE_SELECTED_BATTLE = 'mobile-selectedBattle';
 
 
 // Web
@@ -50,4 +51,5 @@ export const WEB_TURN_END = 'web-turnEnd';
 export const WEB_ATTACK_ANIMATION_END = 'web-attackAnimationEnd';
 export const WEB_STOP_TIMER = 'web-stopTimer';
 export const WEB_CREATE_BATTLE = 'web-createdBattle';
+export const WEB_SEND_SELECTED_BATTLE = 'web-selectedBattle';
 

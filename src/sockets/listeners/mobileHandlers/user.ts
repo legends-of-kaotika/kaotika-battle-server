@@ -5,6 +5,7 @@ import {
   resetInitialGameValues,
   round,
   setGameStarted,
+  setSelectedBattle,
   setTarget,
   target,
 } from '../../../game.ts';
@@ -31,7 +32,6 @@ import { findBattleById } from '../../../helpers/battle.ts';
 
 export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   sendResetGame(socket, io);
-
 
   // Receive socketId + email from clientMobile
   socket.on(SOCKETS.MOBILE_SEND_SOCKET_ID, async (email: string) => {
@@ -119,6 +119,11 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
     sendCreateBattleToWeb(findBattleById(_id), io);
+  });
+
+  socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {
+    console.log(`${SOCKETS.MOBILE_SELECTED_BATTLE} socket message listened.`);
+    setSelectedBattle(_id);
   });
 
 };
