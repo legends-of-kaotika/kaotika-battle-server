@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
   BATTLES,
@@ -35,10 +35,11 @@ import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
+import { io } from '../../../../index.ts';
 import { sendIsGameCreated } from '../../emits/game.ts';
 
   
-export const mobileUserHandlers = (io: Server, socket: Socket): void => {
+export const mobileUserHandlers = (socket: Socket): void => {
 
   // Mobile login.
   // eslint-disable-next-line no-unused-vars

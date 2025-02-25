@@ -9,7 +9,7 @@ export const socketHandlers = (io: Server, socket: Socket): void => {
   globalHandlers(socket);
 
   //Sockets used for MOBILE
-  mobileUserHandlers(io, socket);
+  mobileUserHandlers(socket);
 
   //Sockets used for WEB
   webUserHandlers(io, socket);
