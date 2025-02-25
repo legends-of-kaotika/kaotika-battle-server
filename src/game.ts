@@ -1,6 +1,7 @@
 import { io } from '../index.ts';
 import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
+import { Battle } from './interfaces/Battles.ts';
 import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
 import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
@@ -8,6 +9,7 @@ import { clearTimer } from './timer/timer.ts';
 
 export const ONLINE_USERS: Player[] = [];
 export const NPCS: Player[] = [];
+export const BATTLES: Battle[] = [];
 export let webSocketId: string = '';
 
 export let target: Player | undefined;

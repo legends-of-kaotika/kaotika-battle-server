@@ -1,6 +1,6 @@
 import { missions } from '../__mocks__/missions.ts';
 
-export const fetchMissions = async () => {
+export const fetchBattles = async () => {
   try {
     console.log('fetchMissions()');
     // const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/}/`);

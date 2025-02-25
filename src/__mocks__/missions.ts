@@ -1,8 +1,9 @@
-import { Missions } from '../interfaces/Missions.ts';
+import { Battle } from '../interfaces/Battles.ts';
 
-export const missions: Missions[] = 
+export const missions: Battle[] = 
     [
       {
+        id: '8367893',
         name: 'Forgotten Tavern',
         description: 'In search of Angelo, a dark secret lurks in the shadows of the tavern.',
         enemies: ['boss_id', 'boos_id'],
@@ -15,6 +16,7 @@ export const missions: Missions[] =
         end_of_battle_background: ['victory.webp', 'defeat.webp']
       },
       {
+        id: '765325',
         name: 'The Profane Ritual',
         description: 'A coven of warlocks has summoned horrors from beyond the veil. Stop them before it’s too late.',
         enemies: ['warlock_id', 'demon_id'],
