@@ -7,12 +7,14 @@ export const getBattles = async (req: Request, res: Response) => {
   try {
    
     const battles = await fetchBattles();
-    BATTLES.push(...battles);
     if (battles === null) {
       return res
         .status(404)
         .send({message: 'Not mission found'});
     }
+
+    BATTLES.length = 0;
+    BATTLES.push(...battles);
 
     return res
       .status(200)
