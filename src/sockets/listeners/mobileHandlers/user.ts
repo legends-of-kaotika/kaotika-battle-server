@@ -31,6 +31,7 @@ import {
 } from '../../emits/user.ts';
 import { findBattleById } from '../../../helpers/battle.ts';
 import { fetchBattles } from '../../../helpers/api.ts';
+import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
@@ -149,6 +150,12 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
     sendCreateBattleToWeb(findBattleById(_id), io);
+    const battle = findBattleById(_id);
+    if (battle) {
+      addBattleNPCsToGame(battle);
+    } else {
+      console.error(`Battle with id ${_id} not found`);
+    }
   });
 
   socket.on(SOCKETS.MOBILE_GET_BATTLES, async () => {

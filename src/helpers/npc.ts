@@ -6,6 +6,7 @@ import { Player } from '../interfaces/Player.ts';
 import { logUnlessTesting, sleep } from './utils.ts';
 import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
 import { attackFlow } from './game.ts';
+import { Battle } from '../interfaces/Battles.ts';
 
 
 export const fetchNPCs = async () => {
@@ -60,4 +61,16 @@ export const npcAttack = async () : Promise<void> => {
     await sleep(3000);
     attackFlow(npcSelectedPlayer._id);
   }
+};
+
+export const addBattleNPCsToGame = (battle: Battle) => {
+
+  const npcs: Player[] = battle.enemies;
+  npcs.forEach((fullNPC: Player) => {
+    const npc = fullNPC;
+    npc.role = 'npc';
+    npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
+    NPCS.push(npc);
+    ONLINE_USERS.push(npc);
+  });
 };
