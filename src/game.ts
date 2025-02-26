@@ -18,7 +18,7 @@ export let turn: number = -1;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
-export let selectedBattle: string | null = null;
+export let selectedBattleId: string | null = null;
 export let isGameCreated: boolean = false; 
 
 export const setIdPlayerFirstTurn = (playerId: string | null): void => {
@@ -49,8 +49,8 @@ export const increaseTurn = (): void => {
   }
 };
 
-export const setSelectedBattle = (_id:string):void => {
-  selectedBattle = _id;
+export const setSelectedBattleId = (_id:string):void => {
+  selectedBattleId = _id;
 };
 
 //changes the turn number

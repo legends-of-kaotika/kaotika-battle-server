@@ -9,7 +9,7 @@ import {
   round,
   setGameStarted,
   setIsGameCreated,
-  setSelectedBattle,
+  setSelectedBattleId,
   setTarget,
   target,
   webSocketId,
@@ -41,7 +41,7 @@ import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
-import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated } from '../../emits/game.ts';
+import { sendCreatedBattleToWeb, sendSelectedBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
 import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
@@ -174,7 +174,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     }
     
     // Set the selected battle.
-    setSelectedBattle(_id);
+    setSelectedBattleId(_id);
 
     // Add the NPCs from the battle to game users array.
     addBattleNPCsToGame(battleData.enemies);
@@ -224,8 +224,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
   
   socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_SELECTED_BATTLE} socket message listened.`);
-    setSelectedBattle(_id);
-    sendCurrentSelectedBattle();
+    setSelectedBattleId(_id);
+    sendSelectedBattleToWeb();
   });
 
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
