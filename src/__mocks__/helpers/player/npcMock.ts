@@ -144,6 +144,8 @@ export const NPCS_MOCK: PlayerPopulated[] = [
         image: '/images/equipment/rings/ring_42.png',
         value: 3000,
         min_lvl: 22,
+        isUnique: true,
+        isActive: true
       },
       'artifact': {
         'modifiers': {
