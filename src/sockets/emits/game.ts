@@ -20,9 +20,16 @@ export const sendIsGameCreated = () : void => {
   logUnlessTesting(`emit the ${IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
   io.emit(IS_GAME_CREATED, isGameCreated);
 };
-export const sendCreatedBattleToWeb = (battle: Battle | undefined): void => {
-  io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battle);
+
+export const sendIsGameCreatedToEmiter = (socketId: string) : void => {
+  logUnlessTesting(`emit the ${IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
+  io.to(socketId).emit(IS_GAME_CREATED, isGameCreated);
 };
+
+export const sendCreatedBattleToWeb = (battleData: Partial<Battle>): void => {
+  io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battleData);
+};
+
 
 export const sendCurrentSelectedBattle = () => {
   logUnlessTesting('sending selected battle emit to web');

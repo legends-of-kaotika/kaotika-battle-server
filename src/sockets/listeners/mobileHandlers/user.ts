@@ -17,7 +17,7 @@ import {
 } from '../../../game.ts';
 
 import { fetchBattles } from '../../../helpers/api.ts';
-import { findBattleById } from '../../../helpers/battle.ts';
+import { findBattleById, parseWebBattleData } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
@@ -42,8 +42,8 @@ import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
+import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated, sendIsGameCreatedToEmiter } from '../../emits/game.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
-import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated } from '../../emits/game.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
 
@@ -168,17 +168,27 @@ export const mobileUserHandlers = (socket: Socket): void => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
         
     const battleData = findBattleById(_id);
-    sendCreatedBattleToWeb(battleData);
     
-    setIsGameCreated(true);
-    sendIsGameCreated();
-    
-    const battle = findBattleById(_id);
-    if (battle) {
-      addBattleNPCsToGame(battle);
-    } else {
+    if (!battleData) {
       console.error(`Battle with id ${_id} not found`);
+      return;
     }
+    
+    // Set the selected battle.
+    setSelectedBattle(_id);
+
+    // Add the NPCs from the battle to game users array.
+    addBattleNPCsToGame(battleData.enemies);
+    
+    // Set the lobby created to true.
+    setIsGameCreated(true);
+    
+    // Send data to clients.
+    const webBattleData = parseWebBattleData(battleData);
+
+    // Send the data to clients.
+    sendCreatedBattleToWeb(webBattleData);
+    sendIsGameCreated();
 
   });
 
@@ -221,7 +231,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED}.`);
-    sendIsGameCreated();
+    sendIsGameCreatedToEmiter(socket.id);
   });
 
   
