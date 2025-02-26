@@ -71,6 +71,6 @@ export const addBattleNPCsToGame = (battle: Battle) => {
     npc.role = 'npc';
     npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
     NPCS.push(npc);
-    ONLINE_USERS.push(npc);
+    GAME_USERS.push(npc);
   });
 };
