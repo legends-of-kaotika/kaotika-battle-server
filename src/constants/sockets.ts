@@ -27,6 +27,7 @@ export const WEB_TURN_TIMEOUT = 'web-turnTimeout';
 export const IS_GAME_CREATED = 'isGameCreated';
 export const BATTLES = 'battles';
 export const WEB_JOINED_BATTLE = 'web-joinedBattle';
+export const IS_GAME_STARTED = 'isGameStarted';
 
 // ---- LISTENERS ---- //
 

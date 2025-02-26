@@ -5,6 +5,7 @@ import {
   CONNECTED_USERS,
   GAME_USERS,
   isGameCreated,
+  isGameStarted,
   resetInitialGameValues,
   round,
   setGameStarted,
@@ -39,10 +40,10 @@ import {
 
 import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
-import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
-import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
-import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated } from '../../emits/game.ts';
 import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
+import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
+import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
+import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated } from '../../emits/game.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
 
@@ -261,8 +262,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
     io.to(webSocketId).emit(SOCKETS.WEB_JOINED_BATTLE, playerId);
   });
 
-  socket.on(SOCKETS.MOBILE_IS_GAME_STARTED, () => {
+  socket.on(SOCKETS.MOBILE_IS_GAME_STARTED, async() => {
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_STARTED}.`);
-    
+    io.to(socket.id).emit(SOCKETS.IS_GAME_STARTED, isGameStarted);
   });
 };
