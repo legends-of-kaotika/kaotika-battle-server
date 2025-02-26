@@ -23,7 +23,7 @@ export const sendIsGameCreated = () : void => {
 export const sendCreateBattleToWeb = (battle: Battle | undefined): void => {
 
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battle);
-  io.emit(SOCKETS.IS_GAME_CREATED, true);
+  io.emit(SOCKETS.IS_GAME_CREATED, isGameCreated);
 };
 
 export const sendCurrentSelectedBattle = (_id:string) => {

@@ -7,6 +7,7 @@ import {
   resetInitialGameValues,
   round,
   setGameStarted,
+  setIsGameCreated,
   setSelectedBattle,
   setTarget,
   target,
@@ -159,7 +160,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
-
+    
+    setIsGameCreated(true);
     sendCreateBattleToWeb(findBattleById(_id));
     const battle = findBattleById(_id);
     if (battle) {
