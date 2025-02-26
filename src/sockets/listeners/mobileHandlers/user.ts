@@ -41,7 +41,7 @@ import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
-import { sendCreateBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
+import { sendCreatedBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
 import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
@@ -164,9 +164,9 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
-    
     setIsGameCreated(true);
-    sendCreateBattleToWeb(findBattleById(_id));
+    sendCreatedBattleToWeb(findBattleById(_id));
+    sendIsGameCreated();
     const battle = findBattleById(_id);
     if (battle) {
       addBattleNPCsToGame(battle);
