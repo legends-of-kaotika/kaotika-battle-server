@@ -22,11 +22,17 @@ export const sendIsGameCreated = () : void => {
   io.emit(IS_GAME_CREATED, isGameCreated);
 };
 
+export const sendIsGameCreatedToEmiter = (socketId: string) : void => {
+  logUnlessTesting(`emit the ${IS_GAME_CREATED} to all with isGameStarted: ${isGameCreated}`);
+  io.to(socketId).emit(IS_GAME_CREATED, isGameCreated);
+};
+
 export const sendCreatedBattleToWeb = (battleData: Partial<Battle>): void => {
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battleData);
 };
 
 export const sendSelectedBattleToWeb = () => {
+  
   logUnlessTesting('sending selected battle emit to web');
 
   if (!selectedBattleId) {
@@ -44,7 +50,6 @@ export const sendSelectedBattleToWeb = () => {
 
   const webBattleData = parseWebBattleData(battleData);
   io.to(webSocketId).emit(WEB_SEND_SELECTED_BATTLE, webBattleData);
-
 
 };
 
