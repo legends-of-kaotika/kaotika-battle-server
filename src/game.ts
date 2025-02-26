@@ -1,4 +1,3 @@
-import { io } from '../index.ts';
 import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
 import { Battle } from './interfaces/Battles.ts';
@@ -19,6 +18,7 @@ export let turn: number = -1;
 export let round: number = 1;
 export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
+export let selectedBattle: string | null = null;
 export let isGameCreated: boolean = false; 
 
 export const setIdPlayerFirstTurn = (playerId: string | null): void => {
@@ -47,6 +47,10 @@ export const increaseTurn = (): void => {
     turn = 0;
     increaseRound();
   }
+};
+
+export const setSelectedBattle = (_id:string):void => {
+  selectedBattle = _id;
 };
 
 //changes the turn number
@@ -90,7 +94,7 @@ export const resetInitialGameValues = (): void => {
   GAME_USERS.push(...NPCS);
 
   // Send the new users array to web to display them.
-  sendConnectedUsersArrayToWeb(io, GAME_USERS);
+  sendConnectedUsersArrayToWeb(GAME_USERS);
 
 };
 
