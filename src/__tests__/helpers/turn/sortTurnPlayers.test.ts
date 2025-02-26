@@ -1,4 +1,4 @@
-import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { GAME_USERS_MOCK } from '../../../__mocks__/players.ts';
 import { sortTurnPlayers } from '../../../helpers/turn.ts';
 import { Player } from '../../../interfaces/Player.ts';
 
@@ -43,7 +43,7 @@ const playersTurnSuccessesMock2 = {
   '66dec6ab4c27dff822d80066': 3
 };
 
-const onlineUsersMock = [...ONLINE_USERS_MOCK]; 
+const onlineUsersMock = [...GAME_USERS_MOCK]; 
 const onlineUsersWithSameCharisma = usersWithSameCharisma(onlineUsersMock);
 
 describe('sortTurnPlayers method', ()=> {

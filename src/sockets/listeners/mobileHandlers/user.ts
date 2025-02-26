@@ -3,7 +3,7 @@ import * as SOCKETS from '../../../constants/sockets.ts';
 import {
   BATTLES,
   CONNECTED_USERS,
-  ONLINE_USERS,
+  GAME_USERS,
   resetInitialGameValues,
   round,
   setGameStarted,
@@ -11,7 +11,10 @@ import {
   target,
 } from '../../../game.ts';
 
+import { fetchBattles } from '../../../helpers/api.ts';
+import { findBattleById } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
+import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
   findPlayerById
 } from '../../../helpers/player.ts';
@@ -19,9 +22,7 @@ import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.
 import { logUnlessTesting } from '../../../helpers/utils.ts';
 import {
   gameStartToAll,
-  sendBattlestoMobile,
   sendConnectedUsersArrayToAll,
-  sendCreateBattleToWeb,
   sendCurseSelectedToWeb,
   sendHealSelectedToWeb,
   sendNotEnoughPlayers,
@@ -29,14 +30,11 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
 } from '../../emits/user.ts';
-import { findBattleById } from '../../../helpers/battle.ts';
-import { fetchBattles } from '../../../helpers/api.ts';
-import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 
+import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
-import { io } from '../../../../index.ts';
-import { sendIsGameCreated } from '../../emits/game.ts';
+import { sendBattlestoMobile, sendCreateBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
 
   
 export const mobileUserHandlers = (socket: Socket): void => {
@@ -91,10 +89,10 @@ export const mobileUserHandlers = (socket: Socket): void => {
       setGameStarted(true);
     
       // Sort players by successes, charisma, dexterity
-      const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
-      sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
+      const playersTurnSuccesses = getPlayersTurnSuccesses(GAME_USERS);
+      sortTurnPlayers(playersTurnSuccesses, GAME_USERS);
       changeTurn();
-      sendConnectedUsersArrayToAll(io, ONLINE_USERS);
+      sendConnectedUsersArrayToAll(io, GAME_USERS);
       gameStartToAll(io);
       // Assign the first player
       console.log('Round: ', round);
@@ -150,7 +148,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
-    sendCreateBattleToWeb(findBattleById(_id), io);
+    sendCreateBattleToWeb(findBattleById(_id));
     const battle = findBattleById(_id);
     if (battle) {
       addBattleNPCsToGame(battle);
@@ -166,7 +164,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     BATTLES.length = 0;
     BATTLES.push(...battles);
 
-    sendBattlestoMobile(battles, io);
+    sendBattlestoMobile(battles);
   });
 
   socket.on(SOCKETS.MOBILE_RESET_GAME, () => {

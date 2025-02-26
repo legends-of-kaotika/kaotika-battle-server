@@ -1,5 +1,5 @@
 import { io } from '../../index.ts';
-import { ONLINE_USERS, currentPlayer, target, setTarget, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
+import { GAME_USERS, currentPlayer, target, setTarget, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
@@ -38,7 +38,7 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 export const changeTurn = () : void => {
   
   increaseTurn();
-  const nextPlayer = ONLINE_USERS[turn];
+  const nextPlayer = GAME_USERS[turn];
   setCurrentPlayer(nextPlayer);
   if (currentPlayer) {
     assignTurn(io, currentPlayer);
@@ -57,7 +57,7 @@ export const changeTurn = () : void => {
 export const eachSideHasPlayers = (): boolean => {
 
   let gameHasPlayers: boolean = true;
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(ONLINE_USERS);
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
 
   if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
     sendGameEnd(io, 'Draw');
@@ -78,8 +78,8 @@ export const eachSideHasPlayers = (): boolean => {
 
 // Check if there is the minimum 1 player connected and of role acolyte no betrayer
 export const checkStartGameRequirement = () : boolean => {
-  if (ONLINE_USERS.length >= 1) {
-    return ONLINE_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
+  if (GAME_USERS.length >= 1) {
+    return GAME_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
   }
   return false;
 };
@@ -189,7 +189,7 @@ export const attackFlow = (targetId: string) => {
 
   //-----------------------------------------------------------------------------//
   
-  // Update player's attributes in ONLINE_USERS
+  // Update player's attributes in GAME_USERS
   applyDamage(target._id, dealedObjectDamage);
 
   //---------------------------send JSON to web-----------------------------------//

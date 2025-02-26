@@ -1,7 +1,7 @@
-import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { GAME_USERS_MOCK } from '../../../__mocks__/players.ts';
 import { getPlayersTurnSuccesses } from '../../../helpers/turn.ts';
 
-const onlineUsersCopyMock = [...ONLINE_USERS_MOCK];
+const onlineUsersCopyMock = [...GAME_USERS_MOCK];
 
 describe ('getPlayersTurnSuccesses method', ()=> {
   it('should return object with many id with their value', ()=> {
