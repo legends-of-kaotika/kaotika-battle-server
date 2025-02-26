@@ -261,4 +261,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
     io.to(webSocketId).emit(SOCKETS.WEB_JOINED_BATTLE, playerId);
   });
 
+  socket.on(SOCKETS.MOBILE_IS_GAME_STARTED, () => {
+    logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_STARTED}.`);
+    
+  });
 };

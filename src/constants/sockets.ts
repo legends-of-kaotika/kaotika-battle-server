@@ -44,6 +44,7 @@ export const MOBILE_GET_BATTLES = 'mobile-getBattles';
 export const MOBILE_IS_GAME_CREATED = 'mobile-isGameCreated';
 export const MOBILE_JOIN_BATTLE = 'mobile-joinBattle';
 export const MOBILE_SELECTED_BATTLE = 'mobile-selectedBattle';
+export const MOBILE_IS_GAME_STARTED = 'mobile-isGameStarted';
 
 
 // Web
