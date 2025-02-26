@@ -4,6 +4,7 @@ import {
   BATTLES,
   CONNECTED_USERS,
   GAME_USERS,
+  isGameCreated,
   resetInitialGameValues,
   round,
   setGameStarted,
@@ -11,6 +12,7 @@ import {
   setSelectedBattle,
   setTarget,
   target,
+  webSocketId,
 } from '../../../game.ts';
 
 import { fetchBattles } from '../../../helpers/api.ts';
@@ -18,6 +20,7 @@ import { findBattleById } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
+  findConnectedPlayerById,
   findPlayerById,
   isPlayerConnected
 } from '../../../helpers/player.ts';
@@ -37,7 +40,8 @@ import {
 import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
-import { sendCreateBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
+import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
+import { sendCreatedBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
 import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
@@ -160,9 +164,9 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
-    
     setIsGameCreated(true);
-    sendCreateBattleToWeb(findBattleById(_id));
+    sendCreatedBattleToWeb(findBattleById(_id));
+    sendIsGameCreated();
     const battle = findBattleById(_id);
     if (battle) {
       addBattleNPCsToGame(battle);
@@ -211,6 +215,39 @@ export const mobileUserHandlers = (socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED}.`);
     sendIsGameCreated();
+  });
+
+  
+  socket.on(SOCKETS.MOBILE_JOIN_BATTLE, (playerId: string, callback: (_response: MobileJoinBattleResponse) => void) => {
+    
+    console.log(`${socket.id} trying to join the battle`);
+    
+    if (!callback) {
+      console.log(`No callback function received in socket ${SOCKETS.MOBILE_JOIN_BATTLE}.`);
+      return;
+    }
+
+    if (!playerId) {
+      callback({status: 'FAILED', error: `No id received in ${SOCKETS.MOBILE_JOIN_BATTLE} socket! Player join to battle cancelled.`});
+      return;
+    }
+
+    if (!isGameCreated) {
+      callback({status: 'OK', joinBattle: false});
+      return;
+    }
+    
+    // Insert player in battle
+    const player = findConnectedPlayerById(playerId);
+    if (player){
+      GAME_USERS.push(player);
+    }
+    
+    // Send data to mobile.
+    callback({status: 'OK', joinBattle: true});
+
+    // Send data to web
+    io.to(webSocketId).emit(SOCKETS.WEB_JOINED_BATTLE, playerId);
   });
 
 };

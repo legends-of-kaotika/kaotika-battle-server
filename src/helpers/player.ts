@@ -8,6 +8,12 @@ import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
 
+// Returns a player searched by id in connected users
+export const findConnectedPlayerById = (_id: string): Player | undefined => {
+  const user = CONNECTED_USERS.find((player) => player._id === _id);
+  return user;
+};
+
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
   const user = GAME_USERS.find((player) => player._id === _id);
@@ -250,6 +256,7 @@ export const assignRole = (email: string) => {
     return 'acolyte';
   }
 };
+
 
 
 
