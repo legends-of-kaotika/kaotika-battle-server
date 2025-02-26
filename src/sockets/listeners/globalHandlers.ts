@@ -9,7 +9,7 @@ export const globalHandlers = (socket: Socket): void => {
   socket.on(DISCONNECT, async () => {
     
     const player = findPlayerBySocketId(socket.id);
-    console.log(`${player?.nickname || `Player with socker id ${socket.id}`} disconnected.`);
+    console.log(`${player?.nickname || `Player with socket id ${socket.id}`} disconnected.`);
     
     // Remove from connected users.
     removePlayerConnected(socket);
