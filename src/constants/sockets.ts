@@ -27,6 +27,7 @@ export const WEB_TURN_TIMEOUT = 'web-turnTimeout';
 export const IS_GAME_CREATED = 'isGameCreated';
 export const BATTLES = 'battles';
 export const WEB_JOINED_BATTLE = 'web-joinedBattle';
+export const IS_GAME_STARTED = 'isGameStarted';
 
 // ---- LISTENERS ---- //
 
@@ -44,6 +45,7 @@ export const MOBILE_GET_BATTLES = 'mobile-getBattles';
 export const MOBILE_IS_GAME_CREATED = 'mobile-isGameCreated';
 export const MOBILE_JOIN_BATTLE = 'mobile-joinBattle';
 export const MOBILE_SELECTED_BATTLE = 'mobile-selectedBattle';
+export const MOBILE_IS_GAME_STARTED = 'mobile-isGameStarted';
 
 
 // Web
