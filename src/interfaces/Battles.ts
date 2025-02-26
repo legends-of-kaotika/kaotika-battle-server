@@ -1,10 +1,10 @@
-import { Player } from './Player.ts';
+import { PlayerPopulated } from './PlayerPopulated.ts';
 
 export interface Battle {
         id: string;
         name: string;
         description: string;
-        enemies: Player[];
+        enemies: PlayerPopulated[];
         suggested_level: number;
         drop_item_level: number;
         gold: number;
