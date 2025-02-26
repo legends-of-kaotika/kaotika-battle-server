@@ -1,7 +1,7 @@
 import { GAME_USERS, NPCS, setTarget } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
-import { sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
+import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
 import { attackFlow } from './game.ts';
 import { parsePlayerData } from './player.ts';
 import { logUnlessTesting, sleep } from './utils.ts';
@@ -40,5 +40,7 @@ export const addBattleNPCsToGame = (npcs: PlayerPopulated[]) => {
     NPCS.push(npc);
     GAME_USERS.push(npc);
   });
+
+  sendConnectedUsersArrayToWeb(GAME_USERS);
   
 };
