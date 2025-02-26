@@ -4,12 +4,11 @@ import { fetchBattles } from '../helpers/api.ts';
 export const getBattles = async (req: Request, res: Response) => {
 
   try {
-   
     const battles = await fetchBattles();
     if (battles === null) {
       return res
         .status(404)
-        .send({message: 'Not mission found'});
+        .send({ message: 'Not mission found' });
     }
 
     return res

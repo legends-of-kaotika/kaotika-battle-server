@@ -8,7 +8,7 @@ import { parsePlayerData } from './player.ts';
 import { logUnlessTesting, sleep } from './utils.ts';
 
 
-export const fetchNPCs = async () => {
+export const fetchNPCs = async () : Promise<void> => {
   
   console.log('Fetching NPCs...');
 

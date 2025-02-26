@@ -1,9 +1,10 @@
 
-import { parsePlayerData } from './player.ts';
 import { battles } from '../__mocks__/battles.ts';
+import { Battle } from '../interfaces/Battles.ts';
+import { Player } from '../interfaces/Player.ts';
+import { parsePlayerData } from './player.ts';
 
-
-export const fetchBattles = async () => {
+export const fetchBattles = async () : Promise<Battle[]> => {
   try {
     console.log('fetcBattles()');
     // const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/}/`);
@@ -20,7 +21,7 @@ export const fetchBattles = async () => {
   }
 };
 
-export const getPlayerDataByEmail = async (email: string) => {
+export const getPlayerDataByEmail = async (email: string) : Promise<Player | null> => {
   try {
     const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/players/email/${email}/`);
     const userData = await queryResponse.json();
