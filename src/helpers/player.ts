@@ -257,9 +257,6 @@ export const assignRole = (email: string) => {
   }
 };
 
-export const insertPlayerInBattle = (playerId: string) => {
-  find
-}
 
 
 
