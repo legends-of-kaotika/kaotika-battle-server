@@ -83,7 +83,6 @@ export const mobileUserHandlers = (socket: Socket): void => {
     console.log(`${playerData.nickname} inserted into CONNECTED_USERS`);
 
     socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
-    sendUserDataToWeb(playerData);
     
     // Send data to mobile.
     callback({status: 'OK', player: playerData});
@@ -211,6 +210,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
       BATTLES.length = 0;
       BATTLES.push(...battles);
 
+      console.log({ status: 'OK', battles: battles });
+
       // Send data to mobile.
       callback({ status: 'OK', battles: battles }); 
     } catch (error) {
@@ -268,7 +269,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
     }
     
     GAME_USERS.push(player);
-    
+    sendUserDataToWeb(player);
+
     // Send data to mobile.
     callback({status: 'OK', joinBattle: true});
 
