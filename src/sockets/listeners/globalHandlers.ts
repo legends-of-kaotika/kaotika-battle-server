@@ -1,18 +1,26 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { DISCONNECT } from '../../constants/sockets.ts';
-import { removePlayerConnected } from '../../helpers/player.ts';
+import { findPlayerBySocketId, removePlayerConnected } from '../../helpers/player.ts';
 import { isGameStarted } from '../../game.ts';
 import { eachSideHasPlayers } from '../../helpers/game.ts';
 
-export const globalHandlers = (io: Server, socket: Socket): void => { 
-  //sends the new array of players on disconnect
+export const globalHandlers = (socket: Socket): void => { 
+
   socket.on(DISCONNECT, async () => {
-    console.log(`disconnect socket message listened. Deleting user with socket: ${socket.id} from online users list.`);
-    removePlayerConnected(socket, socket.id);
+    
+    const player = findPlayerBySocketId(socket.id);
+    console.log(`${player?.nickname || `Player with socket id ${socket.id}`} disconnected.`);
+    
+    // Remove from connected users.
+    removePlayerConnected(socket);
+
+    // Check if any team wins.
     if (isGameStarted) { 
       eachSideHasPlayers();
     }
+
+    // Clear all the listeners
+    socket.removeAllListeners();
   });
+
 };
-
-

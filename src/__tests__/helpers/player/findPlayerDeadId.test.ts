@@ -2,7 +2,7 @@ import { ONLISE_USERS_MOCK_PLAYER } from '../../../__mocks__/helpers/player/__pl
 import { findPlayerDeadId } from '../../../helpers/player.ts';
 
 jest.mock('../../../game', () => {
-  return { ONLINE_USERS: ONLISE_USERS_MOCK_PLAYER};
+  return { GAME_USERS: ONLISE_USERS_MOCK_PLAYER};
 });
 
 describe('test findPlayerDead function', () => {

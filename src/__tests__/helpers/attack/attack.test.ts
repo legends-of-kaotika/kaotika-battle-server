@@ -1,4 +1,4 @@
-import { ONLINE_USERS_MOCK } from '../../../__mocks__/players.ts';
+import { GAME_USERS_MOCK } from '../../../__mocks__/players.ts';
 import { ATTACK_TYPES } from '../../../constants/combatRules.ts';
 import { attack } from '../../../helpers/attack.ts';
 
@@ -8,8 +8,8 @@ jest.mock('./../../../helpers/attack.ts', () => ({
 }));
 
 describe('attack function', () => {
-  const attacker = ONLINE_USERS_MOCK[0];
-  const target = ONLINE_USERS_MOCK[1];
+  const attacker = GAME_USERS_MOCK[0];
+  const target = GAME_USERS_MOCK[1];
   beforeEach(() => {
     jest.clearAllMocks();
   });

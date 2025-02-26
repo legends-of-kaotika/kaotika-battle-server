@@ -9,4 +9,6 @@ export interface Ring {
   value: number,
   modifiers: Attribute,
   min_lvl: number,
+  isUnique: boolean,
+  isActive: boolean
 }
