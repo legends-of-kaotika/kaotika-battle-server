@@ -61,6 +61,10 @@ export const isPlayerAlive = (id: string): boolean => {
   return GAME_USERS.some((player) => player._id === id);
 };
 
+export const isPlayerConnected = (id: string): boolean => {
+  return CONNECTED_USERS.some((player) => player._id === id);
+};
+
 export function handlePlayerDeath(id: string): void {
 
   const isConnected = isPlayerAlive(id);

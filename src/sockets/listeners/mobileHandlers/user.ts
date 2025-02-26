@@ -17,7 +17,8 @@ import { findBattleById } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
-  findPlayerById
+  findPlayerById,
+  isPlayerConnected
 } from '../../../helpers/player.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
@@ -44,7 +45,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (_response: MobileSignInResponse) => void) => {
 
-    console.log(`New player with socketId: ${socket.id} - ${email}`);
+    console.log(`New player logged in: ${email}`);
 
     if (!callback) {
       console.log(`No callback function received in socket ${SOCKETS.MOBILE_SIGN_IN}.`);
@@ -52,6 +53,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     }
 
     if (!email) {
+      console.log(`No email received in ${SOCKETS.MOBILE_SIGN_IN} socket! Player login cancelled.`);
       callback({status: 'FAILED', error: `No email received in ${SOCKETS.MOBILE_SIGN_IN} socket! Player login cancelled.`});
       return;
     }
@@ -59,12 +61,20 @@ export const mobileUserHandlers = (socket: Socket): void => {
     const playerData = await getPlayerDataByEmail(email);
 
     if (!playerData) {
+      console.log(`No player found for email ${email}. Player login cancelled.`);
       callback({status: 'FAILED', error: `No player found for email ${email}. Player login cancelled.`});
+      return;
+    }
+
+    if (isPlayerConnected(playerData._id)) {
+      console.log('Player already logged in.');
+      callback({status: 'FAILED', error: 'Player already logged in.'});
       return;
     }
 
     playerData.socketId = socket.id;
     CONNECTED_USERS.push(playerData);
+    console.log(`${playerData.nickname} inserted into CONNECTED_USERS`);
 
     socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
     sendUserDataToWeb(playerData);
