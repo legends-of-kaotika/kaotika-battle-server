@@ -25,6 +25,3 @@ export const sendCreateBattleToWeb = (battle: Battle | undefined): void => {
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battle);
   io.emit(SOCKETS.IS_GAME_CREATED, true);
 };
-export const sendBattlestoMobile = (battles: Battle[]): void => {
-  io.to(SOCKETS.MOBILE).emit(SOCKETS.BATTLES, battles);
-};
