@@ -8,6 +8,8 @@ import {
   resetInitialGameValues,
   round,
   setGameStarted,
+  setIsGameCreated,
+  setSelectedBattle,
   setTarget,
   target,
   webSocketId,
@@ -19,7 +21,8 @@ import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../help
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
   findConnectedPlayerById,
-  findPlayerById
+  findPlayerById,
+  isPlayerConnected
 } from '../../../helpers/player.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
@@ -37,17 +40,17 @@ import {
 import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
-import { sendBattlestoMobile, sendCreateBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
+import { sendCreateBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
+import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 
-  
 export const mobileUserHandlers = (socket: Socket): void => {
 
   // Mobile login.
 
   socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (_response: MobileSignInResponse) => void) => {
 
-    console.log(`New player with socketId: ${socket.id} - ${email}`);
+    console.log(`New player logged in: ${email}`);
 
     if (!callback) {
       console.log(`No callback function received in socket ${SOCKETS.MOBILE_SIGN_IN}.`);
@@ -55,6 +58,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     }
 
     if (!email) {
+      console.log(`No email received in ${SOCKETS.MOBILE_SIGN_IN} socket! Player login cancelled.`);
       callback({status: 'FAILED', error: `No email received in ${SOCKETS.MOBILE_SIGN_IN} socket! Player login cancelled.`});
       return;
     }
@@ -62,12 +66,20 @@ export const mobileUserHandlers = (socket: Socket): void => {
     const playerData = await getPlayerDataByEmail(email);
 
     if (!playerData) {
+      console.log(`No player found for email ${email}. Player login cancelled.`);
       callback({status: 'FAILED', error: `No player found for email ${email}. Player login cancelled.`});
+      return;
+    }
+
+    if (isPlayerConnected(playerData._id)) {
+      console.log('Player already logged in.');
+      callback({status: 'FAILED', error: 'Player already logged in.'});
       return;
     }
 
     playerData.socketId = socket.id;
     CONNECTED_USERS.push(playerData);
+    console.log(`${playerData.nickname} inserted into CONNECTED_USERS`);
 
     socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
     sendUserDataToWeb(playerData);
@@ -152,6 +164,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_CREATE_GAME, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
+    
+    setIsGameCreated(true);
     sendCreateBattleToWeb(findBattleById(_id));
     const battle = findBattleById(_id);
     if (battle) {
@@ -159,16 +173,29 @@ export const mobileUserHandlers = (socket: Socket): void => {
     } else {
       console.error(`Battle with id ${_id} not found`);
     }
+
   });
 
-  socket.on(SOCKETS.MOBILE_GET_BATTLES, async () => {
+  socket.on(SOCKETS.MOBILE_GET_BATTLES, async ( callback: (_response: MobileBattelsResponse) => void) => {
     console.log(`${SOCKETS.MOBILE_GET_BATTLES} socket message listened.`);
-    const battles = await fetchBattles();
 
-    BATTLES.length = 0;
-    BATTLES.push(...battles);
+    if (!callback) {
+      console.log(`No callback function received in socket ${SOCKETS.MOBILE_GET_BATTLES}.`);
+      return;
+    }
 
-    sendBattlestoMobile(battles);
+    try {
+      const battles = await fetchBattles();
+
+      BATTLES.length = 0;
+      BATTLES.push(...battles);
+
+      // Send data to mobile.
+      callback({ status: 'OK', battles: battles }); 
+    } catch (error) {
+      console.error('Error fetching battles:', error);
+      callback({ status: 'FAILED', error: 'Error fetching battles' });
+    }
   });
 
   socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
@@ -177,6 +204,11 @@ export const mobileUserHandlers = (socket: Socket): void => {
     io.emit(SOCKETS.GAME_RESET, () => {
       logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
     });
+  });
+  
+  socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {
+    console.log(`${SOCKETS.MOBILE_SELECTED_BATTLE} socket message listened.`);
+    setSelectedBattle(_id);
   });
 
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {

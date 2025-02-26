@@ -43,6 +43,7 @@ export const MOBILE_CREATE_GAME = 'mobile-createGame';
 export const MOBILE_GET_BATTLES = 'mobile-getBattles';
 export const MOBILE_IS_GAME_CREATED = 'mobile-isGameCreated';
 export const MOBILE_JOIN_BATTLE = 'mobile-joinBattle';
+export const MOBILE_SELECTED_BATTLE = 'mobile-selectedBattle';
 
 
 // Web
@@ -54,4 +55,5 @@ export const WEB_TURN_END = 'web-turnEnd';
 export const WEB_ATTACK_ANIMATION_END = 'web-attackAnimationEnd';
 export const WEB_STOP_TIMER = 'web-stopTimer';
 export const WEB_CREATE_BATTLE = 'web-createdBattle';
+export const WEB_SEND_SELECTED_BATTLE = 'web-selectedBattle';
 

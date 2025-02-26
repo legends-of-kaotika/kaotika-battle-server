@@ -83,9 +83,9 @@ export const sendUpdatedPlayerToMobile = (id:string, updatedAttributes:Attribute
 };
 
 // Sends the players(id) that has been disconnected
-export const sendPlayerRemoved = (player: Player): void => {
-  logUnlessTesting(`Emitting ${SOCKETS.REMOVE_PLAYER} socket message with ${player._id} id`);
-  io.emit(SOCKETS.REMOVE_PLAYER, player._id);
+export const sendPlayerRemoved = (playerId: string): void => {
+  logUnlessTesting(`Emitting ${SOCKETS.REMOVE_PLAYER} socket message with ${playerId} id`);
+  io.emit(SOCKETS.REMOVE_PLAYER, playerId);
 };
 
 // Send the game has ended and a string with the name of the winnner faction 

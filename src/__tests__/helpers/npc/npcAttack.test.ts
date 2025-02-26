@@ -3,7 +3,6 @@ import { attackFlow } from '../../../helpers/game.ts';
 import { npcAttack, selectKaotikaPlayerRandom } from '../../../helpers/npc.ts';
 import { sleep } from '../../../helpers/utils.ts';
 import { sendSelectedPlayerIdToWeb } from '../../../sockets/emits/user.ts';
-import { io } from '../../../../index.ts';
 
 // Mockea cada dependencia en función de su ruta real
 jest.mock('../../../helpers/utils.ts', () => ({
@@ -44,7 +43,7 @@ describe('npcAttack', () => {
     expect(sleep).toHaveBeenNthCalledWith(1, 2000);
     expect(sleep).toHaveBeenNthCalledWith(2, 3000);
     expect(setTarget).toHaveBeenCalledWith(fakePlayer);
-    expect(sendSelectedPlayerIdToWeb).toHaveBeenCalledWith(io, fakePlayer);
+    expect(sendSelectedPlayerIdToWeb).toHaveBeenCalledWith(fakePlayer);
     expect(attackFlow).toHaveBeenCalledWith(fakePlayer._id);
   });
 

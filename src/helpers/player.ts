@@ -1,13 +1,12 @@
 import { Socket } from 'socket.io';
-import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
 import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
+import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
-import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 
 // Returns a player searched by id in connected users
 export const findConnectedPlayerById = (_id: string): Player | undefined => {
@@ -29,13 +28,30 @@ export const findPlayerBySocketId = (id: string): Player | undefined => {
 
 // Removes the player that got disconnected from playerConnected[] global variable
 export const removePlayerConnected = (socket: Socket): void => {
-  const userIndex = GAME_USERS.findIndex((user) => user.socketId === socket.id);
-  if (userIndex != -1) {
-    console.log('Player with email', GAME_USERS[userIndex].email, 'and socket', GAME_USERS[userIndex].socketId, 'disconnected');
+
+  let userInfo: { email: string; _id: string } | undefined;
+
+  // Remove from GAME_USERS if exists.
+  const gameUsersIndex = GAME_USERS.findIndex(user => user.socketId === socket.id);
+  if (gameUsersIndex !== -1) {
+    userInfo = GAME_USERS[gameUsersIndex];
+    GAME_USERS.splice(gameUsersIndex, 1);
+    console.log('Player removed from GAME_USERS');
+  }
+
+  // Remove from CONNECTED_USERS if exists.
+  const connectedUsersIndex = CONNECTED_USERS.findIndex(user => user.socketId === socket.id);
+  if (connectedUsersIndex !== -1) {
+    userInfo = CONNECTED_USERS[connectedUsersIndex];
+    CONNECTED_USERS.splice(connectedUsersIndex, 1);
+    console.log('Player removed from CONNECTED_USERS');
+  }
+
+  if (userInfo) {
+    console.log(`${userInfo.email} has disconnected`);
     socket.leave(MOBILE);
-    sendPlayerRemoved(io, GAME_USERS[userIndex]);
-    sendPlayerDisconnectedToWeb(io, GAME_USERS[userIndex].nickname);
-    GAME_USERS.splice(userIndex, 1);
+    sendPlayerRemoved(userInfo._id);
+    sendPlayerDisconnectedToWeb(userInfo.email);
   } else {
     console.log('No players found with the received socket');
   }
@@ -51,12 +67,16 @@ export const isPlayerAlive = (id: string): boolean => {
   return GAME_USERS.some((player) => player._id === id);
 };
 
+export const isPlayerConnected = (id: string): boolean => {
+  return CONNECTED_USERS.some((player) => player._id === id);
+};
+
 export function handlePlayerDeath(id: string): void {
 
   const isConnected = isPlayerAlive(id);
   if (!isConnected) return;
 
-  sendKilledPlayer(io, id);
+  sendKilledPlayer(id);
   removePlayerFromConectedUsersById(id);
   
   // If the dead player started first in the next round due to the luck, remove the condition.

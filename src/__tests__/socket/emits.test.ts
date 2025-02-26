@@ -7,8 +7,9 @@ import { ASSIGN_TURN, CONNECTED_USERS, GAME_START, WEB_CURRENT_ROUND, WEB_SEND_U
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { DividedPlayers } from '../../interfaces/DividedPlayers.ts';
 import { Player } from '../../interfaces/Player.ts';
-import { assignTurn, gameStartToAll, sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendUserDataToWeb } from '../../sockets/emits/user.ts';
+import { sendConnectedUsersArrayToAll, sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb, sendUserDataToWeb } from '../../sockets/emits/user.ts';
 import { sendCurrentRound } from '../../sockets/emits/game.ts';
+import { returnLoyalsAndBetrayers } from '../../helpers/game.ts';
 
 describe('Socket.IO server tests', () => {
   let io: Server;
@@ -52,21 +53,22 @@ describe('Socket.IO server tests', () => {
         expect(arg.dravokar[0].name).toEqual(GAME_USERS_MOCK[0].name);
         done();
       });
-      sendConnectedUsersArrayToAll(io, GAME_USERS_MOCK);
+      const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS_MOCK);
+      io.emit(CONNECTED_USERS, dividedPlayers);
     });
     test('should send the _id of the player that has been assigned', (done) => {
       clientSocket.on(ASSIGN_TURN, (arg:string) => {
         expect(arg).toEqual(playerMock._id); // expect an id of a player
         done();
       });
-      assignTurn(io, playerMock);
+      io.emit(ASSIGN_TURN, playerMock._id);
     });
     test('should send the message game start to all devices', (done) => {
       clientSocket.on(GAME_START, () => {
         expect(true).toBe(true); // expect the socket to have been called
         done();
       });
-      gameStartToAll(io);
+      io.emit(GAME_START);
     });
   });
   describe('Web Emit tests', () => {
@@ -74,25 +76,25 @@ describe('Socket.IO server tests', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
         expect(arg.dravokar[0].name).toEqual(GAME_USERS_MOCK[0].name);
       });
-      sendConnectedUsersArrayToWeb(io, GAME_USERS_MOCK);
+      sendConnectedUsersArrayToWeb(GAME_USERS_MOCK);
     });
     test('should send an _id of a player', () => {
       clientSocket.on(WEB_SET_SELECTED_PLAYER, (arg:string) => {
         expect(arg).toEqual(playerMock._id); // expect an id
       });
-      sendSelectedPlayerIdToWeb(io, playerMock);
+      sendSelectedPlayerIdToWeb(playerMock);
     });
     test('should send a player', () => {
       clientSocket.on(WEB_SEND_USER, (arg:Player) => {
         expect(arg._id).toEqual(playerMock._id); // expect a player, check ids
       });
-      sendUserDataToWeb(io, playerMock);
+      sendUserDataToWeb(playerMock);
     });
     test('should send a player', () => {
       clientSocket.on(WEB_SEND_USER, (arg:Player) => {
         expect(arg._id).toEqual(playerMock._id); // expect a player, check ids
       });
-      sendUserDataToWeb(io, playerMock);
+      sendUserDataToWeb(playerMock);
     });
     test('should return the actual round and ordered players in divided arrays', ()=> {
       clientSocket.on(WEB_CURRENT_ROUND, (arg:number) => {
@@ -107,13 +109,13 @@ describe('Socket.IO server tests', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
         expect(arg.dravokar[0].name).toEqual(GAME_USERS_MOCK[0].name);
       });
-      sendConnectedUsersArrayToAll(io, GAME_USERS_MOCK);
+      sendConnectedUsersArrayToAll(GAME_USERS_MOCK);
     });
     test('should send an array with the connected users to web client on user connection', () => {
       clientSocket.on(CONNECTED_USERS, (arg:DividedPlayers) => {
         expect(arg.dravokar[0].name).toEqual(GAME_USERS_MOCK[0].name);
       });
-      sendConnectedUsersArrayToWeb(io, GAME_USERS_MOCK);
+      sendConnectedUsersArrayToWeb(GAME_USERS_MOCK);
     });
     
   });
