@@ -16,7 +16,7 @@ import {
 } from '../../../game.ts';
 
 import { fetchBattles } from '../../../helpers/api.ts';
-import { findBattleById } from '../../../helpers/battle.ts';
+import { findBattleById, parseWebBattleData } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
@@ -167,17 +167,27 @@ export const mobileUserHandlers = (socket: Socket): void => {
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
         
     const battleData = findBattleById(_id);
-    sendCreatedBattleToWeb(battleData);
     
-    setIsGameCreated(true);
-    sendIsGameCreated();
-    
-    const battle = findBattleById(_id);
-    if (battle) {
-      addBattleNPCsToGame(battle);
-    } else {
+    if (!battleData) {
       console.error(`Battle with id ${_id} not found`);
+      return;
     }
+    
+    // Set the selected battle.
+    setSelectedBattle(_id);
+
+    // Add the NPCs from the battle to game users array.
+    addBattleNPCsToGame(battleData.enemies);
+    
+    // Set the lobby created to true.
+    setIsGameCreated(true);
+    
+    // Send data to clients.
+    const webBattleData = parseWebBattleData(battleData);
+
+    // Send the data to clients.
+    sendCreatedBattleToWeb(webBattleData);
+    sendIsGameCreated();
 
   });
 
