@@ -181,6 +181,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     }
 
     try {
+      
       const battles = await fetchBattles();
 
       BATTLES.length = 0;

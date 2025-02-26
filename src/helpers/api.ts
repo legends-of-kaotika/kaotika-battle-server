@@ -1,19 +1,27 @@
 
 import { parsePlayerData } from './player.ts';
 import { battles } from '../__mocks__/battles.ts';
+import { Battle } from '../interfaces/Battles.ts';
 
-
-export const fetchBattles = async () => {
+export const fetchBattles = async (): Promise<Battle[]> => {
   try {
+
     console.log('fetcBattles()');
-    // const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/}/`);
-    // const missionsData = await queryResponse.json();
-    // if (missionsData.status === 'NOT FOUND'){
-    //   console.log('missions not found');
-    //   return null;
-    // }
-    console.log('Returning fake battles');
+    
+    const request = await fetch(`${process.env.KAOTIKA_SERVER}/missions`);
+    const battlesData = await request.json();
+
+    if (battlesData.status !== 'OK') {
+      throw new Error('Error fetching battles.');
+    }
+    
+    if (!battlesData.data) {
+      throw new Error('Error fetching battles.');
+    }
+
+    console.log('Returning battles');
     return battles;
+
   } catch (error) {
     console.error(error);
     throw error;
