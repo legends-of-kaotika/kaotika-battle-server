@@ -1,4 +1,5 @@
 import { Battle } from '../interfaces/Battles.ts';
+import { NPCS_MOCK } from './helpers/player/npcMock.ts';
 
 export const battles: Battle[] = 
     [
@@ -6,7 +7,7 @@ export const battles: Battle[] =
         id: '8367893',
         name: 'Forgotten Tavern',
         description: 'In search of Angelo, a dark secret lurks in the shadows of the tavern.',
-        enemies: ['boss_id', 'boos_id'],
+        enemies: NPCS_MOCK,
         suggested_level: 7,
         drop_item_level: 7,
         gold: 300,
@@ -19,7 +20,7 @@ export const battles: Battle[] =
         id: '765325',
         name: 'The Profane Ritual',
         description: 'A coven of warlocks has summoned horrors from beyond the veil. Stop them before it’s too late.',
-        enemies: ['warlock_id', 'demon_id'],
+        enemies: NPCS_MOCK,
         suggested_level: 10,
         drop_item_level: 10,
         gold: 500,

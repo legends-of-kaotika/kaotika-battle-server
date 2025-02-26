@@ -1,5 +1,7 @@
+
 import { parsePlayerData } from './player.ts';
-import { battles } from '../__mocks__/missions.ts';
+import { battles } from '../__mocks__/battles.ts';
+
 
 export const fetchBattles = async () => {
   try {
