@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS } from '../../../constants/sockets.ts';
 import { GAME_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn } from '../../../helpers/game.ts';
@@ -6,7 +6,7 @@ import { findPlayerById, findPlayerDeadId, handlePlayerDeath } from '../../../he
 import { sleep } from '../../../helpers/utils.ts';
 import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
 
-export const webUserHandlers = (io: Server, socket: Socket): void => { 
+export const webUserHandlers = (socket: Socket): void => { 
 
   //gets web client socketId
   socket.on(WEB_SEND_SOCKET_ID, async () => {
@@ -18,7 +18,7 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
   //sends current online players
   socket.on(WEB_SEND_USERS, async () => {
     console.log('web-sendUsers socket message listened. Sending Online Users to everyone.');
-    sendConnectedUsersArrayToWeb(io, GAME_USERS);
+    sendConnectedUsersArrayToWeb(GAME_USERS);
   });
 
 
@@ -33,7 +33,7 @@ export const webUserHandlers = (io: Server, socket: Socket): void => {
       const updatedPlayerIsBetrayer = updatedPlayer.isBetrayer;
 
       // Send the updated player's attributes to mobile
-      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
+      sendUpdatedPlayerToMobile(defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
     }
     
     // Death

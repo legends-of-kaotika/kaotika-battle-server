@@ -1,4 +1,3 @@
-import { io } from '../index.ts';
 import { nextRoundStartFirst } from './helpers/game.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from './helpers/turn.ts';
 import { Battle } from './interfaces/Battles.ts';
@@ -90,7 +89,7 @@ export const resetInitialGameValues = (): void => {
   GAME_USERS.push(...NPCS);
 
   // Send the new users array to web to display them.
-  sendConnectedUsersArrayToWeb(io, GAME_USERS);
+  sendConnectedUsersArrayToWeb(GAME_USERS);
 
 };
 

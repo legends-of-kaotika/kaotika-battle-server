@@ -27,6 +27,7 @@ export default tseslint.config(
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
+        
       ],
       'react/jsx-max-props-per-line': ['error', { maximum: 1 }],
       'react/jsx-first-prop-new-line': ['error', 'multiline'],
@@ -38,7 +39,8 @@ export default tseslint.config(
         args: 'after-used',
         caughtErrors: 'all',
         ignoreRestSiblings: false,
-        reportUsedIgnorePattern: false
+        reportUsedIgnorePattern: false,
+        argsIgnorePattern: "^_" 
       }],
       'function-paren-newline': ['error', 'never'],
       'unused-imports/no-unused-imports': "error",

@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
   BATTLES,
@@ -11,7 +11,10 @@ import {
   target,
 } from '../../../game.ts';
 
+import { fetchBattles } from '../../../helpers/api.ts';
+import { findBattleById } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
+import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
   findPlayerById
 } from '../../../helpers/player.ts';
@@ -27,20 +30,18 @@ import {
   sendUsePotionSelectedToWeb,
   sendUserDataToWeb,
 } from '../../emits/user.ts';
-import { findBattleById } from '../../../helpers/battle.ts';
-import { fetchBattles } from '../../../helpers/api.ts';
-import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 
+import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
 import { sendBattlestoMobile, sendCreateBattleToWeb, sendIsGameCreated } from '../../emits/game.ts';
 
   
-export const mobileUserHandlers = (io: Server, socket: Socket): void => {
+export const mobileUserHandlers = (socket: Socket): void => {
 
   // Mobile login.
-  // eslint-disable-next-line no-unused-vars
-  socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (response: MobileSignInResponse) => void) => {
+
+  socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (_response: MobileSignInResponse) => void) => {
 
     console.log(`New player with socketId: ${socket.id} - ${email}`);
 
@@ -65,7 +66,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     CONNECTED_USERS.push(playerData);
 
     socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
-    sendUserDataToWeb(io, playerData);
+    sendUserDataToWeb(playerData);
     
     // Send data to mobile.
     callback({status: 'OK', player: playerData});
@@ -80,7 +81,7 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (!checkStartGameRequirement()) {
       console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
-      sendNotEnoughPlayers(io, socket.id);
+      sendNotEnoughPlayers(socket.id);
     } else {
       console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
     
@@ -91,8 +92,8 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
       const playersTurnSuccesses = getPlayersTurnSuccesses(GAME_USERS);
       sortTurnPlayers(playersTurnSuccesses, GAME_USERS);
       changeTurn();
-      sendConnectedUsersArrayToAll(io, GAME_USERS);
-      gameStartToAll(io);
+      sendConnectedUsersArrayToAll(GAME_USERS);
+      gameStartToAll();
       // Assign the first player
       console.log('Round: ', round);
     }
@@ -117,25 +118,25 @@ export const mobileUserHandlers = (io: Server, socket: Socket): void => {
     }
   
     setTarget(newTarget);
-    sendSelectedPlayerIdToWeb(io, target);
+    sendSelectedPlayerIdToWeb(target);
   });
 
   // When a player selects that is going to heal
   socket.on(SOCKETS.MOBILE_SELECT_HEAL, async () => {
     console.log(`${SOCKETS.MOBILE_SELECT_HEAL} socket message listened. Performing heal.`);
-    sendHealSelectedToWeb(io);
+    sendHealSelectedToWeb();
   });
 
   // When a player selects that is going to curse
   socket.on(SOCKETS.MOBILE_SELECT_CURSE, async () => {
     console.log(`${SOCKETS.MOBILE_SELECT_CURSE} socket message listened. Performing curse.`);
-    sendCurseSelectedToWeb(io);
+    sendCurseSelectedToWeb();
   });
 
   // When a player selects that is going to use a potion
   socket.on(SOCKETS.MOBILE_SELECT_USE_POTION, async () => {
     console.log(`${SOCKETS.MOBILE_SELECT_USE_POTION} socket message listened. Using potion.`);
-    sendUsePotionSelectedToWeb(io);
+    sendUsePotionSelectedToWeb();
   });
 
   socket.on(SOCKETS.MOBILE_ATTACK, async (_id: string) => {

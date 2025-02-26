@@ -1,12 +1,11 @@
-import { io } from '../../index.ts';
-import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
-import { parsePlayerData } from './player.ts';
-import { NPCS, GAME_USERS, setTarget } from '../game.ts';
+import { GAME_USERS, NPCS, setTarget } from '../game.ts';
+import { Battle } from '../interfaces/Battles.ts';
 import { Player } from '../interfaces/Player.ts';
-import { logUnlessTesting, sleep } from './utils.ts';
+import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
 import { attackFlow } from './game.ts';
-import { Battle } from '../interfaces/Battles.ts';
+import { parsePlayerData } from './player.ts';
+import { logUnlessTesting, sleep } from './utils.ts';
 
 
 export const fetchNPCs = async () => {
@@ -34,7 +33,7 @@ export const fetchNPCs = async () => {
   });
   
   console.log(`${npcArray.length} NPCs have joined to the game.`);
-  sendConnectedUsersArrayToWeb(io, GAME_USERS);
+  sendConnectedUsersArrayToWeb(GAME_USERS);
 
 };
 
@@ -56,7 +55,7 @@ export const npcAttack = async () : Promise<void> => {
 
   if (npcSelectedPlayer) {
     setTarget(npcSelectedPlayer);
-    sendSelectedPlayerIdToWeb(io, npcSelectedPlayer);
+    sendSelectedPlayerIdToWeb(npcSelectedPlayer);
     logUnlessTesting(`The NPC selected ${npcSelectedPlayer.nickname}`);
     await sleep(3000);
     attackFlow(npcSelectedPlayer._id);

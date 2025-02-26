@@ -1,13 +1,12 @@
 import { Socket } from 'socket.io';
-import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
 import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
+import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
-import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -45,8 +44,8 @@ export const removePlayerConnected = (socket: Socket): void => {
   if (userInfo) {
     console.log(`${userInfo.email} has disconnected`);
     socket.leave(MOBILE);
-    sendPlayerRemoved(io, userInfo._id);
-    sendPlayerDisconnectedToWeb(io, userInfo.email);
+    sendPlayerRemoved(userInfo._id);
+    sendPlayerDisconnectedToWeb(userInfo.email);
   } else {
     console.log('No players found with the received socket');
   }
@@ -67,7 +66,7 @@ export function handlePlayerDeath(id: string): void {
   const isConnected = isPlayerAlive(id);
   if (!isConnected) return;
 
-  sendKilledPlayer(io, id);
+  sendKilledPlayer(id);
   removePlayerFromConectedUsersById(id);
   
   // If the dead player started first in the next round due to the luck, remove the condition.
