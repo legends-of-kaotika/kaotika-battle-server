@@ -1,13 +1,19 @@
 import { Socket } from 'socket.io';
 import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
-import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn } from '../game.ts';
+import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
+
+// Returns a player searched by id in connected users
+export const findConnectedPlayerById = (_id: string): Player | undefined => {
+  const user = CONNECTED_USERS.find((player) => player._id === _id);
+  return user;
+};
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
@@ -230,6 +236,10 @@ export const assignRole = (email: string) => {
     return 'acolyte';
   }
 };
+
+export const insertPlayerInBattle = (playerId: string) => {
+  find
+}
 
 
 
