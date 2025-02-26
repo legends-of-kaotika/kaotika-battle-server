@@ -1,5 +1,4 @@
 
-import { battles } from '../__mocks__/battles.ts';
 import { Player } from '../interfaces/Player.ts';
 import { parsePlayerData } from './player.ts';
 import { Battle } from '../interfaces/Battles.ts';
@@ -21,7 +20,7 @@ export const fetchBattles = async () : Promise<Battle[]> => {
     }
 
     console.log('Returning battles');
-    return battles;
+    return battlesData;
 
   } catch (error) {
     console.error(error);
