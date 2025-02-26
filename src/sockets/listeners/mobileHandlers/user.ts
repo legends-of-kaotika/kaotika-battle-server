@@ -40,8 +40,8 @@ import { sendBattlestoMobile, sendCreateBattleToWeb, sendIsGameCreated } from '.
 export const mobileUserHandlers = (socket: Socket): void => {
 
   // Mobile login.
-  // eslint-disable-next-line no-unused-vars
-  socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (response: MobileSignInResponse) => void) => {
+
+  socket.on(SOCKETS.MOBILE_SIGN_IN, async (email: string, callback: (_response: MobileSignInResponse) => void) => {
 
     console.log(`New player with socketId: ${socket.id} - ${email}`);
 
