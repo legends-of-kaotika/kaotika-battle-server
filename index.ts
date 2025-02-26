@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import { fetchNPCs } from './src/helpers/npc.ts';
 import { socketHandlers } from './src/sockets/handlers.ts';
 
 const app = express();
@@ -41,8 +40,6 @@ async function start() {
         console.log(`Socket is listening on port ${PORT}`);
         io.on('connection', onConnection);
       });
-    
-      await fetchNPCs();
     
     } catch (error) {
       console.log(`Error starting the server: ${error.message}`);
