@@ -41,7 +41,7 @@ import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
-import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated } from '../../emits/game.ts';
+import { sendCreatedBattleToWeb, sendCurrentSelectedBattle, sendIsGameCreated, sendIsGameCreatedToEmiter } from '../../emits/game.ts';
 import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
@@ -230,7 +230,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED}.`);
-    sendIsGameCreated();
+    sendIsGameCreatedToEmiter(socket.id);
   });
 
   
