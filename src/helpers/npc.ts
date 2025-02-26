@@ -1,11 +1,12 @@
 import { io } from '../../index.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { parsePlayerData } from './player.ts';
-import { NPCS, ONLINE_USERS, setTarget } from '../game.ts';
+import { NPCS, GAME_USERS, setTarget } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { logUnlessTesting, sleep } from './utils.ts';
 import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
 import { attackFlow } from './game.ts';
+import { Battle } from '../interfaces/Battles.ts';
 
 
 export const fetchNPCs = async () => {
@@ -29,16 +30,16 @@ export const fetchNPCs = async () => {
     npc.role = 'npc';
     npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
     NPCS.push(npc);
-    ONLINE_USERS.push(npc);
+    GAME_USERS.push(npc);
   });
   
   console.log(`${npcArray.length} NPCs have joined to the game.`);
-  sendConnectedUsersArrayToWeb(io, ONLINE_USERS);
+  sendConnectedUsersArrayToWeb(io, GAME_USERS);
 
 };
 
 export const selectKaotikaPlayerRandom = (): Player | undefined => {
-  const kaotikaPlayers = ONLINE_USERS.filter(player => !player.isBetrayer);
+  const kaotikaPlayers = GAME_USERS.filter(player => !player.isBetrayer);
   if (kaotikaPlayers.length === 0){
     return undefined;
   }
@@ -60,4 +61,16 @@ export const npcAttack = async () : Promise<void> => {
     await sleep(3000);
     attackFlow(npcSelectedPlayer._id);
   }
+};
+
+export const addBattleNPCsToGame = (battle: Battle) => {
+
+  const npcs: Player[] = battle.enemies;
+  npcs.forEach((fullNPC: Player) => {
+    const npc = fullNPC;
+    npc.role = 'npc';
+    npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
+    NPCS.push(npc);
+    GAME_USERS.push(npc);
+  });
 };

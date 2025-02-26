@@ -7,7 +7,7 @@ import { sendCurrentRound } from './sockets/emits/game.ts';
 import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
 import { clearTimer } from './timer/timer.ts';
 
-export const ONLINE_USERS: Player[] = [];
+export const GAME_USERS: Player[] = [];
 export const CONNECTED_USERS: Player[] = [];
 export const NPCS: Player[] = [];
 export const BATTLES: Battle[] = [];
@@ -44,7 +44,7 @@ export const setCurrentPlayer = (player: Player): void => {
 //changes the turn number
 export const increaseTurn = (): void => {
   turn++;
-  if (turn >= (ONLINE_USERS.length)) { // if last player turn, follow with the first player of the array
+  if (turn >= (GAME_USERS.length)) { // if last player turn, follow with the first player of the array
     turn = 0;
     increaseRound();
   }
@@ -60,11 +60,11 @@ export const increaseRound = (): void => {
   console.log('Round: ', round, ' Fight!');
   sendCurrentRound(round);
   // Sort players by successes, charisma, dexterity
-  const playersTurnSuccesses = getPlayersTurnSuccesses(ONLINE_USERS);
-  sortTurnPlayers(playersTurnSuccesses, ONLINE_USERS);
+  const playersTurnSuccesses = getPlayersTurnSuccesses(GAME_USERS);
+  sortTurnPlayers(playersTurnSuccesses, GAME_USERS);
   // Sort player if got luck
   if (idPlayerFirstTurn) {
-    nextRoundStartFirst(idPlayerFirstTurn, ONLINE_USERS);
+    nextRoundStartFirst(idPlayerFirstTurn, GAME_USERS);
     // Reset player first by luck
     setIdPlayerFirstTurn(null);
   }
@@ -87,15 +87,15 @@ export const resetInitialGameValues = (): void => {
   clearTimer();
   
   // Empty the players array
-  while (ONLINE_USERS.length > 0) {
-    ONLINE_USERS.pop();
+  while (GAME_USERS.length > 0) {
+    GAME_USERS.pop();
   };
 
-  // Insert the NPCS data into ONLINE_USERS.
-  ONLINE_USERS.push(...NPCS);
+  // Insert the NPCS data into GAME_USERS.
+  GAME_USERS.push(...NPCS);
 
   // Send the new users array to web to display them.
-  sendConnectedUsersArrayToWeb(io, ONLINE_USERS);
+  sendConnectedUsersArrayToWeb(io, GAME_USERS);
 
 };
 

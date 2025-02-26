@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import { io } from '../../index.ts';
 import { MOBILE } from '../constants/sockets.ts';
-import { idPlayerFirstTurn, ONLINE_USERS, setIdPlayerFirstTurn } from '../game.ts';
+import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
@@ -11,25 +11,25 @@ import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 
 // Returns a player searched by id
 export const findPlayerById = (_id: string): Player | undefined => {
-  const user = ONLINE_USERS.find((player) => player._id === _id);
+  const user = GAME_USERS.find((player) => player._id === _id);
   return user;
 };
 
 // Returns a player searched by socketid
 export const findPlayerBySocketId = (id: string): Player | undefined => {
-  const user = ONLINE_USERS.find((player) => player.socketId === id);
+  const user = GAME_USERS.find((player) => player.socketId === id);
   return user;
 };
 
 // Removes the player that got disconnected from playerConnected[] global variable
-export const removePlayerConnected = (socket: Socket, socketId: string): void => {
-  const userIndex = ONLINE_USERS.findIndex((user) => user.socketId === socketId);
+export const removePlayerConnected = (socket: Socket): void => {
+  const userIndex = GAME_USERS.findIndex((user) => user.socketId === socket.id);
   if (userIndex != -1) {
-    console.log('Player with email', ONLINE_USERS[userIndex].email, 'and socket', ONLINE_USERS[userIndex].socketId, 'disconnected');
+    console.log('Player with email', GAME_USERS[userIndex].email, 'and socket', GAME_USERS[userIndex].socketId, 'disconnected');
     socket.leave(MOBILE);
-    sendPlayerRemoved(io, ONLINE_USERS[userIndex]);
-    sendPlayerDisconnectedToWeb(io, ONLINE_USERS[userIndex].nickname);
-    ONLINE_USERS.splice(userIndex, 1);
+    sendPlayerRemoved(io, GAME_USERS[userIndex]);
+    sendPlayerDisconnectedToWeb(io, GAME_USERS[userIndex].nickname);
+    GAME_USERS.splice(userIndex, 1);
   } else {
     console.log('No players found with the received socket');
   }
@@ -37,22 +37,17 @@ export const removePlayerConnected = (socket: Socket, socketId: string): void =>
 
 // Returns a player searched by email
 export const findPlayerByEmail = (email: string): Player | undefined => {
-  const user = ONLINE_USERS.find((player) => player.email === email);
+  const user = GAME_USERS.find((player) => player.email === email);
   return user;
 };
 
-// Returns a boolean if a player is connected. searched by email
-export const isPlayerConnected = (email: string): boolean => {
-  return ONLINE_USERS.some((player) => (player.email === email));
-};
-
-export const isPlayerConnectedById = (id: string): boolean => {
-  return ONLINE_USERS.some((player) => player._id === id);
+export const isPlayerAlive = (id: string): boolean => {
+  return GAME_USERS.some((player) => player._id === id);
 };
 
 export function handlePlayerDeath(id: string): void {
 
-  const isConnected = isPlayerConnectedById(id);
+  const isConnected = isPlayerAlive(id);
   if (!isConnected) return;
 
   sendKilledPlayer(io, id);
@@ -63,16 +58,16 @@ export function handlePlayerDeath(id: string): void {
 }
 
 export function removePlayerFromConectedUsersById(id: string): void {
-  const index = ONLINE_USERS.findIndex(player => player._id === id);
+  const index = GAME_USERS.findIndex(player => player._id === id);
   if (index === -1) {
     logUnlessTesting(`FAILED to delete player with the id ${id} dont exist in ONLINE USER array`);
     return;
   }
-  ONLINE_USERS.splice(index, 1);
+  GAME_USERS.splice(index, 1);
 }
 
 export const findPlayerDeadId = (): string | null => {
-  const player = ONLINE_USERS.find(({attributes}) => attributes.hit_points <= 0 );
+  const player = GAME_USERS.find(({attributes}) => attributes.hit_points <= 0 );
   if(!player) return null;
   return player._id;
 };

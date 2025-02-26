@@ -3,7 +3,7 @@ import { modifyAttributes } from '../../../helpers/player.ts';
 import { Attribute } from '../../../interfaces/Attribute.ts';
 
 jest.mock('../../../game.ts', () => ({
-  ONLINE_USERS: ONLISE_USERS_MOCK_PLAYER
+  GAME_USERS: ONLISE_USERS_MOCK_PLAYER
 }));
 
 
@@ -34,7 +34,7 @@ describe('test modifyAttributes function', () => {
     });
   });
 
-  it('should not modify the attributes and return undefined if the player does not exist in the ONLINE_USERS array', () => {
+  it('should not modify the attributes and return undefined if the player does not exist in the GAME_USERS array', () => {
     const newAttributes: Partial<Attribute> = {
       hit_points: 100,
       strength: 20

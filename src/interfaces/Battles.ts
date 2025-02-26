@@ -1,8 +1,10 @@
+import { Player } from './Player.ts';
+
 export interface Battle {
         id: string;
         name: string;
         description: string;
-        enemies: string[];
+        enemies: Player[];
         suggested_level: number;
         drop_item_level: number;
         gold: number;
