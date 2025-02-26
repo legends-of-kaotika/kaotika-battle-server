@@ -28,7 +28,7 @@ export const io = new Server(server, {
 
 const onConnection = (socket: Socket): void => {  
   console.log(socket.id, ' joined the server.');
-  socketHandlers(io, socket);
+  socketHandlers(socket);
 };
 
 async function start() {

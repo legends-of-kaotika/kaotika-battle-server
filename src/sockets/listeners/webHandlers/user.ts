@@ -1,12 +1,13 @@
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS } from '../../../constants/sockets.ts';
 import { ONLINE_USERS, setWebSocket, webSocketId } from '../../../game.ts';
 import { changeTurn } from '../../../helpers/game.ts';
 import { findPlayerById, findPlayerDeadId, handlePlayerDeath } from '../../../helpers/player.ts';
 import { sleep } from '../../../helpers/utils.ts';
 import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
+import { io } from '../../../../index.ts';
 
-export const webUserHandlers = (io: Server, socket: Socket): void => { 
+export const webUserHandlers = (socket: Socket): void => { 
 
   //gets web client socketId
   socket.on(WEB_SEND_SOCKET_ID, async () => {
