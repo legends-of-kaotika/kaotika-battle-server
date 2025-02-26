@@ -4,7 +4,7 @@ import { NPCS_MOCK } from './helpers/player/npcMock.ts';
 export const battles: Battle[] = 
     [
       {
-        id: '8367893',
+        _id: '8367893',
         name: 'Forgotten Tavern',
         description: 'In search of Angelo, a dark secret lurks in the shadows of the tavern.',
         enemies: NPCS_MOCK,
@@ -17,7 +17,7 @@ export const battles: Battle[] =
         end_of_battle_background: ['victory.webp', 'defeat.webp']
       },
       {
-        id: '765325',
+        _id: '765325',
         name: 'The Profane Ritual',
         description: 'A coven of warlocks has summoned horrors from beyond the veil. Stop them before it’s too late.',
         enemies: NPCS_MOCK,
