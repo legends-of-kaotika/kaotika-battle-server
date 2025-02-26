@@ -5,7 +5,6 @@ import { changeTurn } from '../../../helpers/game.ts';
 import { findPlayerById, findPlayerDeadId, handlePlayerDeath } from '../../../helpers/player.ts';
 import { sleep } from '../../../helpers/utils.ts';
 import { sendConnectedUsersArrayToWeb, sendUpdatedPlayerToMobile } from '../../emits/user.ts';
-import { io } from '../../../../index.ts';
 
 export const webUserHandlers = (socket: Socket): void => { 
 
@@ -19,7 +18,7 @@ export const webUserHandlers = (socket: Socket): void => {
   //sends current online players
   socket.on(WEB_SEND_USERS, async () => {
     console.log('web-sendUsers socket message listened. Sending Online Users to everyone.');
-    sendConnectedUsersArrayToWeb(io, GAME_USERS);
+    sendConnectedUsersArrayToWeb(GAME_USERS);
   });
 
 
@@ -34,7 +33,7 @@ export const webUserHandlers = (socket: Socket): void => {
       const updatedPlayerIsBetrayer = updatedPlayer.isBetrayer;
 
       // Send the updated player's attributes to mobile
-      sendUpdatedPlayerToMobile(io, defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
+      sendUpdatedPlayerToMobile(defenderId, updatedPlayerAttributes, updatedPlayerIsBetrayer);
     }
     
     // Death
