@@ -40,7 +40,7 @@ import {
 
 import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
-import { MobileBattlesResponse } from '../../../interfaces/MobileBattlesResponse.ts';
+import { MobileBattlesResponse } from '../../../interfaces/MobileBattelsResponse.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
 import { sendCreatedBattleToWeb, sendSelectedBattleToWeb, sendIsGameCreated, sendIsGameCreatedToEmiter } from '../../emits/game.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
