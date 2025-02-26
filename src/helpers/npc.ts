@@ -7,7 +7,6 @@ import { attackFlow } from './game.ts';
 import { parsePlayerData } from './player.ts';
 import { logUnlessTesting, sleep } from './utils.ts';
 
-
 export const fetchNPCs = async () : Promise<void> => {
   
   console.log('Fetching NPCs...');
@@ -64,9 +63,9 @@ export const npcAttack = async () : Promise<void> => {
 
 export const addBattleNPCsToGame = (battle: Battle) => {
 
-  const npcs: Player[] = battle.enemies;
-  npcs.forEach((fullNPC: Player) => {
-    const npc = fullNPC;
+  const npcs: PlayerPopulated[] = battle.enemies;
+  npcs.forEach((fullNPC: PlayerPopulated) => {
+    const npc = parsePlayerData(fullNPC);
     npc.role = 'npc';
     npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
     NPCS.push(npc);
