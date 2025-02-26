@@ -175,10 +175,12 @@ export const mobileUserHandlers = (socket: Socket): void => {
       logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
     });
   });
+  
   socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {
     console.log(`${SOCKETS.MOBILE_SELECTED_BATTLE} socket message listened.`);
     setSelectedBattle(_id);
   });
+
   socket.on(SOCKETS.MOBILE_IS_GAME_CREATED, () => {
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_IS_GAME_CREATED}.`);
     sendIsGameCreated();
