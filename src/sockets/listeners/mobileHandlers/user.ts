@@ -167,6 +167,10 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
     console.log(`${SOCKETS.MOBILE_CREATE_GAME} socket message listened.`);
         
+    if (!_id) {
+      console.log(`No battle ID received in socket ${SOCKETS.MOBILE_CREATE_GAME}`);
+    }
+
     const battleData = findBattleById(_id);
     
     if (!battleData) {
