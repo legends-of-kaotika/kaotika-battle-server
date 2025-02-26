@@ -2,72 +2,20 @@ import { PlayerPopulated } from '../../../interfaces/PlayerPopulated.ts';
 
 export const NPCS_MOCK: PlayerPopulated[] = [
   {
-    '_id': '67ac72f9c71f4c928d3bbe66',
-    'name': 'Dicerius',
-    'nickname': 'Dicerius',
-    'email': 'trym6@gmail.com',
-    'avatar': '/images/Dicerius.webp',
-    'classroom_Id': '11677732607425227312',
-    'level': 120,
-    'experience': 209000,
-    'is_active': false,
-    'profile': {
-      '_id': '6687c31b7a5ce485a0eed47d',
-      'name': 'Poet',
-      'description': 'In the grand halls of kings and the humble abodes of commoners, the Poet weaves his magic with words. His voice is a symphony, each phrase a note that resonates with the soul. Dressed in garments that flutter like pages of an ancient manuscript, the Poet is a wanderer and a sage, chronicling the stories of the world with a quill dipped in the ink of imagination. His verses can inspire armies, melt hearts, and stir revolutions. He sees the beauty in the mundane and the tragedy in the magnificent, capturing the essence of human experience in his lyrical tapestry. The Poet is a dreamer, a visionary, a timeless messenger of the human spirit.',
-      'image': '/images/profiles/poet.jpg',
-      'attributes': [
-        {
-          '_id': '67bedc8fd9bdf9392412cd51',
-          'name': 'Intelligence',
-          'description': 'The intelligence controls the chance of success when using a potion',
-          'value': 20
-        },
-        {
-          '_id': '67bedc8fd9bdf9392412cd52',
-          'name': 'Dexterity',
-          'description': 'Manages the chance of success when using a melee weapon and the damage a missile weapon does',
-          'value': 10
-        },
-        {
-          '_id': '67bedc8fd9bdf9392412cd53',
-          'name': 'Insanity',
-          'description': 'Indicates the state of mental health of an adventurer. If the insanity is high, there will be more chance to make a fumble of a critical hit, and the resulting damage will be more critical. If the insanity is low, there will be less chance to make a fumble or a critical hit, and the resulting damage will be less critical',
-          'value': 20
-        },
-        {
-          '_id': '67bedc8fd9bdf9392412cd54',
-          'name': 'Charisma',
-          'description': 'Indicates the chance to attack first in the next round',
-          'value': 30
-        },
-        {
-          '_id': '67bedc8fd9bdf9392412cd55',
-          'name': 'Constitution',
-          'description': 'Indicates the number of Hit Points an adventurer starts with',
-          'value': 5
-        },
-        {
-          '_id': '67bedc8fd9bdf9392412cd56',
-          'name': 'Strength',
-          'description': 'Manages the chance of success when using a melee weapon, and the damage a melee weapon does',
-          'value': 5
-        }
-      ]
-    },
-    'gold': 2000,
-    'tasks': [],
-    'created_date': '2024-09-22T19:23:02.754Z',
-    'isBetrayer': true
-  },
-  {
-    'attributes': {
-      'intelligence': 163,
-      'dexterity': 110,
-      'charisma': 252,
-      'constitution': 105,
-      'strength': 150,
-      'insanity': 70
+    attributes: {
+      intelligence: 163,
+      dexterity: 110,
+      charisma: 252,
+      constitution: 105,
+      strength: 150,
+      insanity: 70,
+      hit_points: 0,
+      attack: 0,
+      defense: 0,
+      magic_resistance: 0,
+      CFP: 0,
+      BCFA: 0,
+      resistance: 0
     },
     'equipment': {
       'weapon': {
@@ -173,24 +121,31 @@ export const NPCS_MOCK: PlayerPopulated[] = [
         'isActive': true,
         'isUnique': true
       },
-      'ring': {
-        'modifiers': {
-          'intelligence': 25,
-          'dexterity': 25,
-          'constitution': 35,
-          'insanity': 15,
-          'charisma': 20,
-          'strength': 0
+      ring: {
+        modifiers: {
+          intelligence: 25,
+          dexterity: 25,
+          constitution: 35,
+          insanity: 15,
+          charisma: 20,
+          strength: 0,
+          hit_points: 0,
+          attack: 0,
+          defense: 0,
+          magic_resistance: 0,
+          CFP: 0,
+          BCFA: 0,
+          resistance: 0
         },
-        '_id': '66fa7a0585f0d4f8e349db1c',
-        'name': 'Ring of the Shadow Whisperer',
-        'description': 'A ring that grants secrets whispered by the shadows.',
-        'type': 'ring',
-        'image': '/images/equipment/rings/ring_42.png',
-        'value': 3000,
-        'min_lvl': 22,
-        'isUnique': true,
-        'isActive': true
+        _id: '66fa7a0585f0d4f8e349db1c',
+        name: 'Ring of the Shadow Whisperer',
+        description: 'A ring that grants secrets whispered by the shadows.',
+        type: 'ring',
+        image: '/images/equipment/rings/ring_42.png',
+        value: 3000,
+        min_lvl: 22,
+        isUnique: true,
+        isActive: true
       },
       'artifact': {
         'modifiers': {
@@ -293,6 +248,19 @@ export const NPCS_MOCK: PlayerPopulated[] = [
       'healing_potions': [],
       'enhancer_potions': []
     },
-  },
-
+    _id: '',
+    name: '',
+    nickname: '',
+    avatar: '',
+    email: '',
+    experience: 0,
+    level: 0,
+    gold: 0,
+    is_active: false,
+    created_date: '',
+    profile: null,
+    classroom_id: null,
+    isBetrayer: false,
+    tasks: []
+  }
 ];

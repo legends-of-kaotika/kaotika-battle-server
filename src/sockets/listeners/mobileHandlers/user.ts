@@ -40,7 +40,7 @@ import {
 
 import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
-import { MobileBattelsResponse } from '../../../interfaces/MobileBattelsResponse.ts';
+import { MobileBattlesResponse } from '../../../interfaces/MobileBattlesResponse.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
 import { sendCreatedBattleToWeb, sendSelectedBattleToWeb, sendIsGameCreated, sendIsGameCreatedToEmiter } from '../../emits/game.ts';
 import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
@@ -196,7 +196,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   });
 
-  socket.on(SOCKETS.MOBILE_GET_BATTLES, async ( callback: (_response: MobileBattelsResponse) => void) => {
+  socket.on(SOCKETS.MOBILE_GET_BATTLES, async ( callback: (_response: MobileBattlesResponse) => void) => {
     console.log(`${SOCKETS.MOBILE_GET_BATTLES} socket message listened.`);
 
     if (!callback) {
