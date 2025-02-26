@@ -25,11 +25,9 @@ export const sendCreateBattleToWeb = (battle: Battle | undefined): void => {
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battle);
   io.emit(SOCKETS.IS_GAME_CREATED, true);
 };
-export const sendBattlestoMobile = (battles: Battle[]): void => {
-  io.to(SOCKETS.MOBILE).emit(SOCKETS.BATTLES, battles);
-};
 
 export const sendCurrentSelectedBattle = (_id:string) => {
   logUnlessTesting('sending selected battle emit to web');
   io.to(webSocketId).emit(WEB_SEND_SELECTED_BATTLE, _id);
 };
+
