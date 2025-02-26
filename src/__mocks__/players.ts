@@ -1,7 +1,7 @@
 import { Player } from '../interfaces/Player.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 
-export const ONLINE_USERS_MOCK: Player[] = 
+export const GAME_USERS_MOCK: Player[] = 
 [
   {
     _id: '66decc4ff42d4a193db77e11',

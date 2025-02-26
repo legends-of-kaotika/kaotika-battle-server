@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import router from './src/routes/routes.ts';
-import { fetchNPCs } from './src/helpers/npc.ts';
 import { socketHandlers } from './src/sockets/handlers.ts';
 
 const app = express();
@@ -13,7 +11,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api/player', router);
 
 // Load .env file
 dotenv.config();
@@ -30,7 +27,7 @@ export const io = new Server(server, {
 
 const onConnection = (socket: Socket): void => {  
   console.log(socket.id, ' joined the server.');
-  socketHandlers(io, socket);
+  socketHandlers(socket);
 };
 
 async function start() {
@@ -43,8 +40,6 @@ async function start() {
         console.log(`Socket is listening on port ${PORT}`);
         io.on('connection', onConnection);
       });
-    
-      await fetchNPCs();
     
     } catch (error) {
       console.log(`Error starting the server: ${error.message}`);

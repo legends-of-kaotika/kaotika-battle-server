@@ -1,22 +1,19 @@
-import { io } from '../../index.ts';
-import { ONLINE_USERS, currentPlayer, target, setTarget, increaseTurn, resetInitialGameValues, setCurrentPlayer, turn } from '../game.ts';
+import { ATTACK_TYPES } from '../constants/combatRules.ts';
+import { LUCK_MESSAGE } from '../constants/messages.ts';
+import { GAME_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, setTarget, target, turn } from '../game.ts';
+import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
-import { Player } from '../interfaces/Player.ts';
-import { assignTurn, sendGameEnd } from '../sockets/emits/user.ts';
-import { clearTimer, startTimer } from '../timer/timer.ts';
-import { findPlayerById } from './player.ts';
-import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData } from './attack.ts';
-import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
-import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
-import { applyDamage } from './player.ts';
-import { sendAttackInformationToWeb } from '../sockets/emits/user.ts';
 import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
-import { ATTACK_TYPES } from '../constants/combatRules.ts';
-import { DealedDamage } from '../interfaces/DealedDamage.ts';
+import { Player } from '../interfaces/Player.ts';
+import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
+import { clearTimer, startTimer } from '../timer/timer.ts';
+import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData } from './attack.ts';
+import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
+import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
-import { LUCK_MESSAGE } from '../constants/messages.ts';
+import { applyDamage, findPlayerById } from './player.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
@@ -38,10 +35,10 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 export const changeTurn = () : void => {
   
   increaseTurn();
-  const nextPlayer = ONLINE_USERS[turn];
+  const nextPlayer = GAME_USERS[turn];
   setCurrentPlayer(nextPlayer);
   if (currentPlayer) {
-    assignTurn(io, currentPlayer);
+    assignTurn(currentPlayer);
     clearTimer();
     startTimer();
 
@@ -57,18 +54,18 @@ export const changeTurn = () : void => {
 export const eachSideHasPlayers = (): boolean => {
 
   let gameHasPlayers: boolean = true;
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(ONLINE_USERS);
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
 
   if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
-    sendGameEnd(io, 'Draw');
+    sendGameEnd('Draw');
     resetInitialGameValues();
     gameHasPlayers = false;
   } else if (dividedPlayers.dravokar.length === 0) {
-    sendGameEnd(io, 'Kaotika');
+    sendGameEnd('Kaotika');
     resetInitialGameValues();
     gameHasPlayers = false;
   } else if (dividedPlayers.kaotika.length === 0) {
-    sendGameEnd(io, 'Dravokar');
+    sendGameEnd('Dravokar');
     resetInitialGameValues();
     gameHasPlayers = false;
   }
@@ -78,8 +75,8 @@ export const eachSideHasPlayers = (): boolean => {
 
 // Check if there is the minimum 1 player connected and of role acolyte no betrayer
 export const checkStartGameRequirement = () : boolean => {
-  if (ONLINE_USERS.length >= 1) {
-    return ONLINE_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
+  if (GAME_USERS.length >= 1) {
+    return GAME_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
   }
   return false;
 };
@@ -189,7 +186,7 @@ export const attackFlow = (targetId: string) => {
 
   //-----------------------------------------------------------------------------//
   
-  // Update player's attributes in ONLINE_USERS
+  // Update player's attributes in GAME_USERS
   applyDamage(target._id, dealedObjectDamage);
 
   //---------------------------send JSON to web-----------------------------------//
@@ -206,7 +203,7 @@ export const attackFlow = (targetId: string) => {
   // Send data to web
   console.log(attackJSON);
   
-  sendAttackInformationToWeb(io, attackJSON);
+  sendAttackInformationToWeb(attackJSON);
 
   //--------------------------------------------------------------------------------//
 

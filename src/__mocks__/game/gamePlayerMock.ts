@@ -1,5 +1,4 @@
 import { Player } from '../../interfaces/Player.ts';
-import { ONLINE_USERS_MOCK } from '../players.ts';
 
 export const gamePlayerMock: Player = 
 {
@@ -215,5 +214,3 @@ export const gamePlayerMock: Player =
   status: { ethaziumCurse: false, common_diseases: [], tired: false },
   isAlive: true
 };
-
-export const GAME_ONLINE_USERS_MOCK = [...ONLINE_USERS_MOCK];
