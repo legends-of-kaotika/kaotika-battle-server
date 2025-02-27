@@ -19,6 +19,13 @@ export const globalHandlers = (socket: Socket): void => {
       eachSideHasPlayers();
     }
 
+    // If the disconnected player is the current attacker, change turn.
+    // if (player && player._id === currentPlayer?._id) {
+    //   sendTurnTimeout();
+    //   await sleep(1000);
+    //   changeTurn();
+    // }
+
     // Clear all the listeners
     socket.removeAllListeners();
   });
