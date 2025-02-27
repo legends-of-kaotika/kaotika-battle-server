@@ -4,7 +4,7 @@ import { IS_GAME_CREATED, WEB_CURRENT_ROUND, WEB_SEND_SELECTED_BATTLE, WEB_TURN_
 import { isGameCreated, selectedBattleId, webSocketId } from '../../game.ts';
 import { findBattleById, parseWebBattleData } from '../../helpers/battle.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
-import { Battle } from '../../interfaces/Battles.ts';
+import { WebBattle } from '../../interfaces/WebBattle.ts';
 
 
 export const sendCurrentRound = (round: number) : void => {
@@ -27,7 +27,7 @@ export const sendIsGameCreatedToEmiter = (socketId: string) : void => {
   io.to(socketId).emit(IS_GAME_CREATED, isGameCreated);
 };
 
-export const sendCreatedBattleToWeb = (battleData: Partial<Battle>): void => {
+export const sendCreatedBattleToWeb = (battleData: WebBattle): void => {
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battleData);
 };
 
