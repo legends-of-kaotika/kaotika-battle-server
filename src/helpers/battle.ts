@@ -7,8 +7,8 @@ export const findBattleById = (_id: string): Battle | undefined => {
 };
 
 export const parseWebBattleData = (battle: Battle): Partial<Battle> => {
-  const webBattleData: Partial<Battle> = battle; 
+  const webBattleData: Partial<Battle> = {...battle}; 
   delete webBattleData._id;
   delete webBattleData.enemies;
-  return battle;
+  return webBattleData;
 };
