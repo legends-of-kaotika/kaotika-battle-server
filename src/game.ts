@@ -49,7 +49,7 @@ export const increaseTurn = (): void => {
   }
 };
 
-export const setSelectedBattleId = (_id:string):void => {
+export const setSelectedBattleId = (_id:string | null):void => {
   selectedBattleId = _id;
 };
 
@@ -82,6 +82,8 @@ export const resetInitialGameValues = (): void => {
   currentPlayer = undefined;
   turn = -1;
   round = 1;
+  setIsGameCreated(false);
+  setSelectedBattleId(null);
   setIdPlayerFirstTurn(null);
   clearTimer();
   
@@ -95,7 +97,6 @@ export const resetInitialGameValues = (): void => {
 
   // Send the new users array to web to display them.
   sendConnectedUsersArrayToWeb(GAME_USERS);
-
 };
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {
