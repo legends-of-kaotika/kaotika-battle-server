@@ -1,5 +1,4 @@
 
-import { battles } from '../__mocks__/battles.ts';
 import { Player } from '../interfaces/Player.ts';
 import { parsePlayerData } from './player.ts';
 import { Battle } from '../interfaces/Battles.ts';
@@ -10,18 +9,19 @@ export const fetchBattles = async () : Promise<Battle[]> => {
     console.log('fetchBattles()');
     
     const request = await fetch(`${process.env.KAOTIKA_SERVER}/missions`);
-    const battlesData = await request.json();
+    const response = await request.json();
 
-    if (battlesData.status !== 'OK') {
+    if (response.status !== 'OK') {
       throw new Error('Error fetching battles.');
     }
     
-    if (!battlesData.data) {
+    const battlesData = response.data;
+
+    if (!battlesData || !Array.isArray(battlesData)) {
       throw new Error('Error fetching battles.');
     }
 
-    console.log('Returning battles');
-    return battles;
+    return battlesData;
 
   } catch (error) {
     console.error(error);
