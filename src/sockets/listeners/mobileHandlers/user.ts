@@ -44,6 +44,7 @@ import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
 import { sendCreatedBattleToWeb, sendSelectedBattleToWeb, sendIsGameCreated, sendIsGameCreatedToEmiter } from '../../emits/game.ts';
+import { turnTime } from '../../../timer/timer.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
 
@@ -158,6 +159,12 @@ export const mobileUserHandlers = (socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_ATTACK, async (_id: string) => {
 
     console.log(`${SOCKETS.MOBILE_ATTACK} socket message listened.`);
+
+    if (turnTime>=1) {
+      console.log('The attack wont be executed as the timer is 1.');
+      return;
+    }
+
     attackFlow(_id);
     
   });
