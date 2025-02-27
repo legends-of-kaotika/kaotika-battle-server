@@ -21,14 +21,14 @@ describe('getFumble method', () => {
 
   it('should return correct slash fumble object', async () => {
     const fumbleResult = fumbleHelpers.getFumble('slash', mockPlayer.attributes, 20, 40);
-    expect(fumbleResult).toEqual({percentile: 40, message: 'is self-injured slightly', type: 'slash', damage: {hit_points: 10}});
+    expect(fumbleResult).toEqual({percentile: 40, message: 'Is self-injured slightly', type: 'slash', damage: {hit_points: 10}});
   });
   it('should return correct hack fumble object', async () => {
     const fumbleResult = fumbleHelpers.getFumble('hack', mockPlayer.attributes, 20, 40);
-    expect(fumbleResult).toEqual({percentile: 40, message: 'leg got broken, losing dexterity', type: 'hack', damage: {dexterity: 20}});
+    expect(fumbleResult).toEqual({percentile: 40, message: 'Leg got broken, losing dexterity', type: 'hack', damage: {dexterity: 20}});
   });
   it('should return correct smash fumble object', async () => {
     const fumbleResult = fumbleHelpers.getFumble('smash', mockPlayer.attributes, 20, 40);
-    expect(fumbleResult).toEqual({percentile: 40, message: 'is self-injured heavily', type: 'smash', damage: {hit_points: 20}});
+    expect(fumbleResult).toEqual({percentile: 40, message: 'Is self-injured heavily', type: 'smash', damage: {hit_points: 20}});
   });
 });
