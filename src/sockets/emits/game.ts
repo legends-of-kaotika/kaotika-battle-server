@@ -2,7 +2,7 @@ import { io } from '../../../index.ts';
 import * as SOCKETS from '../../constants/sockets.ts';
 import { IS_GAME_CREATED, WEB_CURRENT_ROUND, WEB_SEND_SELECTED_BATTLE, WEB_TURN_TIMEOUT } from '../../constants/sockets.ts';
 import { isGameCreated, selectedBattleId, webSocketId } from '../../game.ts';
-import { findBattleById } from '../../helpers/battle.ts';
+import { findBattleById, parseWebBattleData } from '../../helpers/battle.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { Battle } from '../../interfaces/Battles.ts';
 
@@ -42,15 +42,13 @@ export const sendSelectedBattleToWeb = () => {
 
   const battleData = findBattleById(selectedBattleId);
 
-  // battleData?.enemies.forEach
-
   if (!battleData) {
     console.log(`No battle found with id ${selectedBattleId}`);
     return;
   }
 
-  // const webBattleData = parseWebBattleData(battleData);
-  io.to(webSocketId).emit(WEB_SEND_SELECTED_BATTLE, battleData);
+  const webBattleData = parseWebBattleData(battleData);
+  io.to(webSocketId).emit(WEB_SEND_SELECTED_BATTLE, webBattleData);
 
 };
 
