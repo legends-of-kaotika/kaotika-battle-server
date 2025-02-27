@@ -2,7 +2,7 @@ import { clearInterval } from 'timers';
 import { TURN_TIMER } from '../constants/game.ts';
 import { changeTurn } from '../helpers/game.ts';
 import { sleep } from '../helpers/utils.ts';
-import { sendTurnTimeout } from '../sockets/emits/game.ts';
+import { sendWebTurnFinished } from '../sockets/emits/game.ts';
 import { sendTimerDataToWeb } from '../sockets/emits/user.ts';
 
 export let turnTime: number = TURN_TIMER;
@@ -35,7 +35,7 @@ export const resetTimer = () : void => {
 
 export const handleTurnTimerExpiration = async (turnTime: number) => {
   if (turnTime === 0) {
-    sendTurnTimeout();
+    sendWebTurnFinished();
     await sleep(1000);
     changeTurn();
   }

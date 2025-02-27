@@ -1,8 +1,10 @@
 import { Socket } from 'socket.io';
 import { DISCONNECT } from '../../constants/sockets.ts';
 import { findPlayerBySocketId, removePlayerConnected } from '../../helpers/player.ts';
-import { isGameStarted } from '../../game.ts';
-import { eachSideHasPlayers } from '../../helpers/game.ts';
+import { currentPlayer, isGameStarted } from '../../game.ts';
+import { changeTurn, eachSideHasPlayers } from '../../helpers/game.ts';
+import { sendWebTurnFinished } from '../emits/game.ts';
+import { sleep } from '../../helpers/utils.ts';
 
 export const globalHandlers = (socket: Socket): void => { 
 
@@ -20,11 +22,11 @@ export const globalHandlers = (socket: Socket): void => {
     }
 
     // If the disconnected player is the current attacker, change turn.
-    // if (player && player._id === currentPlayer?._id) {
-    //   sendTurnTimeout();
-    //   await sleep(1000);
-    //   changeTurn();
-    // }
+    if (player && player._id === currentPlayer?._id) {
+      sendWebTurnFinished();
+      await sleep(1000);
+      changeTurn();
+    }
 
     // Clear all the listeners
     socket.removeAllListeners();
