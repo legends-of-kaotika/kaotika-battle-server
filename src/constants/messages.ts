@@ -9,15 +9,15 @@ export const LUCK_MESSAGE = {
   DEFENDER_NO_LUCK: 'The defender has no luck'
 };
 export const ATTACK_INCREASE = {
-  SLIGTHLY: ' The attack has been increased slightly',
-  NORMAL: ' The attack has been increased',
-  BIG: ' The attack has been increased significantly!',
+  SLIGTHLY: 'The attack has been increased slightly',
+  NORMAL: 'The attack has been increased',
+  BIG: 'The attack has been increased significantly!',
   
 };
 
 export const FUMBLE_MESSAGE = {
-  slash: 'is self-injured slightly',
-  fairytale: 'wears the glasses of Erudite',
-  hack: 'leg got broken, losing dexterity',
-  smash: 'is self-injured heavily'
+  slash: 'Is self-injured slightly',
+  fairytale: 'Wears the glasses of Erudite',
+  hack: 'Leg got broken, losing dexterity',
+  smash: 'Is self-injured heavily'
 };
