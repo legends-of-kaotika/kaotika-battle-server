@@ -254,6 +254,11 @@ export const mobileUserHandlers = (socket: Socket): void => {
       return;
     }
 
+    if (isGameStarted) {
+      callback({status: 'OK', joinBattle: false});
+      return;
+    }
+
     if (!playerId) {
       console.log(`No playerId received in ${SOCKETS.MOBILE_JOIN_BATTLE} socket! Player join to battle cancelled.`);
       callback({status: 'FAILED', error: 'No playerId received.'});
