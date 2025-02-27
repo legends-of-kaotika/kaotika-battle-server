@@ -15,6 +15,8 @@ import {
   target,
   webSocketId,
 } from '../../../game.ts';
+import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
+import { MobileBattlesResponse } from '../../../interfaces/MobileBattlesResponse.ts';
 
 import { fetchBattles } from '../../../helpers/api.ts';
 import { findBattleById, parseWebBattleData } from '../../../helpers/battle.ts';
@@ -40,10 +42,8 @@ import {
 
 import { io } from '../../../../index.ts';
 import { getPlayerDataByEmail } from '../../../helpers/api.ts';
-import { MobileBattlesResponse } from '../../../interfaces/MobileBattlesResponse.ts';
 import { MobileJoinBattleResponse } from '../../../interfaces/MobileJoinBattleResponse.ts';
 import { sendCreatedBattleToWeb, sendSelectedBattleToWeb, sendIsGameCreated, sendIsGameCreatedToEmiter } from '../../emits/game.ts';
-import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts';
 
 export const mobileUserHandlers = (socket: Socket): void => {
 
@@ -250,6 +250,11 @@ export const mobileUserHandlers = (socket: Socket): void => {
     }
 
     if (!isGameCreated) {
+      callback({status: 'OK', joinBattle: false});
+      return;
+    }
+
+    if (isGameStarted) {
       callback({status: 'OK', joinBattle: false});
       return;
     }
