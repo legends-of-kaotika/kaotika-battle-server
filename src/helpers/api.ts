@@ -16,8 +16,8 @@ export const fetchBattles = async () : Promise<Battle[]> => {
     }
     
     const battlesData = response.data;
-    
-    if (!battlesData || Array.isArray(battlesData)) {
+
+    if (!battlesData || !Array.isArray(battlesData)) {
       throw new Error('Error fetching battles.');
     }
 
