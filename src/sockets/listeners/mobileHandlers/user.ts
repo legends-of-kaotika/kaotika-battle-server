@@ -160,8 +160,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
     console.log(`${SOCKETS.MOBILE_ATTACK} socket message listened.`);
 
-    if (turnTime>=1) {
-      console.log('The attack wont be executed as the timer is 1.');
+    if (turnTime<=1) {
+      console.log('The attack wont be executed as the timer is 1 or lesser.');
       return;
     }
 
