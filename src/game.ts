@@ -92,9 +92,6 @@ export const resetInitialGameValues = (): void => {
     GAME_USERS.pop();
   };
 
-  // Insert the NPCS data into GAME_USERS.
-  GAME_USERS.push(...NPCS);
-
   // Send the new users array to web to display them.
   sendConnectedUsersArrayToWeb(GAME_USERS);
 };
