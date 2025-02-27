@@ -29,7 +29,7 @@ export const findPlayerBySocketId = (id: string): Player | undefined => {
 // Removes the player that got disconnected from playerConnected[] global variable
 export const removePlayerConnected = (socket: Socket): void => {
 
-  let userInfo: { email: string; _id: string } | undefined;
+  let userInfo: { email: string; _id: string; nickname: string } | undefined;
 
   // Remove from GAME_USERS if exists.
   const gameUsersIndex = GAME_USERS.findIndex(user => user.socketId === socket.id);
@@ -51,7 +51,7 @@ export const removePlayerConnected = (socket: Socket): void => {
     console.log(`${userInfo.email} has disconnected`);
     socket.leave(MOBILE);
     sendPlayerRemoved(userInfo._id);
-    sendPlayerDisconnectedToWeb(userInfo.email);
+    sendPlayerDisconnectedToWeb(userInfo.nickname);
   } else {
     console.log('No players found with the received socket');
   }
