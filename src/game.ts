@@ -91,8 +91,7 @@ export const resetInitialGameValues = (): void => {
   while (GAME_USERS.length > 0) {
     GAME_USERS.pop();
   };
-
-  // Send the new users array to web to display them.
+  // Send the new users array to web to display them.(instead of npc)
   sendConnectedUsersArrayToWeb(GAME_USERS);
 };
 
