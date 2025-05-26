@@ -23,8 +23,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           docker rm -f kaotika-battle-server || true
-          docker compose -f docker-compose.yml build web
-          docker compose -f docker-compose.yml up -d web
+          docker compose -f docker-compose.yml build server
+          docker compose -f docker-compose.yml up -d server
 
       - name: Clean up
         run: echo "Deployment complete."
