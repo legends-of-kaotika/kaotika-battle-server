@@ -1,6 +1,6 @@
 import { GAME_USERS_MOCK } from '../../../__mocks__/players.ts';
 import { GAME_USERS } from '../../../game.ts';
-import { removePlayerFromConectedUsersById } from '../../../helpers/player.ts';
+import { removePlayerFromGameUsersById } from '../../../helpers/player.ts';
 
 describe('Test removePlayerFromConectedUsersById', () => {
   beforeEach(() => {
@@ -8,7 +8,7 @@ describe('Test removePlayerFromConectedUsersById', () => {
   });
 
   it('should remove correctly from the GAME_USERS array', () => {
-    removePlayerFromConectedUsersById('12345');
+    removePlayerFromGameUsersById('12345');
     expect(GAME_USERS).toHaveLength(3);
     expect(GAME_USERS.find(player => player._id === '12345')).toBeUndefined();
   });
