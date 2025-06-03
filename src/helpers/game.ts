@@ -1,6 +1,6 @@
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
-import { GAME_USERS, currentPlayer, increaseTurn, resetInitialGameValues, setCurrentPlayer, setTarget, target, turn } from '../game.ts';
+import { GAME_USERS, currentPlayer, increaseTurn, resetInitialGameValues, selectedBattleId, setCurrentPlayer, setTarget, target, turn } from '../game.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
@@ -32,8 +32,8 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 };
 
 // Changes the turn players
-export const changeTurn = () : void => {
-  
+export const changeTurn = (): void => {
+
   increaseTurn();
   const nextPlayer = GAME_USERS[turn];
   setCurrentPlayer(nextPlayer);
@@ -47,7 +47,7 @@ export const changeTurn = () : void => {
     }
   }
   eachSideHasPlayers();
-  
+
 };
 
 // Check if there are at least 1 player from each side
@@ -63,6 +63,7 @@ export const eachSideHasPlayers = (): boolean => {
   } else if (dividedPlayers.dravokar.length === 0) {
     sendGameEnd('Kaotika');
     resetInitialGameValues();
+    sendBattleWinners(dividedPlayers.kaotika, selectedBattleId);
     gameHasPlayers = false;
   } else if (dividedPlayers.kaotika.length === 0) {
     sendGameEnd('Dravokar');
@@ -74,7 +75,7 @@ export const eachSideHasPlayers = (): boolean => {
 };
 
 // Check if there is the minimum 1 player connected and of role acolyte no betrayer
-export const checkStartGameRequirement = () : boolean => {
+export const checkStartGameRequirement = (): boolean => {
   if (GAME_USERS.length >= 1) {
     return GAME_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
   }
@@ -85,7 +86,7 @@ export const nextRoundStartFirst = (id: string, players: Player[]): void => {
   const player = findPlayerById(id);
   const i = players.findIndex(player => player._id === id);
 
-  if (i === -1 || !player)  return;
+  if (i === -1 || !player) return;
 
   players.splice(i, 1);
   players.unshift(player);
@@ -104,10 +105,10 @@ export const attackFlow = (targetId: string) => {
     console.error(`Attack target mismatch. Expected: ${target._id}, Received: ${targetId}`);
     return;
   }
-  
+
   // Define the current attacker, and ensure there's one
   const attacker = currentPlayer;
-    
+
   if (!attacker) {
     console.error('Attacker not found');
     return;
@@ -133,11 +134,11 @@ export const attackFlow = (targetId: string) => {
   let attackerLuckResult: Luck | null = null;
   let defenderLuckResult: Luck | null = null;
   let fumbleToWeb: FumbleWeb | null = null;
-  
+
 
   // Get the percentages of attack types.
   const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
-  const fumblePercentage =  getFumblePercentage(attacker.attributes.CFP, successPercentage); 
+  const fumblePercentage = getFumblePercentage(attacker.attributes.CFP, successPercentage);
   const normalPercentage = successPercentage - criticalPercentage;
   const failedPercentage = (100 - fumblePercentage) - successPercentage;
 
@@ -145,8 +146,8 @@ export const attackFlow = (targetId: string) => {
   const attackerReduced = attackerReducedForAttack(attacker);
   const defenderReduced = defenderReducedForAttack(target);
   const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
-  let attackType = attackResult.attackType;   
- 
+  let attackType = attackResult.attackType;
+
   //----------------------------fumble-----------------------------//
   if (attackType === ATTACK_TYPES.FUMBLE) {
     const fumblePercentile = getCalculationFumblePercentile(fumblePercentage, attackRoll);
@@ -164,28 +165,28 @@ export const attackFlow = (targetId: string) => {
   }
   //----------------------normal, critical, failed------------------//
   else {
-  // Construct attacker and defender player reduced
+    // Construct attacker and defender player reduced
     const luckAttacker = attackerReducedForLuck(attacker);
     const luckDefender = defenderReducedForLuck(target);
 
     // Execute attacker luck
     attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
-    dealedDamage = attackerLuckResult.dealedDamage;  
+    dealedDamage = attackerLuckResult.dealedDamage;
 
     if (attackerLuckResult.luckMessage === LUCK_MESSAGE.CRITICAL_EFFECT) {
       attackType = ATTACK_TYPES.CRITICAL;
-    }  
+    }
 
     // Execute defender luck
     defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
     dealedDamage = defenderLuckResult.dealedDamage;
 
     //Dealed damage to objectDamage
-    dealedObjectDamage = {hit_points: dealedDamage};
+    dealedObjectDamage = { hit_points: dealedDamage };
   }
 
   //-----------------------------------------------------------------------------//
-  
+
   // Update player's attributes in GAME_USERS
   applyDamage(target._id, dealedObjectDamage);
 
@@ -199,12 +200,33 @@ export const attackFlow = (targetId: string) => {
   };
 
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
-
-  // Send data to web
-  console.log(attackJSON);
-  
   sendAttackInformationToWeb(attackJSON);
 
-  //--------------------------------------------------------------------------------//
 
 };
+
+function sendBattleWinners(kaotika: Player[], battleID: string | null) {
+
+  if (!battleID) {
+    console.error('No battleID assigned');
+    return;
+  }
+
+  const getWinnersData = parseWinners(kaotika, battleID);
+  console.log('Number of winners : ' + getWinnersData.length);
+  //if you want to send winners, add here the function  
+  
+}
+
+function parseWinners(kaotika: Player[], battleID: string ): { email: string; isAlive: boolean; battleID: string }[] {
+
+  const parsedPlayers:{ email: string; isAlive: boolean; battleID: string }[] = [];
+  kaotika.map(({ email, isAlive }) => (parsedPlayers.push({
+    email,
+    isAlive,
+    battleID,
+  })));
+  return parsedPlayers;
+
+}
+

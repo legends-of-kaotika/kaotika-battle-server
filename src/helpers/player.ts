@@ -77,13 +77,13 @@ export function handlePlayerDeath(id: string): void {
   if (!isConnected) return;
 
   sendKilledPlayer(id);
-  removePlayerFromConectedUsersById(id);
+  removePlayerFromGameUsersById(id);
   
   // If the dead player started first in the next round due to the luck, remove the condition.
   if (idPlayerFirstTurn === id) setIdPlayerFirstTurn(null);
 }
 
-export function removePlayerFromConectedUsersById(id: string): void {
+export function removePlayerFromGameUsersById(id: string): void {
   const index = GAME_USERS.findIndex(player => player._id === id);
   if (index === -1) {
     logUnlessTesting(`FAILED to delete player with the id ${id} dont exist in ONLINE USER array`);

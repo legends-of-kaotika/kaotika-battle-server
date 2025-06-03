@@ -217,8 +217,6 @@ export const mobileUserHandlers = (socket: Socket): void => {
       BATTLES.length = 0;
       BATTLES.push(...battles);
 
-      console.log({ status: 'OK', battles: battles });
-
       // Send data to mobile.
       callback({ status: 'OK', battles: battles }); 
     } catch (error) {
@@ -279,8 +277,9 @@ export const mobileUserHandlers = (socket: Socket): void => {
       callback({status: 'FAILED', error: `No player found with id ${playerId}.`});
       return;
     }
+    const user_copy = JSON.parse(JSON.stringify(player));
     
-    GAME_USERS.push(player);
+    GAME_USERS.push(user_copy);
     sendUserDataToWeb(player);
 
     // Send data to mobile.
