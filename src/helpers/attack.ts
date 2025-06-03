@@ -14,6 +14,7 @@ import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleWeb } from '../interfaces/Fumble.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
+import { LUCK_MESSAGE } from '../constants/messages.ts';
 
 export const adjustAtributes = (player: Player) => {
 
@@ -195,11 +196,13 @@ export const parseAttackData = (targetPlayerId: string,
         hasLuck: attackerLuckResult.hasLuck,
         luckRolls: attackerLuckResult.luckRolls,
         luckRollMessage: attackerLuckResult.luckMessage,
+        noEffect: attackerLuckResult.luckMessage === LUCK_MESSAGE.ATTACKER_NO_LUCK
       },
       defender: {
         hasLuck: defenderLuckResult.hasLuck,
         luckRolls: defenderLuckResult.luckRolls,
-        luckRollMessage: defenderLuckResult.luckMessage
+        luckRollMessage: defenderLuckResult.luckMessage,
+        noEffect: defenderLuckResult.luckMessage === LUCK_MESSAGE.DEFENDER_NO_LUCK
       }
     };
   }
