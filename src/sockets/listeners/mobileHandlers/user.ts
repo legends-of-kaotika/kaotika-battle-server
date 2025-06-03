@@ -217,8 +217,6 @@ export const mobileUserHandlers = (socket: Socket): void => {
       BATTLES.length = 0;
       BATTLES.push(...battles);
 
-      console.log({ status: 'OK', battles: battles });
-
       // Send data to mobile.
       callback({ status: 'OK', battles: battles }); 
     } catch (error) {
