@@ -5,6 +5,9 @@ import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
 import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
 import { clearTimer } from './timer/timer.ts';
+import { io } from '../index.ts';
+import * as SOCKETS from './constants/sockets.ts';
+import { logUnlessTesting } from './helpers/utils.ts';
 
 export const GAME_USERS: Player[] = [];
 export const CONNECTED_USERS: Player[] = [];
@@ -93,6 +96,11 @@ export const resetInitialGameValues = (): void => {
   };
   // Send the new users array to web to display them.(instead of npc)
   sendConnectedUsersArrayToWeb(GAME_USERS);
+ 
+  // Emit the game reset to all devices
+  io.emit(SOCKETS.GAME_RESET, () => {
+    logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
+  });
 };
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {

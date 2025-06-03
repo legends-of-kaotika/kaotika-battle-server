@@ -228,9 +228,6 @@ export const mobileUserHandlers = (socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
     resetInitialGameValues();
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_RESET_GAME} to all`);
-    io.emit(SOCKETS.GAME_RESET, () => {
-      logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
-    });
   });
   
   socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {
