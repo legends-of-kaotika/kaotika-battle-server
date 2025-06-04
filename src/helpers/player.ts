@@ -36,7 +36,9 @@ export const removePlayerConnected = (socket: Socket): void => {
   if (gameUsersIndex !== -1) {
     userInfo = GAME_USERS[gameUsersIndex];
     GAME_USERS.splice(gameUsersIndex, 1);
-    console.log('Player removed from GAME_USERS');
+    console.log('Player ' + userInfo.nickname + ' removed from GAME_USERS');
+    console.log('Online Users:');
+    GAME_USERS.forEach( user => console.log(user.name));
   }
 
   // Remove from CONNECTED_USERS if exists.
@@ -44,7 +46,7 @@ export const removePlayerConnected = (socket: Socket): void => {
   if (connectedUsersIndex !== -1) {
     userInfo = CONNECTED_USERS[connectedUsersIndex];
     CONNECTED_USERS.splice(connectedUsersIndex, 1);
-    console.log('Player removed from CONNECTED_USERS');
+    console.log('Player ' + userInfo.nickname + ' removed from CONNECTED_USERS');
   }
 
   if (userInfo) {
