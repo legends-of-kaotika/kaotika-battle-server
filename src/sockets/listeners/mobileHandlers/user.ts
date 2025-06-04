@@ -25,7 +25,8 @@ import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
   findConnectedPlayerById,
   findPlayerById,
-  isPlayerConnected
+  isPlayerConnected,
+  printUsers
 } from '../../../helpers/player.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
@@ -75,6 +76,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
     if (isPlayerConnected(playerData._id)) {
       console.log('Player already logged in.');
+      printUsers();
       callback({status: 'FAILED', error: 'Player already logged in.'});
       return;
     }
@@ -82,6 +84,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     playerData.socketId = socket.id;
     CONNECTED_USERS.push(playerData);
     console.log(`${playerData.nickname} inserted into CONNECTED_USERS`);
+    printUsers();
 
     socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
     

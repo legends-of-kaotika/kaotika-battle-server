@@ -74,17 +74,44 @@ export const gameStartToAll = (): void => {
 export const sendAttackInformationToWeb = (attackJSON: AttackJson): void => {
   
   logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message, with attack information`);
-  logUnlessTesting('------------------------AttackInfo----------------------------');
+  logUnlessTesting('----------------------- Attack Info ---------------------------');
   logUnlessTesting('Type: ' + attackJSON.attack.attackType);
-  logUnlessTesting('Damage: ' + attackJSON.attack.dealedDamage);
+  logUnlessTesting('Damage:');
+  Object.entries(attackJSON?.attack?.dealedDamage ?? {}).forEach(([key, value]) => {
+    logUnlessTesting(`  ${key}: ${value}`);
+  });
   logUnlessTesting('DieRoll: ' + attackJSON.attack.dieRoll);
   logUnlessTesting('Critical Percentage: ' + attackJSON.attack.percentages.critical);
   logUnlessTesting('Failed Percentage: ' + attackJSON.attack.percentages.failed);
   logUnlessTesting('Fumble Percentage: ' + attackJSON.attack.percentages.fumble);
   logUnlessTesting('Normal Percentage: ' + attackJSON.attack.percentages.normal);
-  logUnlessTesting('-------------------------------------------------------------');
-  
-  console.log(attackJSON);
+  logUnlessTesting('--------------------------------------------------------------');
+
+  logUnlessTesting('\n------------------------ Luck Info ----------------------------');
+  if (!attackJSON?.luck) {
+    logUnlessTesting('The luck object does not exist');
+  } else {
+
+    if (!attackJSON?.luck.attacker){
+      logUnlessTesting('The attacker doesnt have luck');
+    } else {
+      logUnlessTesting('Attacker Luck');
+      Object.entries(attackJSON.luck.attacker).forEach(([key, value]) => {
+        logUnlessTesting(`  ${key}: ${value}`);
+      });
+    }
+
+    if (!attackJSON?.luck.defender){
+      logUnlessTesting('The defender doesnt have luck');
+    } else {
+      Object.entries(attackJSON.luck.defender).forEach(([key, value]) => {
+        logUnlessTesting(`  ${key}: ${value}`);
+      });
+    }
+
+  }
+
+  logUnlessTesting('---------------------------------------------------------------');
   
   io.to(webSocketId).emit(SOCKETS.ATTACK_INFORMATION, attackJSON);
 };
