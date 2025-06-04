@@ -80,6 +80,8 @@ export const setGameStarted = (status: boolean): void => {
 // Resets the values to the initals
 export const resetInitialGameValues = (): void => {
 
+  console.log('Resetting game');
+
   isGameStarted = false;
   target = undefined;
   currentPlayer = undefined;
@@ -101,6 +103,10 @@ export const resetInitialGameValues = (): void => {
   io.emit(SOCKETS.GAME_RESET, () => {
     logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
   });
+
+  // Emit the game reset to mobile
+  io.emit(SOCKETS.IS_GAME_CREATED, false);
+  
 };
 
 export const setPlayerFirstTurnId =  (id: string | null) : void => {
