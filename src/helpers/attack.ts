@@ -196,13 +196,13 @@ export const parseAttackData = (targetPlayerId: string,
         hasLuck: attackerLuckResult.hasLuck,
         luckRolls: attackerLuckResult.luckRolls,
         luckRollMessage: attackerLuckResult.luckMessage,
-        hasEffect: attackerLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT && !attackerLuckResult.hasLuck
+        hasEffect: attackerLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT && attackerLuckResult.hasLuck
       },
       defender: {
         hasLuck: defenderLuckResult.hasLuck,
         luckRolls: defenderLuckResult.luckRolls,
         luckRollMessage: defenderLuckResult.luckMessage,
-        hasEffect: defenderLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT && !defenderLuckResult.hasLuck
+        hasEffect: defenderLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT && defenderLuckResult.hasLuck
       }
     };
   }
