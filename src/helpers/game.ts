@@ -14,6 +14,7 @@ import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fu
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
 import { applyDamage, findPlayerById } from './player.ts';
+import { sleep } from './utils.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
@@ -32,7 +33,7 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 };
 
 // Changes the turn players
-export const changeTurn = (): void => {
+export const changeTurn = async (): Promise<void> => {
 
   increaseTurn();
   const nextPlayer = GAME_USERS[turn];
@@ -46,34 +47,59 @@ export const changeTurn = (): void => {
       npcAttack();
     }
   }
-  eachSideHasPlayers();
-
-};
-
-// Check if there are at least 1 player from each side
-export const eachSideHasPlayers = (): boolean => {
-
-  let gameHasPlayers: boolean = true;
-  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
-
-  if ((dividedPlayers.dravokar.length === 0) && (dividedPlayers.kaotika.length === 0)) {
-    sendGameEnd('Draw');
-    resetInitialGameValues();
-    gameHasPlayers = false;
-  } else if (dividedPlayers.dravokar.length === 0) {
-    sendGameEnd('Kaotika');
-    resetInitialGameValues();
-    sendBattleWinners(dividedPlayers.kaotika, selectedBattleId);
-    gameHasPlayers = false;
-  } else if (dividedPlayers.kaotika.length === 0) {
-    sendGameEnd('Dravokar');
-    resetInitialGameValues();
-    gameHasPlayers = false;
+  if (isGameEnded()) {
+    await handleGameEnd();
   }
 
-  return gameHasPlayers;
 };
 
+// Returns true if any of the sides has no players
+export const isGameEnded = (): boolean => {
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
+  return (dividedPlayers.dravokar.length === 0 || dividedPlayers.kaotika.length === 0); 
+};
+
+// Returns the winner side
+export const getWinnerSide = (): 'kaotika' | 'dravokar' | 'draw' | null => {
+  if (!isGameEnded()) {
+    return null;
+  }
+
+  const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
+  if (dividedPlayers.dravokar.length === 0) {
+    return 'kaotika';
+  } else if (dividedPlayers.kaotika.length === 0) {
+    return 'dravokar';
+  }
+  return 'draw';
+};
+
+// Handles the game end
+export const handleGameEnd = async (): Promise<void> => {
+  const winnerSide = getWinnerSide();
+
+  if (!winnerSide) {
+    console.error('No winner side found. Probably game is not ended.');
+    return;
+  }
+
+  // Send the winner side to all devices
+  const winnerSideCapitalized = winnerSide.charAt(0).toUpperCase() + winnerSide.slice(1);
+  sendGameEnd(winnerSideCapitalized);
+
+  // If the winner is Kaotika, we want to store the result in the database.
+  if (winnerSide === 'kaotika') {
+    const kaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
+    await sendBattleWinners(kaotika, selectedBattleId);
+  }
+
+  // Wait for 5 seconds to show the winner side 
+  await sleep(5000);
+
+  // Restart game values
+  resetInitialGameValues();
+};
+  
 // Check if there is the minimum 1 player connected and of role acolyte no betrayer
 export const checkStartGameRequirement = (): boolean => {
   if (GAME_USERS.length >= 1) {
@@ -205,26 +231,44 @@ export const attackFlow = (targetId: string) => {
 
 };
 
-function sendBattleWinners(kaotika: Player[], battleID: string | null) {
+async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
 
   if (!battleID) {
     console.error('No battleID assigned');
     return;
   }
 
-  const getWinnersData = parseWinners(kaotika, battleID);
-  console.log('Number of winners : ' + getWinnersData.length);
-  //if you want to send winners, add here the function  
-  
+  const winnersData = parseWinners(kaotika);
+  const body = {
+    players: winnersData,
+    battleID
+  };
+
+  console.log('Sending winners to API: ', body);
+
+  // Send the winners to the database
+  try {
+    const response = await fetch(`${process.env.KAOTIKA_SERVER}/winners`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      console.error('Error sending winners to API:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending winners to API:', error);
+  }
 }
 
-function parseWinners(kaotika: Player[], battleID: string ): { email: string; isAlive: boolean; battleID: string }[] {
+function parseWinners(kaotika: Player[] ): { email: string; isAlive: boolean; }[] {
 
-  const parsedPlayers:{ email: string; isAlive: boolean; battleID: string }[] = [];
+  const parsedPlayers:{ email: string; isAlive: boolean; }[] = [];
   kaotika.map(({ email, isAlive }) => (parsedPlayers.push({
     email,
     isAlive,
-    battleID,
   })));
   return parsedPlayers;
 
