@@ -14,6 +14,7 @@ import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fu
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
 import { applyDamage, findPlayerById } from './player.ts';
+import { sleep } from './utils.ts';
 
 // Returns a object of loyals and betrayers
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
@@ -92,6 +93,10 @@ export const handleGameEnd = async (): Promise<void> => {
     await sendBattleWinners(kaotika, selectedBattleId);
   }
 
+  // Wait for 5 seconds to show the winner side 
+  await sleep(5000);
+
+  // Restart game values
   resetInitialGameValues();
 };
   
@@ -242,15 +247,19 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
   console.log('Sending winners to API: ', body);
 
   // Send the winners to the database
-  const response = await fetch(`${process.env.KAOTIKA_SERVER}/winners`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    console.error('Error sending winners to API:', response.statusText);
+  try {
+    const response = await fetch(`${process.env.KAOTIKA_SERVER}/winners`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      console.error('Error sending winners to API:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending winners to API:', error);
   }
 }
 
