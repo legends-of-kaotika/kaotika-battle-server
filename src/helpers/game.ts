@@ -239,6 +239,8 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
     battleID
   };
 
+  console.log('Sending winners to API: ', body);
+
   // Send the winners to the database
   const response = await fetch(`${process.env.KAOTIKA_SERVER}/winners`, {
     method: 'POST',
