@@ -159,7 +159,7 @@ A player can "have luck" by passing the initial luck roll, but the luck may "hav
 8.  **Damage Application ([`src/helpers/player.ts`](src/helpers/player.ts) -> `applyDamage()`)**: The final `dealedObjectDamage` (HP loss or attribute change from fumble) is applied to the target player's `attributes` in the `GAME_USERS` array.
 9.  **Death Check & Handling ([`src/helpers/player.ts`](src/helpers/player.ts))**: After damage application, implicitly, the game checks if `target.attributes.hit_points <= 0`.
     -   `findPlayerDeadId()` can identify such players.
-    -   `handlePlayerDeath()` is called: emits `KILLED_PLAYER`, removes player from `GAME_USERS`, and checks if `eachSideHasPlayers()` results in game end.
+    -   `handlePlayerDeath()` is called: emits `KILLED_PLAYER`, removes player from `GAME_USERS`, and checks if `isGameEnded()` results in game end.
 10. **Reporting ([`attack.ts`](src/helpers/attack.ts) -> `parseAttackData()`)**: All details of the attack (rolls, percentages, damage, luck outcomes, fumble info) are compiled into an `AttackJson` object.
 11. **Broadcasting**: `sendAttackInformationToWeb()` emits this `AttackJson` to all web clients.
 
