@@ -213,7 +213,7 @@ function sendBattleWinners(kaotika: Player[], battleID: string | null) {
   }
 
   const getWinnersData = parseWinners(kaotika, battleID);
-  console.log('Number of winners : ' + getWinnersData.length);
+  console.log('Number of winners : ', getWinnersData);
   //if you want to send winners, add here the function  
   
 }

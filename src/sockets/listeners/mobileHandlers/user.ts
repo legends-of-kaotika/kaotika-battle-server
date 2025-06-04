@@ -97,7 +97,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
     // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (!checkStartGameRequirement()) {
-      console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
+      console.log('Game cannot start: minimum one Acolyte required and no Betrayers connected.');
       sendNotEnoughPlayers(socket.id);
     } else {
       console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');

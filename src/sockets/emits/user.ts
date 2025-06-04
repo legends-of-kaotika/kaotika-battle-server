@@ -72,7 +72,20 @@ export const gameStartToAll = (): void => {
 
 // Sends the target players(id) with the attributes updated and the total damage
 export const sendAttackInformationToWeb = (attackJSON: AttackJson): void => {
+  
   logUnlessTesting(`Emitting ${SOCKETS.ATTACK_INFORMATION} socket message, with attack information`);
+  logUnlessTesting('------------------------AttackInfo----------------------------');
+  logUnlessTesting('Type: ' + attackJSON.attack.attackType);
+  logUnlessTesting('Damage: ' + attackJSON.attack.dealedDamage);
+  logUnlessTesting('DieRoll: ' + attackJSON.attack.dieRoll);
+  logUnlessTesting('Critical Percentage: ' + attackJSON.attack.percentages.critical);
+  logUnlessTesting('Failed Percentage: ' + attackJSON.attack.percentages.failed);
+  logUnlessTesting('Fumble Percentage: ' + attackJSON.attack.percentages.fumble);
+  logUnlessTesting('Normal Percentage: ' + attackJSON.attack.percentages.normal);
+  logUnlessTesting('-------------------------------------------------------------');
+  
+  console.log(attackJSON);
+  
   io.to(webSocketId).emit(SOCKETS.ATTACK_INFORMATION, attackJSON);
 };
 
