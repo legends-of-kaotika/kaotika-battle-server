@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { DISCONNECT } from '../../constants/sockets.ts';
 import { findPlayerBySocketId, removePlayerConnected } from '../../helpers/player.ts';
 import { currentPlayer, isGameStarted, target } from '../../game.ts';
-import { changeTurn, eachSideHasPlayers } from '../../helpers/game.ts';
+import { changeTurn, handleGameEnd, isGameEnded } from '../../helpers/game.ts';
 import { sendWebTurnFinished } from '../emits/game.ts';
 import { sleep } from '../../helpers/utils.ts';
 
@@ -18,7 +18,9 @@ export const globalHandlers = (socket: Socket): void => {
 
     // Check if any team wins.
     if (isGameStarted) { 
-      eachSideHasPlayers();
+      if (isGameEnded()) {
+        await handleGameEnd();
+      }
     }
 
     // If the disconnected player is the current attacker, change turn.

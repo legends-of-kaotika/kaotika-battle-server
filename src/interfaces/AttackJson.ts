@@ -18,13 +18,13 @@ export type AttackJson = {
       hasLuck: boolean,
       luckRolls: number[],
       luckRollMessage?: string | undefined,
-      noEffect: boolean,
+      hasEffect: boolean,
     },
     defender: {
       hasLuck: boolean,
       luckRolls: number[],
       luckRollMessage: string | undefined,
-      noEffect: boolean,
+      hasEffect: boolean,
     }
   },
 };

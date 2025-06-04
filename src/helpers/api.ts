@@ -6,7 +6,7 @@ import { Battle } from '../interfaces/Battles.ts';
 export const fetchBattles = async () : Promise<Battle[]> => {
   try {
 
-    console.log('fetchBattles()');
+    console.log('fetching missions');
     
     const request = await fetch(`${process.env.KAOTIKA_SERVER}/missions`);
     const response = await request.json();

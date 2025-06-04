@@ -25,7 +25,8 @@ import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
   findConnectedPlayerById,
   findPlayerById,
-  isPlayerConnected
+  isPlayerConnected,
+  printUsers
 } from '../../../helpers/player.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
 import { logUnlessTesting } from '../../../helpers/utils.ts';
@@ -75,6 +76,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
     if (isPlayerConnected(playerData._id)) {
       console.log('Player already logged in.');
+      printUsers();
       callback({status: 'FAILED', error: 'Player already logged in.'});
       return;
     }
@@ -82,6 +84,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     playerData.socketId = socket.id;
     CONNECTED_USERS.push(playerData);
     console.log(`${playerData.nickname} inserted into CONNECTED_USERS`);
+    printUsers();
 
     socket.join(SOCKETS.MOBILE); // Enter to mobile socket room 
     
@@ -97,7 +100,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
     // Check if there at least 1 acolyte no betrayer connected (enemy always there is one as a bot)
     if (!checkStartGameRequirement()) {
-      console.log('Not minimum 1 acolyte no betrayer connected, can\'t start game');
+      console.log('Game cannot start: minimum one Acolyte required and no Betrayers connected.');
       sendNotEnoughPlayers(socket.id);
     } else {
       console.log('mobile-gameStart socket message listened. Sending Online users to everyone.');
@@ -228,9 +231,6 @@ export const mobileUserHandlers = (socket: Socket): void => {
   socket.on(SOCKETS.MOBILE_RESET_GAME, () => {
     resetInitialGameValues();
     logUnlessTesting(`listen the ${SOCKETS.MOBILE_RESET_GAME} to all`);
-    io.emit(SOCKETS.GAME_RESET, () => {
-      logUnlessTesting(`sending the emit ${SOCKETS.GAME_RESET}`);
-    });
   });
   
   socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, async (_id: string) => {

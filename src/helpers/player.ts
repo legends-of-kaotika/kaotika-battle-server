@@ -26,6 +26,26 @@ export const findPlayerBySocketId = (id: string): Player | undefined => {
   return user;
 };
 
+export const printUsers = (): void => {
+  logUnlessTesting('Connected Users:');
+  if (CONNECTED_USERS.length === 0) {
+    logUnlessTesting(' - No user in connected users array');
+  } else {
+    CONNECTED_USERS.forEach(user => {
+      logUnlessTesting(` - ${user.nickname}`);
+    });
+  }
+
+  logUnlessTesting('Game Users:');
+  if (GAME_USERS.length === 0) {
+    logUnlessTesting(' - No user in game users array');
+  } else {
+    GAME_USERS.forEach(user => {
+      logUnlessTesting(` - ${user.nickname}`);
+    });
+  }
+};
+
 // Removes the player that got disconnected from playerConnected[] global variable
 export const removePlayerConnected = (socket: Socket): void => {
 
@@ -36,7 +56,7 @@ export const removePlayerConnected = (socket: Socket): void => {
   if (gameUsersIndex !== -1) {
     userInfo = GAME_USERS[gameUsersIndex];
     GAME_USERS.splice(gameUsersIndex, 1);
-    console.log('Player removed from GAME_USERS');
+    logUnlessTesting('Player ' + userInfo.nickname + ' removed from GAME_USERS');
   }
 
   // Remove from CONNECTED_USERS if exists.
@@ -44,17 +64,20 @@ export const removePlayerConnected = (socket: Socket): void => {
   if (connectedUsersIndex !== -1) {
     userInfo = CONNECTED_USERS[connectedUsersIndex];
     CONNECTED_USERS.splice(connectedUsersIndex, 1);
-    console.log('Player removed from CONNECTED_USERS');
+    logUnlessTesting('Player ' + userInfo.nickname + ' removed from CONNECTED_USERS');
   }
 
   if (userInfo) {
-    console.log(`${userInfo.email} has disconnected`);
+    logUnlessTesting(`${userInfo.email} has disconnected`);
     socket.leave(MOBILE);
     sendPlayerRemoved(userInfo._id);
     sendPlayerDisconnectedToWeb(userInfo.nickname);
   } else {
-    console.log('No players found with the received socket');
+    logUnlessTesting('No players found with the received socket');
   }
+
+  printUsers();
+
 };
 
 // Returns a player searched by email
