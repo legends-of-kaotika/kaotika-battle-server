@@ -248,7 +248,7 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
 
   // Send the winners to the database
   try {
-    const response = await fetch(`${process.env.KAOTIKA_SERVER}/winners`, {
+    const response = await fetch(`${process.env.KAOTIKA_SERVER}/battle`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
