@@ -22,7 +22,9 @@ jobs:
       - name: Build and restart Docker container
         run: |
           cd $GITHUB_WORKSPACE
-          docker rm -f kaotika-battle-server || true
+          if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
+            docker rm -f $CONTAINER_NAME
+          fi
           docker compose -f docker-compose.yml build server
           docker compose -f docker-compose.yml up -d server
 
