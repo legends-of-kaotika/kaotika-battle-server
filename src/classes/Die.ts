@@ -24,6 +24,10 @@ export default class Die{
     return roll;
   }
 
+  public getMaxDieRoll(): number{
+    return (this.num_die * this.num_faces) + this.modifier;
+  }
+
   public rollWithModifier() : number{
     return Math.floor(this.roll() + this.modifier);
   } 

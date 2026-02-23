@@ -9,7 +9,7 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
-import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData } from './attack.ts';
+import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getMaxWeaponDieRoll } from './attack.ts';
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
@@ -181,7 +181,8 @@ export const attackFlow = (targetId: string) => {
 
     if (attacker) {
       setTarget(attacker); //change target to attacker self player
-      fumble = getFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
+      const maxWeaponRoll = getMaxWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier); //Get max weapon roll possible
+      fumble = getFumble(fumbleEffect, target.attributes, maxWeaponRoll, fumblePercentile);
       if (fumble) {
         dealedObjectDamage = fumble.damage;
         fumbleToWeb = fumble;

@@ -1,7 +1,7 @@
 export interface Fumble {
     percentile: number,
     message: string,
-    type: 'smash' | 'fairytale' | 'hack' | 'slash',
+    type: 'smash' | 'lightsmash' | 'hack' | 'slash',
     damage: FumbleDamage
 }
 export interface FumbleDamage {
@@ -12,6 +12,6 @@ export interface FumbleDamage {
 export interface FumbleWeb {
     percentile: number,
     message: string,
-    type: 'smash' | 'fairytale' | 'hack' | 'slash',
+    type: 'smash' | 'lightsmash' | 'hack' | 'slash',
     damage?: FumbleDamage
 }

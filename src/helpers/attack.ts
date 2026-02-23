@@ -108,6 +108,15 @@ export const getWeaponDieRoll = (
   return weaponDie.rollWithModifier();
 };
 
+export const getMaxWeaponDieRoll = (
+  weaponDieNumber: number,
+  weaponDieFaces: number,
+  weaponDieModifier: number,
+): number => {
+  const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
+  return weaponDie.getMaxDieRoll();
+};
+
 export const getEquipmentDefense = (equipment: Equipment): number => {
   return Object.values(equipment)
     .filter((item) => item?.defense)

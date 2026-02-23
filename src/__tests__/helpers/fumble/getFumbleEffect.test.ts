@@ -5,6 +5,6 @@ const fumblePercentileMock = 40;
 describe('getFumbleEffect method', ()=> {
   it('should return the correct fumbleEffect', ()=> {
     const fumbleEffect = getFumbleEffect(fumblePercentileMock);
-    expect(fumbleEffect).toBe('fairytale');
+    expect(fumbleEffect).toBe('lightsmash');
   });
 });

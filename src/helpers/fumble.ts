@@ -3,9 +3,8 @@ import { FumbleDamage, Fumble } from '../interfaces/Fumble.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FUMBLE_EFFECTS } from '../constants/game.ts';
 import { EFFECTS_FUMBLE } from '../constants/combatRules.ts';
-import { Player } from '../interfaces/Player.ts';
 
-export type FumbleType = 'slash'| 'fairytale' | 'hack' | 'smash';
+export type FumbleType = 'slash' | 'lightsmash' | 'hack' | 'smash';
 
 export const getCalculationFumbleDamage = (bcfa: number , weaponDieRoll: number ): number => {
   return Math.ceil((bcfa + weaponDieRoll) / 5);
@@ -28,13 +27,14 @@ export const getFumbleEffect = (fumblePercentile: number ): FumbleType => {
 
 //apply self damage to the player
 export const getSlashDamage = (calculationFumbleDamage: number): Partial<Attribute> => {
-  const slashResult = Math.ceil(calculationFumbleDamage / 2);
+  const slashResult = Math.ceil(calculationFumbleDamage / 3);
   return {hit_points: slashResult};
 };
 
 //add erudite glasses to player
-export const getFairytaleDamage = (): Partial<Player> => {
-  return {eruditoGlasses: true};
+export const getSmashDamage = (calculationFumbleDamage: number): Partial<Attribute> => {
+  const slashResult = Math.ceil(calculationFumbleDamage / 2);
+  return {hit_points: slashResult};
 };
 
 //halve the dex of currentPlayer forever
@@ -44,7 +44,7 @@ export const getHackDamage = (currentPlayerDex: number): Partial<Attribute> => {
 };
 
 export const getFumbleObject = (percentileFumble: number, typeFumble: FumbleType, damageFumble: FumbleDamage): Fumble => {
-  return {percentile: percentileFumble, message: FUMBLE_MESSAGE[typeFumble],type: typeFumble, damage: damageFumble};
+  return {percentile: percentileFumble, message: FUMBLE_MESSAGE[typeFumble], type: typeFumble, damage: damageFumble};
 };
 
 export const getFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Attribute, weaponDieRoll: number, percentile: number) : Fumble | null => {
@@ -54,10 +54,10 @@ export const getFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Att
     const slashDamage = getSlashDamage(calculationFumbleDamage);
     return getFumbleObject(percentile, fumbleEffect, slashDamage); 
   }
-  case FUMBLE_EFFECTS.FAIRYTALE: { //change later on 
+  case FUMBLE_EFFECTS.LIGHTSMASH: { //change later on 
     const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
-    const slashDamage = getSlashDamage(calculationFumbleDamage);
-    return getFumbleObject(percentile, FUMBLE_EFFECTS.SLASH, slashDamage);
+    const slashDamage = getSmashDamage(calculationFumbleDamage);
+    return getFumbleObject(percentile, fumbleEffect, slashDamage);
   }
   case FUMBLE_EFFECTS.HACK: {
     const hackDamage = getHackDamage(currentPlayerAttributes.dexterity);

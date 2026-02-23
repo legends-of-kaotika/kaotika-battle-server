@@ -85,9 +85,9 @@ export const ATTACK_RULES_LUCK_MOD = [
 
 export const EFFECTS_FUMBLE = [
   {max: 30, effect: FUMBLE_EFFECTS.SLASH},
-  {max: 60, effect: FUMBLE_EFFECTS.FAIRYTALE},
-  {max: 80, effect: FUMBLE_EFFECTS.HACK},
-  {max: Infinity, effect: FUMBLE_EFFECTS.SMASH}
+  {max: 60, effect: FUMBLE_EFFECTS.LIGHTSMASH},
+  {max: 85, effect: FUMBLE_EFFECTS.SMASH},
+  {max: Infinity, effect: FUMBLE_EFFECTS.HACK}
 ];
 export const LUCK_ATTACK_INCREEASE = [
   {max: 35, effect: ATTACK_INCREASE.SLIGTHLY},
