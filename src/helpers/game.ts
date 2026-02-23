@@ -153,7 +153,7 @@ export const attackFlow = (targetId: string) => {
   // Get general variables.
   const attackRoll = getAttackRoll();
   const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
-  const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity);
+  const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity, attacker.attributes.charisma);
   let dealedDamage: number = 0;
   let dealedObjectDamage: DealedDamage | null = null;
   let fumble: Fumble | null = null;
@@ -248,7 +248,7 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
 
   // Send the winners to the database
   try {
-    const response = await fetch(`${process.env.KAOTIKA_SERVER}/winners`, {
+    const response = await fetch(`${process.env.KAOTIKA_SERVER}/battle`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

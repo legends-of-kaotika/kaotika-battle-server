@@ -76,16 +76,9 @@ export const getAttackRoll = (): number => {
   return Die100.roll();
 };
 
-export const getSuccessPercentage = (
-  weaponBasePercentage: number,
-  playerDexterity: number,
-  playerInsanity: number,
-): number => {
+export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number, playerCharisma: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return Math.min(
-    75,
-    weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod,
-  );
+  return weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod + Math.ceil(playerCharisma / 6);
 };
 
 export const getFumblePercentage = (
