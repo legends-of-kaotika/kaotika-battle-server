@@ -41,7 +41,7 @@ The player's data and its transformation are central to the game.
   1.  Takes `PlayerPopulated` data as input.
   2.  **Base Attributes Calculation**: `calculateBaseAttributes()` sums the player's inherent stats with modifiers from all equipped items (weapon, armor, shield, etc.) to get the _base combat attributes_.
   3.  **Derived Combat Stats Calculation**: Based on these summed base attributes, further combat-critical stats are calculated:
-      - `hit_points`: `Constitution + Dexterity - Insanity / 2`
+      - `hit_points`: `Level * 5 + Constitution + Dexterity / 3 - Insanity / 2 + Intelligence / 3 + Charisma * 2 + Strength / 3`
       - `attack`: `Strength - Insanity / 2`
       - `defense`: `Dexterity + Constitution + Intelligence / 2`
       - `magic_resistance`: `Intelligence + Charisma`
