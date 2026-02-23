@@ -99,11 +99,11 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
     - An NPC's turn triggers `npcAttack()`, which selects a target (usually a random Kaotika player) and then calls `attackFlow()`.
 2.  **Attribute Adjustment**: `adjustAtributes()` ([`attack.ts`](src/helpers/attack.ts)) is called for both attacker and target to round attributes and enforce min/max values (e.g., Insanity 1-85).
 3.  **Pre-computation & Rolls ([`attack.ts`](src/helpers/attack.ts))**: Essential values are calculated:
-    -   `getAttackRoll()`: A d100 roll that primarily determines the attack's success.
-    -   `getWeaponDieRoll()`: Simulates the attacker's weapon damage dice roll (e.g., 2d6+1).
-    -   `getSuccessPercentage()`: `WeaponBasePercentage + (Dexterity / 2) + InsanityModifier + (Charisma / 6)`.
-    -   `getCriticalPercentage()`: `AttackerCFP * SuccessPercentage / 100`.
-    -   `getFumblePercentage()`: `(100 - SuccessPercentage) * AttackerCFP / 100`.
+    - `getAttackRoll()`: A d100 roll that primarily determines the attack's success.
+    - `getWeaponDieRoll()`: Simulates the attacker's weapon damage dice roll (e.g., 2d6+1).
+    - `getSuccessPercentage()`: `WeaponBasePercentage + (Dexterity / 2) + InsanityModifier + (Charisma / 6)`.
+    - `getCriticalPercentage()`: `AttackerCFP * SuccessPercentage / 100`.
+    - `getFumblePercentage()`: `(100 - ((100 - SuccessPercentage) * AttackerCFP / 100) / 2 `.
 4.  **Initial Attack Outcome ([attack.ts](src/helpers/attack.ts) -> `getAttackType()`, then `attack()`)**: The `attackRoll` is compared against the calculated percentages:
     - If `attackRoll <= criticalPercentage`: **Critical Hit**.
     - Else if `attackRoll <= successPercentage`: **Normal Hit**.
