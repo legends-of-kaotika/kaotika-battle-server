@@ -103,7 +103,7 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
     - `getWeaponDieRoll()`: Simulates the attacker's weapon damage dice roll (e.g., 2d6+1).
     - `getSuccessPercentage()`: `WeaponBasePercentage + (Dexterity / 2) + InsanityModifier`. Capped at 75%.
     - `getCriticalPercentage()`: `AttackerCFP * SuccessPercentage / 100`.
-    - `getFumblePercentage()`: `(100 - SuccessPercentage) * AttackerCFP / 100`.
+    - `getFumblePercentage()`: `(100 - ((100 - SuccessPercentage) * AttackerCFP / 100) / 2 `.
 4.  **Initial Attack Outcome ([attack.ts](src/helpers/attack.ts) -> `getAttackType()`, then `attack()`)**: The `attackRoll` is compared against the calculated percentages:
     - If `attackRoll <= criticalPercentage`: **Critical Hit**.
     - Else if `attackRoll <= successPercentage`: **Normal Hit**.
