@@ -49,7 +49,7 @@ export const getCriticalPercentage = (
   CFP: number,
   successPercentage: number,
 ) => {
-  return Math.ceil((CFP * successPercentage) / 100);
+  return Math.ceil(((CFP * successPercentage) / 100) / 2);
 };
 
 export const getValueFromRule = (
