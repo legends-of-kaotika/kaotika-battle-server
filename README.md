@@ -119,12 +119,12 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
 6.  **Fumble Resolution ([fumble.ts](src/helpers/fumble.ts), if attackType is FUMBLE)**:
     - The `target` is switched to the `attacker` (self-effect).
     - `getCalculationFumblePercentile()`: Determines the severity of the fumble.
-    - `getFumbleEffect()`: Maps the percentile to a specific `FumbleType` (Slash, Fairytale, Hack, Smash) from `EFFECTS_FUMBLE` in `combatRules.ts`.
+    - `getFumbleEffect()`: Maps the percentile to a specific `FumbleType` (Slash, LightSmash, Hack, Smash) from `EFFECTS_FUMBLE` in `combatRules.ts`.
     - `getFumble()`: Calculates the consequence:
-      - **Slash**: Self-inflicted HP damage: `ceil((BCFA + WeaponDieRoll) / 10)`.
-      - **Fairytale**: Attacker gets `eruditoGlasses: true`. (Note: Current code applies Slash damage instead; a comment indicates "change later on").
+      - **Slash**: Self-inflicted HP damage: `ceil((BCFA + MaxWeaponDieRoll) / 3)`.
+      - **LightSmash**: Self-inflicted HP damage: `ceil((BCFA + MaxWeaponDieRoll) / 2)`.
       - **Hack**: Attacker's `dexterity` is halved for the battle.
-      - **Smash**: Self-inflicted HP damage: `ceil((BCFA + WeaponDieRoll) / 5)`.
+      - **Smash**: Self-inflicted HP damage: `ceil((BCFA + MaxWeaponDieRoll))`.
     - The outcome (e.g., `{hit_points: X}` or `{dexterity: Y}`) becomes `dealedObjectDamage`.
 7.  **Luck System ([`luck.ts`](src/helpers/luck.ts), if not a Fumble)**:
 
