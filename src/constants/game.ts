@@ -19,7 +19,7 @@ export const ATTACK_LUCK_EFFECTS = {
 
 export const FUMBLE_EFFECTS : Record<string, FumbleType> = {
   SLASH: 'slash',
-  FAIRYTALE: 'fairytale',
+  LIGHTSMASH: 'lightsmash',
   HACK: 'hack',
   SMASH: 'smash'
 };
