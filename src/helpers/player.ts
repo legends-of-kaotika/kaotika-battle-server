@@ -174,8 +174,8 @@ const calculateBaseAttributes = (data: PlayerPopulated): Attribute => {
   };
 };
 
-export const calculateHitPoints = (attributes: Attribute): number => {
-  return Math.floor(attributes.constitution + attributes.dexterity - attributes.insanity / 2);
+export const calculateHitPoints = (attributes: Attribute, level: number): number => {
+  return (level * 5) + attributes.constitution + Math.ceil(attributes.dexterity / 3) - Math.ceil(attributes.insanity / 2) + Math.ceil(attributes.intelligence / 3) + (attributes.charisma * 2) + Math.ceil(attributes.strength / 3);
 };
 
 export const calculateAttack = (attributes: Attribute): number => {
@@ -203,7 +203,7 @@ export const parsePlayerData = (data: PlayerPopulated): Player => {
 
   const calculatedAttributes = {
     ...baseAttributes,
-    hit_points: calculateHitPoints(baseAttributes),
+    hit_points: calculateHitPoints(baseAttributes, data.level),
     attack: calculateAttack(baseAttributes),
     defense: calculateDefense(baseAttributes),
     magic_resistance: calculateMagicResistance(baseAttributes),
