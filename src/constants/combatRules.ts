@@ -90,3 +90,54 @@ export const EFFECTS_FUMBLE = [
 export const LUCK_ATTACK_INCREEASE = [
   {max: Infinity, effect: ATTACK_INCREASE.BIG},
 ];
+
+export const DEFENSE_MOD = [
+  // att 1-9
+  {min_att: 1, max_att: 9, min_def: 550, max_def: Infinity, mult: null, minDamageChance: 0},
+  {min_att: 1, max_att: 9, min_def: 450, max_def: 549,      mult: null, minDamageChance: 0},
+  {min_att: 1, max_att: 9, min_def: 350, max_def: 449,      mult: null, minDamageChance: 0},
+  {min_att: 1, max_att: 9, min_def: 250, max_def: 349,      mult: null, minDamageChance: 0},
+  {min_att: 1, max_att: 9, min_def: 150, max_def: 249,      mult: null, minDamageChance: 0},
+  {min_att: 1, max_att: 9, min_def: 20,  max_def: 149,      mult: null, minDamageChance: 0},
+  {min_att: 1, max_att: 9, min_def: 1,   max_def: 19,       mult: 0.25, minDamageChance: 100},
+  // att 10-34
+  {min_att: 10, max_att: 34, min_def: 550, max_def: Infinity, mult: null, minDamageChance: 0},
+  {min_att: 10, max_att: 34, min_def: 450, max_def: 549,      mult: 5,    minDamageChance: 50},
+  {min_att: 10, max_att: 34, min_def: 350, max_def: 449,      mult: 3.2,  minDamageChance: 50},
+  {min_att: 10, max_att: 34, min_def: 250, max_def: 349,      mult: 2.8,  minDamageChance: 50},
+  {min_att: 10, max_att: 34, min_def: 150, max_def: 249,      mult: 2.4,  minDamageChance: 100},
+  {min_att: 10, max_att: 34, min_def: 20,  max_def: 149,      mult: 2,    minDamageChance: 100},
+  {min_att: 10, max_att: 34, min_def: 1,   max_def: 19,       mult: 1.5,  minDamageChance: 100},
+  // att 35-59
+  {min_att: 35, max_att: 59, min_def: 550, max_def: Infinity, mult: 3.6, minDamageChance: 30},
+  {min_att: 35, max_att: 59, min_def: 450, max_def: 549,      mult: 3.1, minDamageChance: 30},
+  {min_att: 35, max_att: 59, min_def: 350, max_def: 449,      mult: 2.6, minDamageChance: 100},
+  {min_att: 35, max_att: 59, min_def: 250, max_def: 349,      mult: 2.4, minDamageChance: 100},
+  {min_att: 35, max_att: 59, min_def: 150, max_def: 249,      mult: 2.1, minDamageChance: 100},
+  {min_att: 35, max_att: 59, min_def: 20,  max_def: 149,      mult: 1.8, minDamageChance: 100},
+  {min_att: 35, max_att: 59, min_def: 1,   max_def: 19,       mult: 1.5, minDamageChance: 100},
+  // att 60-119
+  {min_att: 60, max_att: 119, min_def: 550, max_def: Infinity, mult: 3,   minDamageChance: 100},
+  {min_att: 60, max_att: 119, min_def: 450, max_def: 549,      mult: 2.8, minDamageChance: 100},
+  {min_att: 60, max_att: 119, min_def: 350, max_def: 449,      mult: 2.7, minDamageChance: 100},
+  {min_att: 60, max_att: 119, min_def: 250, max_def: 349,      mult: 2.4, minDamageChance: 100},
+  {min_att: 60, max_att: 119, min_def: 150, max_def: 249,      mult: 2,   minDamageChance: 100},
+  {min_att: 60, max_att: 119, min_def: 20,  max_def: 149,      mult: 1.7, minDamageChance: 100},
+  {min_att: 60, max_att: 119, min_def: 1,   max_def: 19,       mult: 1,   minDamageChance: 100},
+  // att 120-179
+  {min_att: 120, max_att: 179, min_def: 550, max_def: Infinity, mult: 2.8, minDamageChance: 100},
+  {min_att: 120, max_att: 179, min_def: 450, max_def: 549,      mult: 2.6, minDamageChance: 100},
+  {min_att: 120, max_att: 179, min_def: 350, max_def: 449,      mult: 2.4, minDamageChance: 100},
+  {min_att: 120, max_att: 179, min_def: 250, max_def: 349,      mult: 2.2, minDamageChance: 100},
+  {min_att: 120, max_att: 179, min_def: 150, max_def: 249,      mult: 1.8, minDamageChance: 100},
+  {min_att: 120, max_att: 179, min_def: 20,  max_def: 149,      mult: 1.4, minDamageChance: 100},
+  {min_att: 120, max_att: 179, min_def: 1,   max_def: 19,       mult: 0.5, minDamageChance: 100},
+  // att +180
+  {min_att: 180, max_att: Infinity, min_def: 550, max_def: Infinity, mult: 3.3, minDamageChance: 100},
+  {min_att: 180, max_att: Infinity, min_def: 450, max_def: 549,      mult: 2.7, minDamageChance: 100},
+  {min_att: 180, max_att: Infinity, min_def: 350, max_def: 449,      mult: 2,   minDamageChance: 100},
+  {min_att: 180, max_att: Infinity, min_def: 250, max_def: 349,      mult: 1.3, minDamageChance: 100},
+  {min_att: 180, max_att: Infinity, min_def: 150, max_def: 249,      mult: 0.7, minDamageChance: 100},
+  {min_att: 180, max_att: Infinity, min_def: 20,  max_def: 149,      mult: 0.3, minDamageChance: 100},
+  {min_att: 180, max_att: Infinity, min_def: 1,   max_def: 19,       mult: 0.1, minDamageChance: 100}
+];

@@ -1,5 +1,5 @@
 import Die from "../classes/Die.ts";
-import { DEFENSE_RULES } from "../constants/combatRules.ts";
+import { DEFENSE_RULES, DEFENSE_MOD } from "../constants/combatRules.ts";
 import { Die100 } from "../constants/dies.ts";
 import { Player } from "../interfaces/Player.ts";
 import {
@@ -89,8 +89,29 @@ export const getFumblePercentage = (
   return Math.floor(100 - ((100 - successPercentage) * playerCFP) / 100 / 2);
 };
 
-export const getDefenseModificator = (value: number): number => {
-  return getValueFromRule(DEFENSE_RULES, value);
+export const getDefenseModificator = (totalDefense: number, weaponRoll: number, attackAttribute: number, weapon: Weapon): number | null => {
+  const attack = Math.max(weaponRoll + attackAttribute, 1);
+  const weaponDieNumber = weapon.die_num;
+  const weaponDieFaces = weapon.die_faces;
+  const weaponDieModifier = weapon.die_modifier;
+  const weaponMaxDieRoll = getMaxWeaponDieRoll(weaponDieNumber, weaponDieFaces, weaponDieModifier)
+  const { minDamageChance, mult } = DEFENSE_MOD.find(({ min_att, max_att, min_def, max_def }) => (totalDefense >= min_def && totalDefense <= max_def) && (attack >= min_att && attack <= max_att))!;
+  
+  if ( minDamageChance === 30) {
+    if (weaponRoll >= weaponMaxDieRoll * 0.3) {
+      return mult;
+    } else {
+      return null;
+    }
+  } else if (minDamageChance === 50) {
+    if (weaponRoll >= weaponMaxDieRoll * 0.5) {
+      return mult;
+    } else {
+      return null;
+    }
+  }
+  
+  return mult;
 };
 
 export const calculateTotalDefense = (
@@ -193,36 +214,35 @@ export const getCriticalHitDamage = (
 
 export const calculateNormalHitDamage = (
   weaponRoll: number,
-  attackMod1: number,
-  attackMod2: number,
+  attackAttribute: number,
   defenseMod: number,
 ): number => {
-  const value = Math.ceil((weaponRoll * attackMod1 + attackMod2) / defenseMod);
-  return value || 1;
+  const normalHitDamage = Math.max(Math.ceil((attackAttribute + weaponRoll) / defenseMod), 1);
+  return normalHitDamage;
 };
 
 export const getNormalHitDamage = (
+  weapon: Weapon,
   weaponRoll: number,
   attackAttribute: number,
   targetEquipment: Equipment,
   targetDefenseAttribute: number,
-  attMod2IncreaseRate: number = 0,
 ): number => {
-  const attackMod1 = getAttackModificator1(attackAttribute);
-  const attackMod2 = getAttackModificator2(attackAttribute);
   const equipmentDefense = getEquipmentDefense(targetEquipment);
   const totalDefense = calculateTotalDefense(
     equipmentDefense,
     targetDefenseAttribute,
   );
-  const defenseMod = getDefenseModificator(totalDefense);
-  const attackMod2Increase = attackMod2 * attMod2IncreaseRate;
-  return calculateNormalHitDamage(
-    weaponRoll,
-    attackMod1,
-    attackMod2 + attackMod2Increase,
-    defenseMod,
-  );
+  const defenseMod = getDefenseModificator(totalDefense, weaponRoll, attackAttribute, weapon);
+  
+  // Damage to inflict will be 1 if null defense modificator is returned 
+  let normalHitDamage = 1;
+
+  if (defenseMod) {
+    normalHitDamage = calculateNormalHitDamage(weaponRoll, attackAttribute, defenseMod);
+  }
+
+  return normalHitDamage;
 };
 
 // ---- MAIN FLOW FUNCTION ---- //
@@ -272,11 +292,12 @@ export const attack = (
         attacker.attributes.charisma,
         attackRoll,
         criticalPercentage,
-        attacker.equipment.weapon,
+        attacker.weapon,
       );
       break;
     case ATTACK_TYPES.NORMAL:
       dealedDamage = getNormalHitDamage(
+        attacker.weapon,
         weaponRoll,
         attacker.attributes.attack,
         target.equipment,

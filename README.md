@@ -113,10 +113,27 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
     > See [docs/Attack type.png](docs/Attack%20type.png) for graphic representation of the attack types.
 
 5.  **Damage Calculation Formulas ([attack.ts](src/helpers/attack.ts))**:
-    - `getNormalHitDamage()`: `ceil((WeaponRoll * AttackMod1 + AttackMod2) / DefenseMod)`. Ensures at least 1 damage.
+    - `getNormalHitDamage()`: `ceil((attackAttribute + weaponRoll) / defenseMod)`. Ensures at least 1 damage.
     - `getCriticalHitDamage()`: `ceil(BCFA  + max WEAPON ROLL + CRIT mod)`.
-      _(AttackMod1/2, DefenseMod are derived from [combatRules.ts](src/constants/combatRules.ts) based on attacker/defender stats.)_
+      _(DefenseMod are derived from [combatRules.ts](src/constants/combatRules.ts) based on attacker/defender stats.)_
       _(CritMod is the calculation of additional regular weapon rolls. CritMod1 represents the assured additional weapon throws while CritMod2 represents the additional weapon throws if the player has luck. CritMod1/2 is derived from [combatRules.ts](src/constants/combatRules.ts) based on the critical percentile achieved.)_
+    - `getDefenseModificator()`: `(totalDefense, weaponRoll, attackAttribute, weapon)`.  
+    Takes enemy's total DEF (Equipment Total DEF + Player DEF) & attacker's total Attack (ATT Attribute + Weapon Roll) and finds a DefenseMod on this table.
+
+    | DEF \ ATK | 180+ | 120-179 | 60-119 | 35-59 | 10-34 | 1-9 |
+    |------------|------|---------|--------|-------|-------|-----|
+    | 550+       | 3.3  | 2.8     | 3      | -/*3.6 | -     | -   |
+    | 450-549    | 2.7  | 2.6     | 2.8    | -/*3.1 | -/**5 | -   |
+    | 350-449    | 2    | 2.4     | 2.7    | 2.6    | -/**3.2 | - |
+    | 250-349    | 1.3  | 2.2     | 2.4    | 2.4    | -/**2.8 | - |
+    | 150-249    | 0.7  | 1.8     | 2      | 2.1    | 2.4   | -   |
+    | 20-149     | 0.3  | 1.4     | 1.7    | 1.8    | 2     | -   |
+    | 1-19       | 0.1  | 0.5     | 1      | 1.5    | 1.5   | 0.25 |
+
+    `*` If the weapon damage roll is greater or equal than 30% of the max weapon damage, it would impact.				
+    `**` If the weapon damage roll is greater or equal than 50% of the max weapon damage, it would impact.				
+    `-` It does 1 damage.
+
 6.  **Fumble Resolution ([fumble.ts](src/helpers/fumble.ts), if attackType is FUMBLE)**:
     - The `target` is switched to the `attacker` (self-effect).
     - `getCalculationFumblePercentile()`: Determines the severity of the fumble.

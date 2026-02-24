@@ -1,4 +1,4 @@
-import { Equipment } from "./Equipment.ts"
+import { Weapon } from "./Weapon.ts";
 
 export interface ReducedAttacker {
   attributes: {
@@ -6,5 +6,5 @@ export interface ReducedAttacker {
     attack: number,
     charisma: number
   },
-  equipment: Equipment
+  weapon: Weapon,
 }

@@ -187,7 +187,7 @@ export const attackerReducedForAttack = (attacker: Player): ReducedAttacker => {
       attack: attacker.attributes.attack,
       charisma: attacker.attributes.charisma
     },
-    equipment: attacker.equipment
+    weapon: attacker.equipment.weapon,
   };
 };
 
