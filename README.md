@@ -116,7 +116,7 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
     - `getNormalHitDamage()`: `ceil((WeaponRoll * AttackMod1 + AttackMod2) / DefenseMod)`. Ensures at least 1 damage.
     - `getCriticalHitDamage()`: `ceil(BCFA  + max WEAPON ROLL + CRIT mod)`.
       _(AttackMod1/2, DefenseMod are derived from [combatRules.ts](src/constants/combatRules.ts) based on attacker/defender stats.)_
-      _(CritMod is the calculation of additional regular weapon rolls. CritMod1 represents the assured additional weapon throws while CritMod2 represents the additional weapon throws if the player has luck. CritMod1/2 is derived from [combatRules.ts](src/constants/combatRules.ts) based on attacker/defender stats.)_
+      _(CritMod is the calculation of additional regular weapon rolls. CritMod1 represents the assured additional weapon throws while CritMod2 represents the additional weapon throws if the player has luck. CritMod1/2 is derived from [combatRules.ts](src/constants/combatRules.ts) based on the critical percentile achieved.)_
 6.  **Fumble Resolution ([fumble.ts](src/helpers/fumble.ts), if attackType is FUMBLE)**:
     - The `target` is switched to the `attacker` (self-effect).
     - `getCalculationFumblePercentile()`: Determines the severity of the fumble.
