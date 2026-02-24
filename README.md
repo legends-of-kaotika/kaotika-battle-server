@@ -152,7 +152,7 @@ If the player has luck (i.e., at least one luck roll < 20), roll 1D100 again to 
 | 60-80     | When attacking, a normal attack is upgraded to critical damage.                                                                         |
 | 50-59     | Attacking: Normal attack, `ATT mod 2` is increased by 80%.<br>Defending: No magic damage received.                                      |
 | 36-49     | Attacking: Normal attack, `ATT mod 2` is increased by 40%.<br>Defending: No magic damage received.                                      |
-| 16-35     | Attacking: Normal attack, `ATT mod 2` is increased by 20%.<br>Defending: No magic damage received.                                      |
+| 16-35     | Attacking: Normal attack, its damage is increased by 60%.<br>Defending: No luck applied.                                      |
 | 1-15      | When defending, the player receives no damage.                                                                                          |
 
 **Clarification:**  
