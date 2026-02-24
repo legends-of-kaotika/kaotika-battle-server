@@ -60,21 +60,21 @@ export const ATTACK_LUCK_RULES = [
 ];
 
 export const CRITICAL_MOD1 = [
-  { max: 7, value: 0.35},
-  { max: 14, value: 0.3},
-  { max: 24, value: 0.25},
-  { max: 40, value: 0.23},
-  { max: 60, value: 0.2},
-  { max: Infinity, value: 0.15},
+  { max: 7, value: 5},
+  { max: 14, value: 3},
+  { max: 24, value: 2},
+  { max: 40, value: 2},
+  { max: 60, value: 1},
+  { max: Infinity, value: 0},
 ];
 
 export const CRITICAL_MOD2 = [
-  { max: 7,  value: 30},
-  { max: 14, value: 25 },
-  { max: 24, value: 20 },
-  { max: 40, value: 15 },
-  { max: 60,  value: 10 },
-  { max: Infinity, value: 5 },
+  { max: 7,  value: 0 },
+  { max: 14, value: 2 },
+  { max: 24, value: 1 },
+  { max: 40, value: 0 },
+  { max: 60,  value: 0 },
+  { max: Infinity, value: 0 },
 ];
 
 export const ATTACK_RULES_LUCK_MOD = [

@@ -153,6 +153,7 @@ export const attackFlow = (targetId: string) => {
   // Get general variables.
   const attackRoll = getAttackRoll();
   const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
+  const maxWeaponRoll = getMaxWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier); //Get max weapon roll possible
   const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity, attacker.attributes.charisma);
   let dealedDamage: number = 0;
   let dealedObjectDamage: DealedDamage | null = null;
@@ -171,7 +172,7 @@ export const attackFlow = (targetId: string) => {
   // Get the attack damage and attack type
   const attackerReduced = attackerReducedForAttack(attacker);
   const defenderReduced = defenderReducedForAttack(target);
-  const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
+  const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, maxWeaponRoll);
   let attackType = attackResult.attackType;
 
   //----------------------------fumble-----------------------------//
@@ -181,7 +182,6 @@ export const attackFlow = (targetId: string) => {
 
     if (attacker) {
       setTarget(attacker); //change target to attacker self player
-      const maxWeaponRoll = getMaxWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier); //Get max weapon roll possible
       fumble = getFumble(fumbleEffect, target.attributes, maxWeaponRoll, fumblePercentile);
       if (fumble) {
         dealedObjectDamage = fumble.damage;

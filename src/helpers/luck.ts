@@ -125,7 +125,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
       break;
     }
 
-    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
+    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, attacker.attributes.charisma, weaponRoll, attackPercentage, criticalPercentage, attacker.equipment.weapon);
     luckMessage = LUCK_MESSAGE.CRITICAL_EFFECT;
     break;
 
@@ -175,7 +175,8 @@ export const attackerReducedForLuck = (attacker: Player): LuckAttacker => {
       charisma: attacker.attributes.charisma,
       BCFA: attacker.attributes.BCFA,
       attack: attacker.attributes.attack
-    }
+    },
+    equipment: attacker.equipment
   };
 };
 
@@ -183,8 +184,10 @@ export const attackerReducedForAttack = (attacker: Player): ReducedAttacker => {
   return {
     attributes: {
       BCFA: attacker.attributes.BCFA,
-      attack: attacker.attributes.attack
-    }
+      attack: attacker.attributes.attack,
+      charisma: attacker.attributes.charisma
+    },
+    equipment: attacker.equipment
   };
 };
 

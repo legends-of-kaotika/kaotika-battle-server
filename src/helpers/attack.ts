@@ -22,6 +22,7 @@ import { FumbleWeb } from "../interfaces/Fumble.ts";
 import { DealedDamage } from "../interfaces/DealedDamage.ts";
 import { LUCK_MESSAGE } from "../constants/messages.ts";
 import { MIN_INSANITY, MAX_INSANITY } from "../constants/attributes.ts";
+import { Weapon } from "../interfaces/Weapon.ts";
 
 export const adjustAtributes = (player: Player) => {
   const attributes = Object.keys(
@@ -143,18 +144,40 @@ export const getCriticalAttackModifier2 = (
 
 export const calculateCriticalHitDamage = (
   bcfa: number,
+  charisma: number,
   weaponRoll: number,
   critMod1: number,
   critMod2: number,
+  weapon: Weapon
 ) => {
-  return Math.ceil(bcfa / 5 + weaponRoll * critMod1 + critMod2);
+  const baseAttack = bcfa + weaponRoll;
+  const additionalDamage = getAdditionalWeaponDieRolls(critMod1, weapon); //Assured weapon throws with critMod1
+  let luckAdditionalDamage = 0; 
+  const luckRoll = Die100.roll();
+  if(luckRoll <= charisma) {
+    luckAdditionalDamage = getAdditionalWeaponDieRolls(critMod2, weapon); //Additional weapon throws if luck
+  }
+  return Math.ceil(baseAttack + additionalDamage + luckAdditionalDamage);
 };
+
+export const getAdditionalWeaponDieRolls = (
+  throws: number,
+  weapon: Weapon
+) => {
+  let damageDealt = 0;
+  for(let i=0; i<throws; i++) {
+    damageDealt += getWeaponDieRoll(weapon.die_num, weapon.die_faces, weapon.die_modifier);
+  }
+  return damageDealt
+}
 
 export const getCriticalHitDamage = (
   BCFA: number,
+  charisma: number,
   weaponRoll: number,
   attackPercentage: number,
   criticalPercentage: number,
+  weapon: Weapon
 ) => {
   const critMod1 = getCriticalAttackModifier1(
     attackPercentage,
@@ -164,7 +187,7 @@ export const getCriticalHitDamage = (
     attackPercentage,
     criticalPercentage,
   );
-  return calculateCriticalHitDamage(BCFA, weaponRoll, critMod1, critMod2);
+  return calculateCriticalHitDamage(BCFA, charisma, weaponRoll, critMod1, critMod2, weapon);
 };
 
 // ---- NORMAL ATTACK ---- //
@@ -247,9 +270,11 @@ export const attack = (
     case ATTACK_TYPES.CRITICAL:
       dealedDamage = getCriticalHitDamage(
         attacker.attributes.BCFA,
+        attacker.attributes.charisma,
         weaponRoll,
         attackRoll,
         criticalPercentage,
+        attacker.equipment.weapon,
       );
       break;
     case ATTACK_TYPES.NORMAL:
