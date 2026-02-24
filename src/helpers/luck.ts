@@ -135,8 +135,8 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
       break;
     }
     
-    const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
-    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
+    const attackModIncrease = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
+    dealedDamage = Math.ceil(dealedDamage * attackModIncrease);
     const increaseType = getIncreseType(roll);
     luckMessage = increaseType;
 
@@ -150,7 +150,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   };
 
 };
-export const getIncreseType = (roll:number):string =>{
+export const getIncreseType = (roll:number):string => {
   const {effect} = LUCK_ATTACK_INCREEASE.find((element)=> (roll <= element.max))!;
   return effect;
 };

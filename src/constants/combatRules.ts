@@ -78,9 +78,7 @@ export const CRITICAL_MOD2 = [
 ];
 
 export const ATTACK_RULES_LUCK_MOD = [
-  {max: 35, value: 0.2},
-  {max: 49, value: 0.4},
-  {max: Infinity, value: 0.8}
+  {max: Infinity, value: 1.6}
 ];
 
 export const EFFECTS_FUMBLE = [
@@ -90,7 +88,5 @@ export const EFFECTS_FUMBLE = [
   {max: Infinity, effect: FUMBLE_EFFECTS.HACK}
 ];
 export const LUCK_ATTACK_INCREEASE = [
-  {max: 35, effect: ATTACK_INCREASE.SLIGTHLY},
-  {max: 49, effect: ATTACK_INCREASE.NORMAL},
-  {max: 59, effect: ATTACK_INCREASE.BIG},
+  {max: Infinity, effect: ATTACK_INCREASE.BIG},
 ];
