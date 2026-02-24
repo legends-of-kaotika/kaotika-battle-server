@@ -172,7 +172,7 @@ export const attackFlow = (targetId: string) => {
   // Get the attack damage and attack type
   const attackerReduced = attackerReducedForAttack(attacker);
   const defenderReduced = defenderReducedForAttack(target);
-  const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, maxWeaponRoll);
+  const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
   let attackType = attackResult.attackType;
 
   //----------------------------fumble-----------------------------//

@@ -145,12 +145,12 @@ export const getCriticalAttackModifier2 = (
 export const calculateCriticalHitDamage = (
   bcfa: number,
   charisma: number,
-  weaponRoll: number,
   critMod1: number,
   critMod2: number,
   weapon: Weapon
 ) => {
-  const baseAttack = bcfa + weaponRoll;
+  const weaponMaxRoll = getMaxWeaponDieRoll(weapon.die_num, weapon.die_faces, weapon.die_modifier)
+  const baseAttack = bcfa + weaponMaxRoll;
   const additionalDamage = getAdditionalWeaponDieRolls(critMod1, weapon); //Assured weapon throws with critMod1
   let luckAdditionalDamage = 0; 
   const luckRoll = Die100.roll();
@@ -174,7 +174,6 @@ export const getAdditionalWeaponDieRolls = (
 export const getCriticalHitDamage = (
   BCFA: number,
   charisma: number,
-  weaponRoll: number,
   attackPercentage: number,
   criticalPercentage: number,
   weapon: Weapon
@@ -187,7 +186,7 @@ export const getCriticalHitDamage = (
     attackPercentage,
     criticalPercentage,
   );
-  return calculateCriticalHitDamage(BCFA, charisma, weaponRoll, critMod1, critMod2, weapon);
+  return calculateCriticalHitDamage(BCFA, charisma, critMod1, critMod2, weapon);
 };
 
 // ---- NORMAL ATTACK ---- //
@@ -271,7 +270,6 @@ export const attack = (
       dealedDamage = getCriticalHitDamage(
         attacker.attributes.BCFA,
         attacker.attributes.charisma,
-        weaponRoll,
         attackRoll,
         criticalPercentage,
         attacker.equipment.weapon,

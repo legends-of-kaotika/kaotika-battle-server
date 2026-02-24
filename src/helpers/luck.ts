@@ -5,7 +5,7 @@ import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts'
 import { idPlayerFirstTurn, setPlayerFirstTurnId } from '../game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { Player } from '../interfaces/Player.ts';
-import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
+import { getCriticalHitDamage, getValueFromRule } from './attack.ts';
 import { ApplyLuck } from '../interfaces/ApplyLuck.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
 import { LuckDefender as LuckDefender } from '../interfaces/LuckDefender.ts';
@@ -125,7 +125,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
       break;
     }
 
-    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, attacker.attributes.charisma, weaponRoll, attackPercentage, criticalPercentage, attacker.equipment.weapon);
+    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, attacker.attributes.charisma, attackPercentage, criticalPercentage, attacker.equipment.weapon);
     luckMessage = LUCK_MESSAGE.CRITICAL_EFFECT;
     break;
 
