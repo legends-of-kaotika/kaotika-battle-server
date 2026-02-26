@@ -101,7 +101,7 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
 3.  **Pre-computation & Rolls ([`attack.ts`](src/helpers/attack.ts))**: Essential values are calculated:
     - `getAttackRoll()`: A d100 roll that primarily determines the attack's success.
     - `getWeaponDieRoll()`: Simulates the attacker's weapon damage dice roll (e.g., 2d6+1).
-    - `getSuccessPercentage()`: `WeaponBasePercentage + (Dexterity / 2) + InsanityModifier + (Charisma / 6)`.
+    - `getSuccessPercentage()`: `WeaponBasePercentage + (Dexterity / 2) + (Charisma / 3) + (Intelligence / 2)`.
     - `getCriticalPercentage()`: `(AttackerCFP * SuccessPercentage / 100) / 2`.
     - `getFumblePercentage()`: `(100 - ((100 - SuccessPercentage) * AttackerCFP / 100) / 2 `.
 4.  **Initial Attack Outcome ([attack.ts](src/helpers/attack.ts) -> `getAttackType()`, then `attack()`)**: The `attackRoll` is compared against the calculated percentages:
