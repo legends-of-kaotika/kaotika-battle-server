@@ -61,10 +61,6 @@ export const getValueFromRule = (
   return value;
 };
 
-export const getInsanityModificator = (insanity: number) => {
-  return getValueFromRule(INSANITY_RULES, insanity);
-};
-
 export const getAttackModificator1 = (attack: number) => {
   return getValueFromRule(ATTACK_RULES_MOD1, attack);
 };
@@ -77,9 +73,8 @@ export const getAttackRoll = (): number => {
   return Die100.roll();
 };
 
-export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number, playerCharisma: number): number => {
-  const insMod = getInsanityModificator(playerInsanity);
-  return weaponBasePercentage + Math.ceil(playerDexterity / 2) - insMod + Math.ceil(playerCharisma / 6);
+export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerIntelligence: number, playerCharisma: number): number => {
+  return Math.min(weaponBasePercentage + Math.ceil(playerDexterity / 2) + Math.ceil(playerCharisma / 3) + Math.ceil(playerIntelligence / 2), 75);
 };
 
 export const getFumblePercentage = (
