@@ -79,7 +79,7 @@ export const getAttackRoll = (): number => {
 
 export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number, playerCharisma: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod + Math.ceil(playerCharisma / 6);
+  return weaponBasePercentage + Math.ceil(playerDexterity / 2) - insMod + Math.ceil(playerCharisma / 6);
 };
 
 export const getFumblePercentage = (
@@ -259,7 +259,7 @@ export const getAttackType = (
     attackType = ATTACK_TYPES.CRITICAL;
   } else if (attackRoll <= successPercentage) {
     attackType = ATTACK_TYPES.NORMAL;
-  } else if (attackRoll <= 100 - fumblePercentage) {
+  } else if (attackRoll <= fumblePercentage) {
     attackType = ATTACK_TYPES.FAILED;
   } else {
     attackType = ATTACK_TYPES.FUMBLE;

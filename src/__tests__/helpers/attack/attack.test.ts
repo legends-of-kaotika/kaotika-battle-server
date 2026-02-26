@@ -39,7 +39,7 @@ describe('attack function', () => {
     expect(result.dealedDamage).toBeLessThanOrEqual(713);
   });
   test('returns zero damage when attack type is FAILED', () => {
-    const result = attack(target, attacker, 90, 80, 10, 10, 15);
+    const result = attack(target, attacker, 50, 20, 10, 85, 15);
     expect(result).toEqual({ dealedDamage: 0, attackType: ATTACK_TYPES.FAILED });
   });
 

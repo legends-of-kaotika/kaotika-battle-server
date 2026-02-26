@@ -167,7 +167,7 @@ export const attackFlow = (targetId: string) => {
   const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
   const fumblePercentage = getFumblePercentage(attacker.attributes.CFP, successPercentage);
   const normalPercentage = successPercentage - criticalPercentage;
-  const failedPercentage = (100 - fumblePercentage) - successPercentage;
+  const failedPercentage = fumblePercentage - normalPercentage;
 
   // Get the attack damage and attack type
   const attackerReduced = attackerReducedForAttack(attacker);
@@ -223,7 +223,7 @@ export const attackFlow = (targetId: string) => {
     critical: criticalPercentage,
     normal: normalPercentage,
     failed: failedPercentage,
-    fumble: fumblePercentage
+    fumble: 100 - fumblePercentage,
   };
 
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
