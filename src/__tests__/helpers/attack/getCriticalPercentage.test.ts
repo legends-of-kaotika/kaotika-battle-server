@@ -6,7 +6,7 @@ describe('getCriticalPercentage', () => {
     const cfp = 31;
     const successPercentage = 20;
     const result = getCriticalPercentage(cfp, successPercentage);
-    expect(result).toBe(7);
+    expect(result).toBe(4);
   });
 
   it('should handle zero CFP correctly', () => {
@@ -28,8 +28,7 @@ describe('getCriticalPercentage', () => {
     const cfp = 31;
     const successPercentage = 20;
     const result = getCriticalPercentage(cfp, successPercentage);
-    // 31 * 20 / 100 = 6.2 
-    expect(result).toBe(7);
+    expect(result).toBe(4);
   });
 
 

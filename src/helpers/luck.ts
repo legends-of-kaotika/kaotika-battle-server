@@ -5,7 +5,7 @@ import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts'
 import { idPlayerFirstTurn, setPlayerFirstTurnId } from '../game.ts';
 import { AttackTypes } from '../interfaces/AttackTypes.ts';
 import { Player } from '../interfaces/Player.ts';
-import { getCriticalHitDamage, getNormalHitDamage, getValueFromRule } from './attack.ts';
+import { getCriticalHitDamage, getValueFromRule } from './attack.ts';
 import { ApplyLuck } from '../interfaces/ApplyLuck.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
 import { LuckDefender as LuckDefender } from '../interfaces/LuckDefender.ts';
@@ -125,7 +125,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
       break;
     }
 
-    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackPercentage, criticalPercentage);
+    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, attacker.attributes.charisma, attackPercentage, criticalPercentage, attacker.equipment.weapon);
     luckMessage = LUCK_MESSAGE.CRITICAL_EFFECT;
     break;
 
@@ -135,8 +135,8 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
       break;
     }
     
-    const attackMod2Increase = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
-    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, defender.equipment, defender.attributes.defense, attackMod2Increase);
+    const attackModIncrease = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
+    dealedDamage = Math.ceil(dealedDamage * attackModIncrease);
     const increaseType = getIncreseType(roll);
     luckMessage = increaseType;
 
@@ -150,7 +150,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   };
 
 };
-export const getIncreseType = (roll:number):string =>{
+export const getIncreseType = (roll:number):string => {
   const {effect} = LUCK_ATTACK_INCREEASE.find((element)=> (roll <= element.max))!;
   return effect;
 };
@@ -175,7 +175,8 @@ export const attackerReducedForLuck = (attacker: Player): LuckAttacker => {
       charisma: attacker.attributes.charisma,
       BCFA: attacker.attributes.BCFA,
       attack: attacker.attributes.attack
-    }
+    },
+    equipment: attacker.equipment
   };
 };
 
@@ -183,8 +184,10 @@ export const attackerReducedForAttack = (attacker: Player): ReducedAttacker => {
   return {
     attributes: {
       BCFA: attacker.attributes.BCFA,
-      attack: attacker.attributes.attack
-    }
+      attack: attacker.attributes.attack,
+      charisma: attacker.attributes.charisma
+    },
+    weapon: attacker.equipment.weapon,
   };
 };
 

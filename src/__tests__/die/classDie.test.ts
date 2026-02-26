@@ -11,6 +11,11 @@ describe('Test Die class ant its methods', () => {
       expect(die10['modifier']).toBe(2);
     });
 
+    it('should return its max roll value when calling getMaxDieRoll method', () => {
+      const maxDieRoll = die10.getMaxDieRoll();
+      expect(maxDieRoll).toBe(11); //Max value of 3D3 + 2 should be 11
+    })
+
     it('should roll the die correctly multiple times', () => {
       for (let i = 0; i < 100; i++) {
         const roll = die10.roll();

@@ -1,44 +1,62 @@
-import Die from '../classes/Die.ts';
-import { DEFENSE_RULES } from '../constants/combatRules.ts';
-import { Die100 } from '../constants/dies.ts';
-import { Player } from '../interfaces/Player.ts';
-import { ATTACK_RULES_MOD1, ATTACK_RULES_MOD2, INSANITY_RULES, CRITICAL_MOD1, CRITICAL_MOD2 } from '../constants/combatRules.ts';
-import { Equipment } from '../interfaces/Equipment.ts';
-import { AttackTypes } from '../interfaces/AttackTypes.ts';
-import { AttackJson } from '../interfaces/AttackJson.ts';
-import { Luck } from '../interfaces/Luck.ts';
-import { Percentages } from '../interfaces/Percentages.ts';
-import { ATTACK_TYPES } from '../constants/combatRules.ts';
-import { ReducedDefender } from '../interfaces/ReducedDefender.ts';
-import { ReducedAttacker } from '../interfaces/ReducedAttacker.ts';
-import { Attribute } from '../interfaces/Attribute.ts';
-import { FumbleWeb } from '../interfaces/Fumble.ts';
-import { DealedDamage } from '../interfaces/DealedDamage.ts';
-import { LUCK_MESSAGE } from '../constants/messages.ts';
+import Die from "../classes/Die.ts";
+import { DEFENSE_RULES, DEFENSE_MOD } from "../constants/combatRules.ts";
+import { Die100 } from "../constants/dies.ts";
+import { Player } from "../interfaces/Player.ts";
+import {
+  ATTACK_RULES_MOD1,
+  ATTACK_RULES_MOD2,
+  INSANITY_RULES,
+  CRITICAL_MOD1,
+  CRITICAL_MOD2,
+} from "../constants/combatRules.ts";
+import { Equipment } from "../interfaces/Equipment.ts";
+import { AttackTypes } from "../interfaces/AttackTypes.ts";
+import { AttackJson } from "../interfaces/AttackJson.ts";
+import { Luck } from "../interfaces/Luck.ts";
+import { Percentages } from "../interfaces/Percentages.ts";
+import { ATTACK_TYPES } from "../constants/combatRules.ts";
+import { ReducedDefender } from "../interfaces/ReducedDefender.ts";
+import { ReducedAttacker } from "../interfaces/ReducedAttacker.ts";
+import { Attribute } from "../interfaces/Attribute.ts";
+import { FumbleWeb } from "../interfaces/Fumble.ts";
+import { DealedDamage } from "../interfaces/DealedDamage.ts";
+import { LUCK_MESSAGE } from "../constants/messages.ts";
+import { MIN_INSANITY, MAX_INSANITY } from "../constants/attributes.ts";
+import { Weapon } from "../interfaces/Weapon.ts";
 
 export const adjustAtributes = (player: Player) => {
-
-  const attributes = Object.keys(player.attributes) as (keyof Player['attributes'])[];
+  const attributes = Object.keys(
+    player.attributes,
+  ) as (keyof Player["attributes"])[];
 
   attributes.forEach((key) => {
     // Every attribute has to be rounded to integer
     player.attributes[key] = Math.round(player.attributes[key] as number);
     // Remaining attributes will have a minimum value of 1
-    if (key !== 'insanity' && key !== 'attack') {
+    if (key !== "insanity" && key !== "attack") {
       player.attributes[key] = Math.max(1, player.attributes[key] as number);
-      //INS: min 1 - max 80
-    } 
-    if (key === 'insanity' || key === 'CFP') {
-      player.attributes[key] = Math.max(1, Math.min(80, player.attributes[key] as number));
+      //INS: min 1 - max 85
+    }
+    if (key === "insanity" || key === "CFP") {
+      player.attributes[key] = Math.max(
+        MIN_INSANITY,
+        Math.min(MAX_INSANITY, player.attributes[key] as number),
+      );
     }
   });
 };
 
-export const getCriticalPercentage = (CFP: number, successPercentage: number) => {
-  return Math.ceil(CFP * successPercentage / 100);
+export const getCriticalPercentage = (
+  CFP: number,
+  successPercentage: number,
+) => {
+  return Math.ceil(((CFP * successPercentage) / 100) / 2);
 };
 
-export const getValueFromRule = (rule: { max: number, value: number }[], findValue: number): number => {
+export const getValueFromRule = (
+  rule: { max: number; value: number }[],
+  findValue: number,
+): number => {
   const { value } = rule.find(({ max }) => findValue <= max)!;
   return value;
 };
@@ -59,125 +77,255 @@ export const getAttackRoll = (): number => {
   return Die100.roll();
 };
 
-export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number): number => {
+export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerInsanity: number, playerCharisma: number): number => {
   const insMod = getInsanityModificator(playerInsanity);
-  return Math.min(75,weaponBasePercentage + Math.ceil(playerDexterity / 2) + insMod);
+  return weaponBasePercentage + Math.ceil(playerDexterity / 2) - insMod + Math.ceil(playerCharisma / 6);
 };
 
-export const getFumblePercentage = (playerCFP: number, successPercentage: number) => {
-  return Math.floor((100 - successPercentage) * playerCFP / 100);
-};
-export const getDefenseModificator = (value: number): number => {
-  return getValueFromRule(DEFENSE_RULES, value);
+export const getFumblePercentage = (
+  playerCFP: number,
+  successPercentage: number,
+) => {
+  return Math.floor(100 - ((100 - successPercentage) * playerCFP) / 100 / 2);
 };
 
-export const calculateTotalDefense = (totalArmorDefense: number, playerDefense: number): number => {
+export const getDefenseModificator = (totalDefense: number, weaponRoll: number, attackAttribute: number, weapon: Weapon): number | null => {
+  const attack = Math.max(weaponRoll + attackAttribute, 1);
+  const weaponDieNumber = weapon.die_num;
+  const weaponDieFaces = weapon.die_faces;
+  const weaponDieModifier = weapon.die_modifier;
+  const weaponMaxDieRoll = getMaxWeaponDieRoll(weaponDieNumber, weaponDieFaces, weaponDieModifier)
+  const { minDamageChance, mult } = DEFENSE_MOD.find(({ min_att, max_att, min_def, max_def }) => (totalDefense >= min_def && totalDefense <= max_def) && (attack >= min_att && attack <= max_att))!;
+  
+  if ( minDamageChance === 30) {
+    if (weaponRoll >= weaponMaxDieRoll * 0.3) {
+      return mult;
+    } else {
+      return null;
+    }
+  } else if (minDamageChance === 50) {
+    if (weaponRoll >= weaponMaxDieRoll * 0.5) {
+      return mult;
+    } else {
+      return null;
+    }
+  }
+  
+  return mult;
+};
+
+export const calculateTotalDefense = (
+  totalArmorDefense: number,
+  playerDefense: number,
+): number => {
   return Math.floor(totalArmorDefense + playerDefense);
 };
 
-export const getWeaponDieRoll = (weaponDieNumber: number, weaponDieFaces: number, weaponDieModifier: number): number => {
+export const getWeaponDieRoll = (
+  weaponDieNumber: number,
+  weaponDieFaces: number,
+  weaponDieModifier: number,
+): number => {
   const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
   return weaponDie.rollWithModifier();
 };
 
+export const getMaxWeaponDieRoll = (
+  weaponDieNumber: number,
+  weaponDieFaces: number,
+  weaponDieModifier: number,
+): number => {
+  const weaponDie = new Die(weaponDieNumber, weaponDieFaces, weaponDieModifier);
+  return weaponDie.getMaxDieRoll();
+};
+
 export const getEquipmentDefense = (equipment: Equipment): number => {
   return Object.values(equipment)
-    .filter(item => item?.defense)
+    .filter((item) => item?.defense)
     .reduce((total, item) => total + item.defense, 0);
 };
 
-// ---- CRITICAL ATTACK ---- // 
+// ---- CRITICAL ATTACK ---- //
 
-export const getCriticalAttackModifier1 = (attackPercentage: number, criticalPercentage: number) => {
+export const getCriticalAttackModifier1 = (
+  attackPercentage: number,
+  criticalPercentage: number,
+) => {
   const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
   return getValueFromRule(CRITICAL_MOD1, criticalPercentageMod);
 };
 
-export const getCriticalAttackModifier2 = (attackPercentage: number, criticalPercentage: number) => {
+export const getCriticalAttackModifier2 = (
+  attackPercentage: number,
+  criticalPercentage: number,
+) => {
   const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
   return getValueFromRule(CRITICAL_MOD2, criticalPercentageMod);
 };
 
-export const calculateCriticalHitDamage = (bcfa: number, weaponRoll: number, critMod1: number, critMod2: number) => {
-  return Math.ceil(bcfa / 5 + weaponRoll * critMod1 + critMod2);
+export const calculateCriticalHitDamage = (
+  bcfa: number,
+  charisma: number,
+  critMod1: number,
+  critMod2: number,
+  weapon: Weapon
+) => {
+  const weaponMaxRoll = getMaxWeaponDieRoll(weapon.die_num, weapon.die_faces, weapon.die_modifier)
+  const baseAttack = bcfa + weaponMaxRoll;
+  const additionalDamage = getAdditionalWeaponDieRolls(critMod1, weapon); //Assured weapon throws with critMod1
+  let luckAdditionalDamage = 0; 
+  const luckRoll = Die100.roll();
+  if(luckRoll <= charisma) {
+    luckAdditionalDamage = getAdditionalWeaponDieRolls(critMod2, weapon); //Additional weapon throws if luck
+  }
+  return Math.ceil(baseAttack + additionalDamage + luckAdditionalDamage);
 };
 
-export const getCriticalHitDamage = (BCFA: number, weaponRoll: number, attackPercentage: number, criticalPercentage: number) => {
-  const critMod1 = getCriticalAttackModifier1(attackPercentage, criticalPercentage);
-  const critMod2 = getCriticalAttackModifier2(attackPercentage, criticalPercentage);
-  return calculateCriticalHitDamage(BCFA, weaponRoll, critMod1, critMod2);
+export const getAdditionalWeaponDieRolls = (
+  throws: number,
+  weapon: Weapon
+) => {
+  let damageDealt = 0;
+  for(let i=0; i<throws; i++) {
+    damageDealt += getWeaponDieRoll(weapon.die_num, weapon.die_faces, weapon.die_modifier);
+  }
+  return damageDealt
+}
+
+export const getCriticalHitDamage = (
+  BCFA: number,
+  charisma: number,
+  attackPercentage: number,
+  criticalPercentage: number,
+  weapon: Weapon
+) => {
+  const critMod1 = getCriticalAttackModifier1(
+    attackPercentage,
+    criticalPercentage,
+  );
+  const critMod2 = getCriticalAttackModifier2(
+    attackPercentage,
+    criticalPercentage,
+  );
+  return calculateCriticalHitDamage(BCFA, charisma, critMod1, critMod2, weapon);
 };
 
-// ---- NORMAL ATTACK ---- // 
+// ---- NORMAL ATTACK ---- //
 
-export const calculateNormalHitDamage = (weaponRoll: number, attackMod1: number, attackMod2: number, defenseMod: number): number => {
-  const value = Math.ceil((weaponRoll * attackMod1 + attackMod2) / defenseMod);
-  return value || 1;
+export const calculateNormalHitDamage = (
+  weaponRoll: number,
+  attackAttribute: number,
+  defenseMod: number,
+): number => {
+  const normalHitDamage = Math.max(Math.ceil((attackAttribute + weaponRoll) / defenseMod), 1);
+  return normalHitDamage;
 };
 
-export const getNormalHitDamage = (weaponRoll: number, attackAttribute: number, targetEquipment: Equipment, targetDefenseAttribute: number, attMod2IncreaseRate: number = 0) : number => {
-  const attackMod1 = getAttackModificator1(attackAttribute);
-  const attackMod2 = getAttackModificator2(attackAttribute);
+export const getNormalHitDamage = (
+  weapon: Weapon,
+  weaponRoll: number,
+  attackAttribute: number,
+  targetEquipment: Equipment,
+  targetDefenseAttribute: number,
+): number => {
   const equipmentDefense = getEquipmentDefense(targetEquipment);
-  const totalDefense = calculateTotalDefense(equipmentDefense, targetDefenseAttribute);
-  const defenseMod = getDefenseModificator(totalDefense);
-  const attackMod2Increase = attackMod2 * attMod2IncreaseRate;
-  return calculateNormalHitDamage(weaponRoll, attackMod1, attackMod2 + attackMod2Increase, defenseMod);
+  const totalDefense = calculateTotalDefense(
+    equipmentDefense,
+    targetDefenseAttribute,
+  );
+  const defenseMod = getDefenseModificator(totalDefense, weaponRoll, attackAttribute, weapon);
+  
+  // Damage to inflict will be 1 if null defense modificator is returned 
+  let normalHitDamage = 1;
+
+  if (defenseMod) {
+    normalHitDamage = calculateNormalHitDamage(weaponRoll, attackAttribute, defenseMod);
+  }
+
+  return normalHitDamage;
 };
 
-// ---- MAIN FLOW FUNCTION ---- // 
+// ---- MAIN FLOW FUNCTION ---- //
 
-export const getAttackType = (attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number) : AttackTypes => {
-
+export const getAttackType = (
+  attackRoll: number,
+  successPercentage: number,
+  criticalPercentage: number,
+  fumblePercentage: number,
+): AttackTypes => {
   let attackType: AttackTypes;
 
   if (attackRoll <= criticalPercentage) {
     attackType = ATTACK_TYPES.CRITICAL;
   } else if (attackRoll <= successPercentage) {
     attackType = ATTACK_TYPES.NORMAL;
-  } else if (attackRoll <= 100 - fumblePercentage) {
+  } else if (attackRoll <= fumblePercentage) {
     attackType = ATTACK_TYPES.FAILED;
   } else {
     attackType = ATTACK_TYPES.FUMBLE;
   }
 
   return attackType;
-
 };
 
-export const attack = (target: ReducedDefender, attacker: ReducedAttacker, attackRoll: number, successPercentage: number, criticalPercentage: number, fumblePercentage: number, weaponRoll: number) => {
-
-  const attackType = getAttackType(attackRoll, successPercentage, criticalPercentage, fumblePercentage);
+export const attack = (
+  target: ReducedDefender,
+  attacker: ReducedAttacker,
+  attackRoll: number,
+  successPercentage: number,
+  criticalPercentage: number,
+  fumblePercentage: number,
+  weaponRoll: number,
+) => {
+  const attackType = getAttackType(
+    attackRoll,
+    successPercentage,
+    criticalPercentage,
+    fumblePercentage,
+  );
   let dealedDamage: number = 0;
 
   switch (attackType) {
-  case ATTACK_TYPES.CRITICAL:
-    dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA, weaponRoll, attackRoll, criticalPercentage);
-    break;
-  case ATTACK_TYPES.NORMAL:
-    dealedDamage = getNormalHitDamage(weaponRoll, attacker.attributes.attack, target.equipment, target.attributes.defense);
-    break;
-  case ATTACK_TYPES.FAILED:
-    dealedDamage = 0;
-    break;
-  case ATTACK_TYPES.FUMBLE:
-    dealedDamage = 0;
-    break;
+    case ATTACK_TYPES.CRITICAL:
+      dealedDamage = getCriticalHitDamage(
+        attacker.attributes.BCFA,
+        attacker.attributes.charisma,
+        attackRoll,
+        criticalPercentage,
+        attacker.weapon,
+      );
+      break;
+    case ATTACK_TYPES.NORMAL:
+      dealedDamage = getNormalHitDamage(
+        attacker.weapon,
+        weaponRoll,
+        attacker.attributes.attack,
+        target.equipment,
+        target.attributes.defense,
+      );
+      break;
+    case ATTACK_TYPES.FAILED:
+      dealedDamage = 0;
+      break;
+    case ATTACK_TYPES.FUMBLE:
+      dealedDamage = 0;
+      break;
   }
 
   return { dealedDamage, attackType };
 };
 
-export const parseAttackData = (targetPlayerId: string,
+export const parseAttackData = (
+  targetPlayerId: string,
   targetAttributes: Attribute,
   percentages: Percentages,
   attackRoll: number,
   dealedTargetDamage: DealedDamage | null,
   attackType: string,
-  attackerLuckResult: Luck | null, 
-  defenderLuckResult: Luck | null, 
-  fumble: FumbleWeb | null): AttackJson => {
-
+  attackerLuckResult: Luck | null,
+  defenderLuckResult: Luck | null,
+  fumble: FumbleWeb | null,
+): AttackJson => {
   const attackJson: AttackJson = {
     attack: {
       targetPlayerId: targetPlayerId,
@@ -186,7 +334,7 @@ export const parseAttackData = (targetPlayerId: string,
       dieRoll: attackRoll,
       dealedDamage: dealedTargetDamage,
       attackType: attackType,
-      fumble: fumble
+      fumble: fumble,
     },
   };
 
@@ -196,17 +344,20 @@ export const parseAttackData = (targetPlayerId: string,
         hasLuck: attackerLuckResult.hasLuck,
         luckRolls: attackerLuckResult.luckRolls,
         luckRollMessage: attackerLuckResult.luckMessage,
-        hasEffect: attackerLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT && attackerLuckResult.hasLuck
+        hasEffect:
+          attackerLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT &&
+          attackerLuckResult.hasLuck,
       },
       defender: {
         hasLuck: defenderLuckResult.hasLuck,
         luckRolls: defenderLuckResult.luckRolls,
         luckRollMessage: defenderLuckResult.luckMessage,
-        hasEffect: defenderLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT && defenderLuckResult.hasLuck
-      }
+        hasEffect:
+          defenderLuckResult.luckMessage !== LUCK_MESSAGE.NO_EFFECT &&
+          defenderLuckResult.hasLuck,
+      },
     };
-  }
-  else {
+  } else {
     attackJson.luck = undefined;
   }
 

@@ -9,7 +9,7 @@ describe('getFumble method', () => {
     jest.clearAllMocks();
 
     jest.spyOn(fumbleHelpers, 'getSlashDamage').mockReturnValue({hit_points: 10});
-    jest.spyOn(fumbleHelpers, 'getFairytaleDamage').mockReturnValue({eruditoGlasses: true});
+    jest.spyOn(fumbleHelpers, 'getSmashDamage').mockReturnValue({hit_points: 15});
     jest.spyOn(fumbleHelpers, 'getHackDamage').mockReturnValue({dexterity: 20});
 
     jest.spyOn(fumbleHelpers, 'getCalculationFumbleDamage').mockReturnValue(20);
@@ -30,5 +30,9 @@ describe('getFumble method', () => {
   it('should return correct smash fumble object', async () => {
     const fumbleResult = fumbleHelpers.getFumble('smash', mockPlayer.attributes, 20, 40);
     expect(fumbleResult).toEqual({percentile: 40, message: 'Is self-injured heavily', type: 'smash', damage: {hit_points: 20}});
+  });
+  it('should return correct lightsmash fumble object', async () => {
+    const fumbleResult = fumbleHelpers.getFumble('lightsmash', mockPlayer.attributes, 20, 40);
+    expect(fumbleResult).toEqual({percentile: 40, message: 'Is self-injured heavily', type: 'lightsmash', damage: {hit_points: 15}});
   });
 });

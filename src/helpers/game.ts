@@ -9,7 +9,7 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
 import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
-import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData } from './attack.ts';
+import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getMaxWeaponDieRoll } from './attack.ts';
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
@@ -153,7 +153,8 @@ export const attackFlow = (targetId: string) => {
   // Get general variables.
   const attackRoll = getAttackRoll();
   const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
-  const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity);
+  const maxWeaponRoll = getMaxWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier); //Get max weapon roll possible
+  const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.insanity, attacker.attributes.charisma);
   let dealedDamage: number = 0;
   let dealedObjectDamage: DealedDamage | null = null;
   let fumble: Fumble | null = null;
@@ -166,7 +167,7 @@ export const attackFlow = (targetId: string) => {
   const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
   const fumblePercentage = getFumblePercentage(attacker.attributes.CFP, successPercentage);
   const normalPercentage = successPercentage - criticalPercentage;
-  const failedPercentage = (100 - fumblePercentage) - successPercentage;
+  const failedPercentage = fumblePercentage - normalPercentage;
 
   // Get the attack damage and attack type
   const attackerReduced = attackerReducedForAttack(attacker);
@@ -181,7 +182,7 @@ export const attackFlow = (targetId: string) => {
 
     if (attacker) {
       setTarget(attacker); //change target to attacker self player
-      fumble = getFumble(fumbleEffect, target.attributes, weaponRoll, fumblePercentile);
+      fumble = getFumble(fumbleEffect, target.attributes, maxWeaponRoll, fumblePercentile);
       if (fumble) {
         dealedObjectDamage = fumble.damage;
         fumbleToWeb = fumble;
@@ -222,7 +223,7 @@ export const attackFlow = (targetId: string) => {
     critical: criticalPercentage,
     normal: normalPercentage,
     failed: failedPercentage,
-    fumble: fumblePercentage
+    fumble: 100 - fumblePercentage,
   };
 
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);

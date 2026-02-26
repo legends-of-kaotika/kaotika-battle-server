@@ -1,8 +1,8 @@
-import { adjustAtributes } from '../../../helpers/attack.ts';
-import { Player } from '../../../interfaces/Player.ts';
+import { adjustAtributes } from "../../../helpers/attack.ts";
+import { Player } from "../../../interfaces/Player.ts";
 
-describe('adjustAtributes', () => {
-  it('should round all attributes to integers', () => {
+describe("adjustAtributes", () => {
+  it("should round all attributes to integers", () => {
     const player: Player = {
       attributes: {
         intelligence: 10.7,
@@ -17,15 +17,15 @@ describe('adjustAtributes', () => {
         magic_resistance: 3.3,
         CFP: 12.6,
         BCFA: 7.9,
-        resistance: 4.5
-      }
+        resistance: 4.5,
+      },
     } as Player;
-    
+
     adjustAtributes(player);
     expect(player.attributes.intelligence).toBe(11);
     expect(player.attributes.dexterity).toBe(5);
     expect(player.attributes.constitution).toBe(9);
-    expect(player.attributes.insanity).toBe(80);
+    expect(player.attributes.insanity).toBe(85);
     expect(player.attributes.charisma).toBe(7);
     expect(player.attributes.strength).toBe(7);
     expect(player.attributes.hit_points).toBe(50);
@@ -37,7 +37,7 @@ describe('adjustAtributes', () => {
     expect(player.attributes.resistance).toBe(5);
   });
 
-  it('should enforce minimum value rules', () => {
+  it("should enforce minimum value rules", () => {
     const player: Player = {
       attributes: {
         intelligence: -5,
@@ -52,15 +52,15 @@ describe('adjustAtributes', () => {
         magic_resistance: -5,
         CFP: 10,
         BCFA: -7,
-        resistance: -6
-      }
-    }as Player;
-    
+        resistance: -6,
+      },
+    } as Player;
+
     adjustAtributes(player);
     expect(player.attributes.intelligence).toBe(1);
     expect(player.attributes.dexterity).toBe(1);
     expect(player.attributes.constitution).toBe(1);
-    expect(player.attributes.insanity).toBe(80);
+    expect(player.attributes.insanity).toBe(85);
     expect(player.attributes.charisma).toBe(1);
     expect(player.attributes.strength).toBe(1);
     expect(player.attributes.hit_points).toBe(1);
@@ -71,22 +71,18 @@ describe('adjustAtributes', () => {
     expect(player.attributes.resistance).toBe(1);
   });
 
-  it('should enforce minimum and maximum values for insanity', () => {
+  it("should enforce minimum and maximum values for insanity", () => {
     const player: Player = {
       attributes: {
-        insanity: -10
-      }
-    }as Player;
-    
+        insanity: -10,
+      },
+    } as Player;
+
     adjustAtributes(player);
     expect(player.attributes.insanity).toBe(1);
 
     player.attributes.insanity = 150;
     adjustAtributes(player);
-    expect(player.attributes.insanity).toBe(80);
+    expect(player.attributes.insanity).toBe(85);
   });
 });
-
-
-
-
