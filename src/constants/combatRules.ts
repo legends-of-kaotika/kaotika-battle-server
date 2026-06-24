@@ -88,6 +88,8 @@ export const EFFECTS_FUMBLE = [
   {max: Infinity, effect: FUMBLE_EFFECTS.HACK}
 ];
 export const LUCK_ATTACK_INCREEASE = [
+  {max: 35, effect: ATTACK_INCREASE.SLIGTHLY},
+  {max: 49, effect: ATTACK_INCREASE.NORMAL},
   {max: Infinity, effect: ATTACK_INCREASE.BIG},
 ];
 

@@ -151,8 +151,8 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
 
 };
 export const getIncreseType = (roll:number):string => {
-  const {effect} = LUCK_ATTACK_INCREEASE.find((element)=> (roll <= element.max))!;
-  return effect;
+  const found = LUCK_ATTACK_INCREEASE.find((element)=> (roll <= element.max));
+  return found?.effect ?? LUCK_MESSAGE.ATTACK_INCREASE;
 };
 
 export const defenderReducedForLuck = (defender: Player): LuckDefender => {
