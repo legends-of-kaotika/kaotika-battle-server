@@ -92,9 +92,12 @@ export const resetInitialGameValues = (): void => {
   setIdPlayerFirstTurn(null);
   clearTimer();
   
-  // Empty the players array
+  // Empty the players and NPC arrays
   while (GAME_USERS.length > 0) {
     GAME_USERS.pop();
+  };
+  while (NPCS.length > 0) {
+    NPCS.pop();
   };
   // Send the new users array to web to display them.(instead of npc)
   sendConnectedUsersArrayToWeb(GAME_USERS);
