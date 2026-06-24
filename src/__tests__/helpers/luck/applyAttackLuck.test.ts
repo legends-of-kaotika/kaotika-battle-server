@@ -26,17 +26,17 @@ describe('applyAttackLuck', () => {
     expect(result).toEqual({luckMessage: 'The luck roll has no effect', dealedDamage: 40});
   });
   
-  it('should increase normal attack damage if roll is between 15-59', () => {
+  it('should increase normal attack damage if roll is between 15-59 with slight increase when roll <= 35', () => {
     (Die100.roll as jest.Mock).mockReturnValue(30); 
     const result = applyAttackLuck(8, 'NORMAL', 20, 15, 30, attacker, defender);
-    expect(result).toEqual({luckMessage: 'The attack has been increased significantly!', dealedDamage: 13});
+    expect(result).toEqual({luckMessage: 'The attack has been increased slightly', dealedDamage: 13});
   });
 
-  it('should increase normal attack damage if roll is between 15-59', () => {
+  it('should increase normal attack damage if roll is between 15-59 with slight increase when roll <= 35', () => {
     (Die100.roll as jest.Mock).mockReturnValue(30); 
     attacker.attributes.attack = 65;
     const result = applyAttackLuck(20, 'NORMAL', 20, 15, 30, attacker, defender);
-    expect(result).toEqual({luckMessage: 'The attack has been increased significantly!', dealedDamage: 32});
+    expect(result).toEqual({luckMessage: 'The attack has been increased slightly', dealedDamage: 32});
   });
 
   it('should not transform a attack that is not normal into a critical when roll is between 15-59', () => {
