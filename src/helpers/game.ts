@@ -100,12 +100,13 @@ export const handleGameEnd = async (): Promise<void> => {
   resetInitialGameValues();
 };
   
-// Check if there is the minimum 1 player connected and of role acolyte no betrayer
+// Check if the game can start: needs at least 1 master (istvan/villain/mortimer)
+// or 1 acolyte who is not a betrayer
 export const checkStartGameRequirement = (): boolean => {
-  if (GAME_USERS.length >= 1) {
-    return GAME_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
-  }
-  return false;
+  const masterRoles = ['istvan', 'villain', 'mortimer'];
+  const hasMaster = GAME_USERS.some((user) => masterRoles.includes(user.role));
+  const hasAcolyte = GAME_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
+  return hasMaster || hasAcolyte;
 };
 
 export const nextRoundStartFirst = (id: string, players: Player[]): void => {
