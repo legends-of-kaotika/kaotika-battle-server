@@ -13,7 +13,7 @@ import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumbl
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
-import { applyDamage, findPlayerById } from './player.ts';
+import { applyDamage, findPlayerById, findPlayerDeadId, handlePlayerDeath } from './player.ts';
 import { sleep } from './utils.ts';
 
 // Returns a object of loyals and betrayers
@@ -229,6 +229,11 @@ export const attackFlow = (targetId: string) => {
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
   sendAttackInformationToWeb(attackJSON);
 
+  // Handle player death if the target died from this attack
+  const deadPlayerId = findPlayerDeadId();
+  if (deadPlayerId) {
+    handlePlayerDeath(deadPlayerId);
+  }
 
 };
 
