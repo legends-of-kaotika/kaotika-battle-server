@@ -212,7 +212,8 @@ export const calculateNormalHitDamage = (
   attackAttribute: number,
   defenseMod: number,
 ): number => {
-  const normalHitDamage = Math.max(Math.ceil((attackAttribute + weaponRoll) / defenseMod), 1);
+  const safeDefenseMod = defenseMod || 1;
+  const normalHitDamage = Math.max(Math.ceil((attackAttribute + weaponRoll) / safeDefenseMod), 1);
   return normalHitDamage;
 };
 

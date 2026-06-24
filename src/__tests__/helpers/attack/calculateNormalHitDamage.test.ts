@@ -17,5 +17,11 @@ describe('calculateNormalHitDamage', () => {
   it('should handle attack attribute with value of 0 correctly', () => {
     expect(calculateNormalHitDamage(1, 0, 0.25)).toBe(4);
   });
+
+  it('should return finite damage when defenseMod is 0 (guard against Infinity)', () => {
+    const result = calculateNormalHitDamage(50, 30, 0);
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBeGreaterThan(0);
+  });
   
 });
