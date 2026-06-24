@@ -31,7 +31,6 @@ export const getSlashDamage = (calculationFumbleDamage: number): Partial<Attribu
   return {hit_points: slashResult};
 };
 
-//add erudite glasses to player
 export const getSmashDamage = (calculationFumbleDamage: number): Partial<Attribute> => {
   const slashResult = Math.ceil(calculationFumbleDamage / 2);
   return {hit_points: slashResult};
@@ -54,10 +53,10 @@ export const getFumble = (fumbleEffect: FumbleType, currentPlayerAttributes: Att
     const slashDamage = getSlashDamage(calculationFumbleDamage);
     return getFumbleObject(percentile, fumbleEffect, slashDamage); 
   }
-  case FUMBLE_EFFECTS.LIGHTSMASH: { //change later on 
+  case FUMBLE_EFFECTS.LIGHTSMASH: {
     const calculationFumbleDamage = getCalculationFumbleDamage(currentPlayerAttributes.BCFA, weaponDieRoll);
-    const slashDamage = getSmashDamage(calculationFumbleDamage);
-    return getFumbleObject(percentile, fumbleEffect, slashDamage);
+    const smashDamage = getSmashDamage(calculationFumbleDamage);
+    return getFumbleObject(percentile, fumbleEffect, smashDamage);
   }
   case FUMBLE_EFFECTS.HACK: {
     const hackDamage = getHackDamage(currentPlayerAttributes.dexterity);
