@@ -31,12 +31,22 @@ export const npcAttack = async () : Promise<void> => {
   }
 };
 
+const buildAvatarUrl = (baseUrl: string | undefined, avatarPath: string): string => {
+  if (!avatarPath) return '';
+  if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
+    return avatarPath;
+  }
+  const base = (baseUrl || '').replace(/\/+$/, '');
+  const path = avatarPath.replace(/^\/+/, '');
+  return `${base}/${path}`;
+};
+
 export const addBattleNPCsToGame = (npcs: PlayerPopulated[]) => {
 
   npcs.forEach((fullNPC: PlayerPopulated) => {
     const npc = parsePlayerData(fullNPC);
     npc.role = 'npc';
-    npc.avatar = `${process.env.KAOTIKA_VERCEL}/${npc.avatar}`;
+    npc.avatar = buildAvatarUrl(process.env.KAOTIKA_VERCEL, npc.avatar);
     NPCS.push(npc);
     GAME_USERS.push(npc);
   });
