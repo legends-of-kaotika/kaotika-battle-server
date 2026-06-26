@@ -1,4 +1,4 @@
-import { NPCS, currentPlayer, idPlayerFirstTurn, isGameCreated, isGameStarted, resetInitialGameValues, round, selectedBattleId, target, turn } from '../../../game.ts';
+import { CONNECTED_USERS, NPCS, currentPlayer, idPlayerFirstTurn, isGameCreated, isGameStarted, resetInitialGameValues, round, selectedBattleId, target, turn } from '../../../game.ts';
 import { turnTime } from '../../../timer/timer.ts';
 
 describe('test the resetInitialGameValues', () => {
@@ -14,5 +14,6 @@ describe('test the resetInitialGameValues', () => {
     expect(selectedBattleId).toBe(null);
     expect(isGameCreated).toBe(false);
     expect(NPCS).toHaveLength(0);
+    expect(CONNECTED_USERS).toHaveLength(0);
   });
 }); 
