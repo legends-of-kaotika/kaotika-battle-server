@@ -10,6 +10,7 @@ export interface Battle {
   gold: number;
   exp: number;
   battle_background: string;
+  battle_video_background: string;
   battle_animations: string[];
   end_of_battle_background: string[];
 };

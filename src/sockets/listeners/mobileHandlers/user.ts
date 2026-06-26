@@ -19,7 +19,7 @@ import { MobileSignInResponse } from '../../../interfaces/MobileSignInRespose.ts
 import { MobileBattlesResponse } from '../../../interfaces/MobileBattlesResponse.ts';
 
 import { fetchBattles } from '../../../helpers/api.ts';
-import { findBattleById, parseWebBattleData } from '../../../helpers/battle.ts';
+import { findResolvedBattleById, getResolvedBattles, parseWebBattleData } from '../../../helpers/battle.ts';
 import { attackFlow, changeTurn, checkStartGameRequirement } from '../../../helpers/game.ts';
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
@@ -180,7 +180,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
       console.log(`No battle ID received in socket ${SOCKETS.MOBILE_CREATE_GAME}`);
     }
 
-    const battleData = findBattleById(_id);
+    const battleData = findResolvedBattleById(_id);
     
     if (!battleData) {
       console.error(`Battle with id ${_id} not found`);
@@ -220,8 +220,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
       BATTLES.length = 0;
       BATTLES.push(...battles);
 
-      // Send data to mobile.
-      callback({ status: 'OK', battles: battles }); 
+      // Send data to mobile with resolved media URLs.
+      callback({ status: 'OK', battles: getResolvedBattles(battles) });
     } catch (error) {
       console.error('Error fetching battles:', error);
       callback({ status: 'FAILED', error: 'Error fetching battles' });
