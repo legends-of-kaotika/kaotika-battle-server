@@ -13,6 +13,7 @@ export const battles: Battle[] =
         gold: 300,
         exp: 1500,
         battle_background: 'tabern.webp',
+        battle_video_background: 'videos/battle/backgrounds/tabern.mp4',
         battle_animations: ['player.gif', 'boss.gif'],
         end_of_battle_background: ['victory.webp', 'defeat.webp']
       },
@@ -26,6 +27,7 @@ export const battles: Battle[] =
         gold: 500,
         exp: 2500,
         battle_background: 'ritual.webp',
+        battle_video_background: 'videos/battle/backgrounds/ritual.mp4',
         battle_animations: ['player.gif', 'warlock.gif', 'demon.gif'],
         end_of_battle_background: ['victory.webp', 'defeat.webp']
       }
