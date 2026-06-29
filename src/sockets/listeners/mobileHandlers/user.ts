@@ -25,7 +25,6 @@ import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import {
   findConnectedPlayerById,
   findPlayerById,
-  isPlayerConnected,
   printUsers
 } from '../../../helpers/player.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
@@ -74,11 +73,11 @@ export const mobileUserHandlers = (socket: Socket): void => {
       return;
     }
 
-    if (isPlayerConnected(playerData._id)) {
-      console.log('Player already logged in.');
-      printUsers();
-      callback({status: 'FAILED', error: 'Player already logged in.'});
-      return;
+    // Remove existing entry if same player ID (handle stale/reconnect sessions)
+    const existingIndex = CONNECTED_USERS.findIndex(u => u._id === playerData._id);
+    if (existingIndex !== -1) {
+      console.log(`Player ${playerData.nickname} already logged in. Replacing stale session.`);
+      CONNECTED_USERS.splice(existingIndex, 1);
     }
 
     playerData.socketId = socket.id;

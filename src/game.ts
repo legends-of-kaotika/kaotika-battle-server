@@ -110,10 +110,6 @@ export const resetInitialGameValues = (): void => {
   // Emit the game reset to mobile
   io.emit(SOCKETS.IS_GAME_CREATED, false);
   
-  // Clear the connected users list so they can log in again for a new game
-  while (CONNECTED_USERS.length > 0) {
-    CONNECTED_USERS.pop();
-  };
   
 };
 
