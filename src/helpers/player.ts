@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 import { MOBILE } from '../constants/sockets.ts';
-import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS } from '../game.ts';
+import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS, KILLED_PLAYERS } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
@@ -125,6 +125,13 @@ export function handlePlayerDeath(id: string): void {
 
   const isConnected = isPlayerAlive(id);
   if (!isConnected) return;
+
+  // Keep track of the dead player so they can still receive a share of the
+  // rewards if their side wins the battle.
+  const deadPlayer = findPlayerById(id);
+  if (deadPlayer) {
+    KILLED_PLAYERS.push({ ...deadPlayer, isAlive: false });
+  }
 
   sendKilledPlayer(id);
   removePlayerFromGameUsersById(id);

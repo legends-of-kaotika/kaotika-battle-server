@@ -1,13 +1,13 @@
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
-import { GAME_USERS, currentPlayer, increaseTurn, resetInitialGameValues, selectedBattleId, setCurrentPlayer, setTarget, target, turn } from '../game.ts';
+import { GAME_USERS, KILLED_PLAYERS, currentPlayer, increaseTurn, resetInitialGameValues, selectedBattleId, setCurrentPlayer, setTarget, target, turn } from '../game.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
-import { BattleOutcome } from '../interfaces/BattleRewards.ts';
+import { BattleOutcome, PlayerReward } from '../interfaces/BattleRewards.ts';
 import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
 import { sendBattleRewardsToWeb } from '../sockets/emits/game.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
@@ -15,7 +15,7 @@ import { adjustAttributes, attack, getAttackRoll, getCriticalPercentage, getFumb
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
-import { applyDamage, findPlayerById, findPlayerDeadId, handlePlayerDeath } from './player.ts';
+import { applyDamage, findPlayerById } from './player.ts';
 import { sleep } from './utils.ts';
 
 // Returns a object of loyals and betrayers
@@ -91,8 +91,9 @@ export const handleGameEnd = async (): Promise<void> => {
 
   // If the winner is Kaotika, we want to store the result in the database.
   if (winnerSide === 'kaotika') {
-    const kaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
-    await sendBattleWinners(kaotika, selectedBattleId);
+    const aliveKaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
+    const deadKaotika = KILLED_PLAYERS.filter((player) => !player.isBetrayer);
+    await sendBattleWinners([...aliveKaotika, ...deadKaotika], selectedBattleId);
   }
 
   // Wait for 5 seconds to show the winner side 
@@ -232,12 +233,6 @@ export const attackFlow = (targetId: string) => {
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
   sendAttackInformationToWeb(attackJSON);
 
-  // Handle player death if the target died from this attack
-  const deadPlayerId = findPlayerDeadId();
-  if (deadPlayerId) {
-    handlePlayerDeath(deadPlayerId);
-  }
-
 };
 
 async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
@@ -275,12 +270,23 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
       return;
     }
 
+    const resolveItemImage = (image: string | undefined): string => {
+      if (!image) return '';
+      if (image.startsWith('http://') || image.startsWith('https://')) return image;
+      const base = (process.env.KAOTIKA_VERCEL || '').replace(/\/+$/, '');
+      const clean = image.replace(/^\/+/, '');
+      return `${base}/${clean}`;
+    };
+
     const outcome: BattleOutcome = {
       winner: 'Kaotika',
       rewards: {
         gold: json.data.gold,
         experience: json.data.experience,
-        playerRewards: json.data.playerRewards,
+        playerRewards: (json.data.playerRewards || []).map((pr: PlayerReward) => ({
+          ...pr,
+          item: pr.item ? { ...pr.item, image: resolveItemImage(pr.item.image) } : pr.item,
+        })),
       },
     };
 

@@ -17,7 +17,12 @@ const resolveBattleMediaUrls = (battle: Battle): Battle => {
     battle_background: buildMediaUrl(baseUrl, battle.battle_background),
     battle_video_background: buildMediaUrl(baseUrl, battle.battle_video_background),
     battle_animations: battle.battle_animations.map((anim) => buildMediaUrl(baseUrl, anim)),
-    end_of_battle_background: battle.end_of_battle_background.map((bg) => buildMediaUrl(baseUrl, bg)),
+    end_of_battle_background: battle.end_of_battle_background.map((bg) => {
+      // The mission stores end-of-battle backgrounds as bare filenames
+      // (e.g. "victory.webp"), unlike battle_background which includes the path.
+      const normalized = bg.includes('/') ? bg : `images/battle/backgrounds/${bg}`;
+      return buildMediaUrl(baseUrl, normalized);
+    }),
   };
 };
 

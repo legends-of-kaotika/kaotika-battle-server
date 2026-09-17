@@ -12,6 +12,7 @@ import { logUnlessTesting } from './helpers/utils.ts';
 export const GAME_USERS: Player[] = [];
 export const CONNECTED_USERS: Player[] = [];
 export const NPCS: Player[] = [];
+export const KILLED_PLAYERS: Player[] = [];
 export const BATTLES: Battle[] = [];
 export let webSocketId: string = '';
 
@@ -98,6 +99,9 @@ export const resetInitialGameValues = (): void => {
   };
   while (NPCS.length > 0) {
     NPCS.pop();
+  };
+  while (KILLED_PLAYERS.length > 0) {
+    KILLED_PLAYERS.pop();
   };
   // Send the new users array to web to display them.(instead of npc)
   sendConnectedUsersArrayToWeb(GAME_USERS);
