@@ -89,11 +89,11 @@ export const handleGameEnd = async (): Promise<void> => {
   const winnerSideCapitalized = winnerSide.charAt(0).toUpperCase() + winnerSide.slice(1);
   sendGameEnd(winnerSideCapitalized);
 
-  // If the winner is Kaotika, we want to store the result in the database.
-  if (winnerSide === 'kaotika') {
+  // Store the result in the database: rewards on a Kaotika win, penalties on a loss.
+  if (winnerSide === 'kaotika' || winnerSide === 'dravokar') {
     const aliveKaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
     const deadKaotika = KILLED_PLAYERS.filter((player) => !player.isBetrayer);
-    await sendBattleWinners([...aliveKaotika, ...deadKaotika], selectedBattleId);
+    await sendBattleResult([...aliveKaotika, ...deadKaotika], selectedBattleId, winnerSide);
   }
 
   // Wait for 5 seconds to show the winner side 
@@ -235,20 +235,21 @@ export const attackFlow = (targetId: string) => {
 
 };
 
-async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
+async function sendBattleResult(players: Player[], battleID: string | null, winner: string) {
 
   if (!battleID) {
     console.error('No battleID assigned');
     return;
   }
 
-  const winnersData = parseWinners(kaotika);
+  const parsedPlayers = parseWinners(players);
   const body = {
-    players: winnersData,
-    battleID
+    players: parsedPlayers,
+    battleID,
+    winner
   };
 
-  console.log('Sending winners to API: ', body);
+  console.log('Sending battle result to API: ', body);
 
   // Send the winners to the database
   try {
@@ -267,6 +268,12 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
     const json = await response.json();
     if (!json || json.status !== 'OK' || !json.data) {
       console.error('Unexpected battle rewards response:', json);
+      return;
+    }
+
+    if (winner === 'dravokar') {
+      // Penalties are applied server-side (gold/item loss).
+      console.log('Battle penalties applied:', json.data.penalties);
       return;
     }
 
