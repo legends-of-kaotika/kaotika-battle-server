@@ -1,0 +1,68 @@
+# End-to-end orchestration for local development.
+#
+# Runs the four Kaotika battle pieces together:
+#   - api     (kaotika-server):        REST source of players/missions  -> http://localhost:3001
+#   - server  (kaotika-battle-server): Socket.IO game brain             -> http://localhost:3000
+#   - web     (kaotika-battle-web):    animated battle visualization    -> http://localhost:5000
+#   - mobile  (kaotika-battle-mobile): players/admin login              -> http://localhost:5001
+#
+# Usage (from this repo's root):
+#   docker compose -f docker-compose.e2e.yml up --build
+#
+# Assumptions:
+#   - The sibling projects are checked out at their standard paths relative to
+#     this repo (../kaotika-server, ../../ReactProjects/kaotika-battle-web,
+#     ../../NextJSProjects/kaotika-battle-mobile). Adjust `build.context` if not.
+#   - Each project provides its own .env (referenced via env_file). No secrets
+#     are stored here.
+#   - The battle server is pointed at the local `api` service via the
+#     KAOTIKA_SERVER override below.
+#   - The mobile app connects to the battle server via VITE_SOCKET_URL, which is
+#     baked at build time; keep it pointing to a host-reachable URL
+#     (default http://localhost:3000).
+
+services:
+  api:
+    build:
+      context: ../kaotika-server
+    container_name: kaotika-api
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+    env_file:
+      - ../kaotika-server/.env
+
+  server:
+    build:
+      context: .
+    container_name: kaotika-battle-server
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Override the deployed API URL so the server talks to the local api service.
+      KAOTIKA_SERVER: http://api:3000
+
+  web:
+    build:
+      context: ../../ReactProjects/kaotika-battle-web
+    container_name: kaotika-battle-web
+    depends_on:
+      - server
+    ports:
+      - "5000:4173"
+    restart: unless-stopped
+
+  mobile:
+    build:
+      context: ../../NextJSProjects/kaotika-battle-mobile
+    container_name: kaotika-battle-mobile
+    depends_on:
+      - server
+    ports:
+      - "5001:4173"
+    restart: unless-stopped

@@ -30,19 +30,30 @@ const onConnection = (socket: Socket): void => {
   socketHandlers(socket);
 };
 
+// Starts the HTTP + Socket.IO server on the given port and registers the
+// connection handler. Resolves with the actual port in use (useful when
+// passing 0 to bind an ephemeral port in tests).
+export const startServer = (port: number = Number(PORT)): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(port, () => {
+      const address = server.address();
+      const actualPort = typeof address === 'object' && address !== null ? address.port : port;
+      console.log(`Socket is listening on port ${actualPort}`);
+      io.on('connection', onConnection);
+      resolve(actualPort);
+    });
+  });
+};
+
 async function start() {
 
   // Start server only if NOT in test mode
   if (process.env.NODE_ENV !== 'test') {
     try {
-      
-      server.listen(PORT, () => {
-        console.log(`Socket is listening on port ${PORT}`);
-        io.on('connection', onConnection);
-      });
-    
+      await startServer(Number(PORT));
     } catch (error) {
-      console.log(`Error starting the server: ${error.message}`);
+      console.log(`Error starting the server: ${(error as Error).message}`);
     }
   }
 }

@@ -5,6 +5,7 @@ import { isGameCreated, selectedBattleId, webSocketId } from '../../game.ts';
 import { findResolvedBattleById, parseWebBattleData } from '../../helpers/battle.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { WebBattle } from '../../interfaces/WebBattle.ts';
+import { BattleOutcome } from '../../interfaces/BattleRewards.ts';
 
 
 export const sendCurrentRound = (round: number) : void => {
@@ -29,6 +30,12 @@ export const sendIsGameCreatedToEmiter = (socketId: string) : void => {
 
 export const sendCreatedBattleToWeb = (battleData: WebBattle): void => {
   io.to(webSocketId).emit(SOCKETS.WEB_CREATE_BATTLE, battleData);
+  io.to(webSocketId).emit(SOCKETS.WEB_BATTLE_CONFIG, battleData);
+};
+
+export const sendBattleRewardsToWeb = (outcome: BattleOutcome): void => {
+  logUnlessTesting(`Emitting ${SOCKETS.WEB_BATTLE_REWARDS} socket to web with battle rewards.`);
+  io.to(webSocketId).emit(SOCKETS.WEB_BATTLE_REWARDS, outcome);
 };
 
 export const sendSelectedBattleToWeb = () => {
@@ -49,6 +56,7 @@ export const sendSelectedBattleToWeb = () => {
 
   const webBattleData = parseWebBattleData(battleData);
   io.to(webSocketId).emit(WEB_SEND_SELECTED_BATTLE, webBattleData);
+  io.to(webSocketId).emit(SOCKETS.WEB_BATTLE_CONFIG, webBattleData);
 
 };
 

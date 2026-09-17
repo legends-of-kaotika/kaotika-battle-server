@@ -12,7 +12,6 @@ export const WEB_SELECT_USE_POTION = 'web-selectUsePotion';
 export const WEB_SEND_USER = 'web-sendUser';
 export const WEB_USER_DISCONNECT = 'web-playerDisconnected';
 export const SEND_TIMER = 'send-timer';
-export const TURN_START = 'turn-start';
 export const ASSIGN_TURN = 'assign-turn';
 export const GAME_START = 'gameStart';
 export const UPDATE_PLAYER = 'updatePlayer';
@@ -25,9 +24,10 @@ export const ATTACK_INFORMATION = 'web-attackInformation';
 export const GAME_RESET = 'gameReset';
 export const WEB_TURN_FINISHED = 'web-turnFinished';
 export const IS_GAME_CREATED = 'isGameCreated';
-export const BATTLES = 'battles';
 export const WEB_JOINED_BATTLE = 'web-joinedBattle';
 export const IS_GAME_STARTED = 'isGameStarted';
+export const WEB_BATTLE_CONFIG = 'web-battleConfig';
+export const WEB_BATTLE_REWARDS = 'web-battleRewards';
 
 // ---- LISTENERS ---- //
 
@@ -53,9 +53,7 @@ export const MOBILE_IS_GAME_STARTED = 'mobile-isGameStarted';
 export const WEB_SEND_USERS = 'web-sendUsers';
 export const DISCONNECT = 'disconnect';
 export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
-export const WEB_TURN_END = 'web-turnEnd';
 export const WEB_ATTACK_ANIMATION_END = 'web-attackAnimationEnd';
-export const WEB_STOP_TIMER = 'web-stopTimer';
 export const WEB_CREATE_BATTLE = 'web-createdBattle';
 export const WEB_SEND_SELECTED_BATTLE = 'web-selectedBattle';
 

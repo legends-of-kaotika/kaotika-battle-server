@@ -5,8 +5,35 @@ import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
+import { Weapon } from '../interfaces/Weapon.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
+
+// Fallback weapon for players that have no weapon equipped, so combat never
+// crashes on undefined weapon fields.
+const DEFAULT_WEAPON: Weapon = {
+  _id: '',
+  name: 'Fists',
+  description: 'Bare hands.',
+  type: 'weapon',
+  image: '',
+  die_faces: 4,
+  die_modifier: 0,
+  die_num: 1,
+  base_percentage: 50,
+  modifiers: {
+    intelligence: 0,
+    dexterity: 0,
+    constitution: 0,
+    insanity: 0,
+    charisma: 0,
+    strength: 0,
+  },
+  min_lvl: 1,
+  value: 0,
+  isUnique: false,
+  isActive: true,
+};
 
 // Returns a player searched by id in connected users
 export const findConnectedPlayerById = (_id: string): Player | undefined => {
@@ -246,7 +273,7 @@ export const parsePlayerData = (data: PlayerPopulated): Player => {
       healing_potion: data.equipment?.healing_potion || {},
       antidote_potion: data.equipment?.antidote_potion || {},
       enhancer_potion: data.equipment?.enhancer_potion || {},
-      weapon: data.equipment?.weapon || {},
+      weapon: data.equipment?.weapon || DEFAULT_WEAPON,
       helmet: data.equipment.helmet,
       boot: data.equipment.boot,
       armor: data.equipment.armor,

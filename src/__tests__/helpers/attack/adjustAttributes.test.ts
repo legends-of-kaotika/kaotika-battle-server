@@ -1,7 +1,7 @@
-import { adjustAtributes } from "../../../helpers/attack.ts";
+import { adjustAttributes } from "../../../helpers/attack.ts";
 import { Player } from "../../../interfaces/Player.ts";
 
-describe("adjustAtributes", () => {
+describe("adjustAttributes", () => {
   it("should round all attributes to integers", () => {
     const player: Player = {
       attributes: {
@@ -21,7 +21,7 @@ describe("adjustAtributes", () => {
       },
     } as Player;
 
-    adjustAtributes(player);
+    adjustAttributes(player);
     expect(player.attributes.intelligence).toBe(11);
     expect(player.attributes.dexterity).toBe(5);
     expect(player.attributes.constitution).toBe(9);
@@ -56,7 +56,7 @@ describe("adjustAtributes", () => {
       },
     } as Player;
 
-    adjustAtributes(player);
+    adjustAttributes(player);
     expect(player.attributes.intelligence).toBe(1);
     expect(player.attributes.dexterity).toBe(1);
     expect(player.attributes.constitution).toBe(1);
@@ -78,11 +78,11 @@ describe("adjustAtributes", () => {
       },
     } as Player;
 
-    adjustAtributes(player);
+    adjustAttributes(player);
     expect(player.attributes.insanity).toBe(1);
 
     player.attributes.insanity = 150;
-    adjustAtributes(player);
+    adjustAttributes(player);
     expect(player.attributes.insanity).toBe(85);
   });
 });

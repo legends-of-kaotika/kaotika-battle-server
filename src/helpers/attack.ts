@@ -24,7 +24,7 @@ import { LUCK_MESSAGE } from "../constants/messages.ts";
 import { MIN_INSANITY, MAX_INSANITY } from "../constants/attributes.ts";
 import { Weapon } from "../interfaces/Weapon.ts";
 
-export const adjustAtributes = (player: Player) => {
+export const adjustAttributes = (player: Player) => {
   const attributes = Object.keys(
     player.attributes,
   ) as (keyof Player["attributes"])[];
@@ -74,7 +74,7 @@ export const getAttackRoll = (): number => {
 };
 
 export const getSuccessPercentage = (weaponBasePercentage: number, playerDexterity: number, playerIntelligence: number, playerCharisma: number): number => {
-  return Math.min(weaponBasePercentage + Math.ceil(playerDexterity / 2) + Math.ceil(playerCharisma / 3) + Math.ceil(playerIntelligence / 2), 75);
+  return Math.min((weaponBasePercentage || 0) + Math.ceil(playerDexterity / 2) + Math.ceil(playerCharisma / 3) + Math.ceil(playerIntelligence / 2), 75);
 };
 
 export const getFumblePercentage = (
@@ -90,8 +90,14 @@ export const getDefenseModificator = (totalDefense: number, weaponRoll: number, 
   const weaponDieFaces = weapon.die_faces;
   const weaponDieModifier = weapon.die_modifier;
   const weaponMaxDieRoll = getMaxWeaponDieRoll(weaponDieNumber, weaponDieFaces, weaponDieModifier)
-  const { minDamageChance, mult } = DEFENSE_MOD.find(({ min_att, max_att, min_def, max_def }) => (totalDefense >= min_def && totalDefense <= max_def) && (attack >= min_att && attack <= max_att))!;
-  
+  const defenseModRow = DEFENSE_MOD.find(({ min_att, max_att, min_def, max_def }) => (totalDefense >= min_def && totalDefense <= max_def) && (attack >= min_att && attack <= max_att));
+
+  if (!defenseModRow) {
+    return null;
+  }
+
+  const { minDamageChance, mult } = defenseModRow;
+
   if ( minDamageChance === 30) {
     if (weaponRoll >= weaponMaxDieRoll * 0.3) {
       return mult;

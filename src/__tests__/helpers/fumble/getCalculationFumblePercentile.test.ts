@@ -8,4 +8,9 @@ describe ('getCalculationFumblePercentile method', ()=> {
     const fumblePercentile = getCalculationFumblePercentile(fumblePercentageMock, attackRollMock);
     expect(fumblePercentile).toBe(34);
   });
+
+  it('should not produce NaN when fumble percentage is 100', ()=> {
+    const fumblePercentile = getCalculationFumblePercentile(100, 100);
+    expect(fumblePercentile).toBe(100);
+  });
 });

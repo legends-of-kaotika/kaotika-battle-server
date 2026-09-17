@@ -84,6 +84,7 @@ This section details the progression of a game session, reflecting the login and
 6. **Turn Management & Combat**
    - The game proceeds in turns, managed by the server (see Section 5 for details).
    - The server tracks the current player, manages timers, and handles both player and NPC actions.
+   - After an attack, the server schedules a fallback (`TURN_CHANGE_FALLBACK_MS`, 10s) to advance the turn on its own if the web client never emits `web-attackAnimationEnd`. A re-entrancy guard and the pending fallback check prevent the turn from advancing twice.
 
 7. **Win/Loss & Reset**
    - After each turn or significant event, the server checks for win/loss conditions.
@@ -138,11 +139,11 @@ Combat is the core interaction, resolved primarily within `attackFlow()` in `src
     - The `target` is switched to the `attacker` (self-effect).
     - `getCalculationFumblePercentile()`: Determines the severity of the fumble.
     - `getFumbleEffect()`: Maps the percentile to a specific `FumbleType` (Slash, LightSmash, Hack, Smash) from `EFFECTS_FUMBLE` in `combatRules.ts`.
-    - `getFumble()`: Calculates the consequence:
-      - **Slash**: Self-inflicted HP damage: `ceil((BCFA + MaxWeaponDieRoll) / 3)`.
-      - **LightSmash**: Self-inflicted HP damage: `ceil((BCFA + MaxWeaponDieRoll) / 2)`.
+    - `getFumble()`: Calculates the consequence from a base value `fumbleBase = ceil((BCFA + MaxWeaponDieRoll) / 5)`:
+      - **Slash**: Self-inflicted HP damage: `ceil(fumbleBase / 3)`.
+      - **LightSmash**: Self-inflicted HP damage: `ceil(fumbleBase / 2)`.
       - **Hack**: Attacker's `dexterity` is halved for the battle.
-      - **Smash**: Self-inflicted HP damage: `ceil((BCFA + MaxWeaponDieRoll))`.
+      - **Smash**: Self-inflicted HP damage: `fumbleBase`.
     - The outcome (e.g., `{hit_points: X}` or `{dexterity: Y}`) becomes `dealedObjectDamage`.
 7.  **Luck System ([`luck.ts`](src/helpers/luck.ts), if not a Fumble)**:
 
@@ -162,19 +163,27 @@ Luck rolls are performed every turn, both when attacking and defending.
 > **Note:** "Having luck" means the player qualifies for a potential luck effect, but the actual impact ("luck having effect") depends on a second roll.
 
 **Determining the Luck Effect:**  
-If the player has luck (i.e., at least one luck roll < 20), roll 1D100 again to determine the effect:
+If the player has luck (i.e., at least one luck roll < 20), roll 1D100 again to determine the effect. The effect depends on whether the player is attacking or defending:
+
+**Attacking** (`ATTACK_LUCK_RULES`):
 
 | D100 Roll | LUCK Effect                                                                                                                             |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | 81-100    | Next round, the player starts first. (Only one player per round may receive this; if a second player qualifies, the result is ignored.) |
-| 60-80     | When attacking, a normal attack is upgraded to critical damage.                                                                         |
-| 50-59     | Attacking: Normal attack, `ATT mod 2` is increased by 80%.<br>Defending: No magic damage received.                                      |
-| 36-49     | Attacking: Normal attack, `ATT mod 2` is increased by 40%.<br>Defending: No magic damage received.                                      |
-| 16-35     | Attacking: Normal attack, its damage is increased by 60%.<br>Defending: No luck applied.                                      |
-| 1-15      | When defending, the player receives no damage.                                                                                          |
+| 36-80     | A normal attack is upgraded to critical damage.                                                                                         |
+| 16-35     | Normal attack damage is increased by 60% (multiplied by 1.6).                                                                           |
+| 1-15      | No effect.                                                                                                                              |
+
+**Defending** (`DEFENSE_LUCK_RULES`):
+
+| D100 Roll | LUCK Effect                                                                                                                             |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 81-100    | Next round, the defender starts first. (Only one player per round may receive this; if a second player qualifies, the result is ignored.) |
+| 16-80     | No effect.                                                                                                                              |
+| 1-15      | The defender receives no damage (dodge).                                                                                                |
 
 **Clarification:**  
-A player can "have luck" by passing the initial luck roll, but the luck may "have no effect" if the subsequent effect roll results in an outcome that does not influence the current situation. For example, if the attack type is already critical, and the user has 60-80 luck, the luck roll won't have any additional effect since the attack is already critical.
+A player can "have luck" by passing the initial luck roll, but the luck may "have no effect" if the subsequent effect roll results in an outcome that does not influence the current situation. For example, if the attack type is already critical, and the user has 36-80 luck, the luck roll won't have any additional effect since the attack is already critical.
 
 8.  **Damage Application ([`src/helpers/player.ts`](src/helpers/player.ts) -> `applyDamage()`)**: The final `dealedObjectDamage` (HP loss or attribute change from fumble) is applied to the target player's `attributes` in the `GAME_USERS` array.
 9.  **Death Check & Handling ([`src/helpers/player.ts`](src/helpers/player.ts))**: After damage application, implicitly, the game checks if `target.attributes.hit_points <= 0`.
@@ -198,11 +207,14 @@ All Socket.IO events are defined in [[`src/constants/sockets.ts`](src/constants/
 | `web-attackInformation`      | Web     | Sends detailed attack information to the web client.  |
 | `web-turnFinished`           | Web     | Notifies web client that a turn has finished.         |
 | `web-joinedBattle`           | Web     | Notifies web client that it has joined a battle.      |
+| `web-createdBattle`          | Web     | Notifies web client that a battle has been created.   |
+| `web-battleConfig`          | Web     | Sends the battle configuration data to the web client. |
+| `web-battleRewards`         | Web     | Sends the battle rewards outcome to the web client.   |
+| `web-selectedBattle`         | Web     | Sends the selected battle data to the web client.     |
 | `mobile-insufficientPlayers` | Mobile  | Notifies mobile clients there are not enough players. |
 | `connectedUsers`             | Shared  | Sends the list of currently connected users.          |
 | `gameReset`                  | Shared  | Notifies clients that the game has been reset.        |
 | `send-timer`                 | Shared  | Sends the current timer value.                        |
-| `turn-start`                 | Shared  | Signals the start of a turn.                          |
 | `assign-turn`                | Shared  | Assigns turn to a player.                             |
 | `gameStart`                  | Shared  | Signals the start of the game.                        |
 | `updatePlayer`               | Shared  | Sends updated player data.                            |
@@ -210,7 +222,6 @@ All Socket.IO events are defined in [[`src/constants/sockets.ts`](src/constants/
 | `gameEnd`                    | Shared  | Announces the winner and ends the game.               |
 | `send-killedPlayer`          | Shared  | Notifies clients that a player has died.              |
 | `isGameCreated`              | Shared  | Notifies clients if a game has been created.          |
-| `battles`                    | Shared  | Sends available battles (missions) to clients.        |
 | `isGameStarted`              | Shared  | Notifies clients if the game has started.             |
 
 ### LISTENERS (Client-to-Server)
@@ -219,11 +230,7 @@ All Socket.IO events are defined in [[`src/constants/sockets.ts`](src/constants/
 | -------------------------- | ------- | -------------------------------------------------------------------- |
 | `web-sendUsers`            | Web     | Web client requests the list of users.                               |
 | `web-sendSocketId`         | Web     | Web client sends its socket ID to the server.                        |
-| `web-turnEnd`              | Web     | Web client notifies server that the turn has ended.                  |
 | `web-attackAnimationEnd`   | Web     | Web client notifies server that attack animation has ended.          |
-| `web-stopTimer`            | Web     | Web client requests to stop the timer.                               |
-| `web-createdBattle`        | Web     | Web client creates a new battle.                                     |
-| `web-selectedBattle`       | Web     | Web client selects a battle.                                         |
 | `mobile-signIn`            | Mobile  | Player attempts to log in (expects email and callback for response). |
 | `mobile-gameStart`         | Mobile  | Initiates the game from a mobile client.                             |
 | `mobile-setSelectedPlayer` | Mobile  | Player selects a target player.                                      |

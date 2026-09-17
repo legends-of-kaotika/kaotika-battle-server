@@ -13,12 +13,18 @@ export const getCalculationFumbleDamage = (bcfa: number , weaponDieRoll: number 
 //----------------------helper for getting fumble effect------------------------------//
 
 export const getCalculationFumblePercentile = (fumblePercentage: number, attackRoll: number): number => {
+  if (fumblePercentage >= 100 || Number.isNaN(fumblePercentage) || Number.isNaN(attackRoll)) {
+    return 100;
+  }
   return Math.ceil(100 * (attackRoll - fumblePercentage) / (100 - fumblePercentage));
 };
 
 export const getFumbleEffect = (fumblePercentile: number ): FumbleType => {
-  const {effect} = EFFECTS_FUMBLE.find((element)=> (fumblePercentile <= element.max))!;
-  return effect;
+  if (Number.isNaN(fumblePercentile)) {
+    return FUMBLE_EFFECTS.HACK;
+  }
+  const found = EFFECTS_FUMBLE.find((element)=> (fumblePercentile <= element.max));
+  return found ? found.effect : FUMBLE_EFFECTS.HACK;
 };
 
 //-------------------------------------------------------------------------------------//

@@ -1,4 +1,4 @@
-import { ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD, DEFENSE_LUCK_RULES, LUCK_ATTACK_INCREEASE } from '../constants/combatRules.ts';
+import { ATTACK_LUCK_RULES, ATTACK_RULES_LUCK_MOD, DEFENSE_LUCK_RULES, LUCK_ATTACK_INCREASE } from '../constants/combatRules.ts';
 import { Die100 } from '../constants/dies.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { ATTACK_LUCK_EFFECTS, DEFENSE_LUCK_EFFECTS } from '../constants/game.ts';
@@ -137,7 +137,7 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
     
     const attackModIncrease = getValueFromRule(ATTACK_RULES_LUCK_MOD, roll);
     dealedDamage = Math.ceil(dealedDamage * attackModIncrease);
-    const increaseType = getIncreseType(roll);
+    const increaseType = getIncreaseType(roll);
     luckMessage = increaseType;
 
     break;
@@ -150,8 +150,8 @@ export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, w
   };
 
 };
-export const getIncreseType = (roll:number):string => {
-  const found = LUCK_ATTACK_INCREEASE.find((element)=> (roll <= element.max));
+export const getIncreaseType = (roll:number):string => {
+  const found = LUCK_ATTACK_INCREASE.find((element)=> (roll <= element.max));
   return found?.effect ?? LUCK_MESSAGE.ATTACK_INCREASE;
 };
 

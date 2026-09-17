@@ -7,9 +7,11 @@ import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
 import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
+import { BattleOutcome } from '../interfaces/BattleRewards.ts';
 import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
+import { sendBattleRewardsToWeb } from '../sockets/emits/game.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
-import { adjustAtributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getMaxWeaponDieRoll } from './attack.ts';
+import { adjustAttributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getMaxWeaponDieRoll } from './attack.ts';
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
@@ -148,8 +150,8 @@ export const attackFlow = (targetId: string) => {
   clearTimer();
 
   // Adjust player attributes
-  adjustAtributes(attacker);
-  adjustAtributes(target);
+  adjustAttributes(attacker);
+  adjustAttributes(target);
 
   // Get general variables.
   const attackRoll = getAttackRoll();
@@ -168,7 +170,7 @@ export const attackFlow = (targetId: string) => {
   const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
   const fumblePercentage = getFumblePercentage(attacker.attributes.CFP, successPercentage);
   const normalPercentage = successPercentage - criticalPercentage;
-  const failedPercentage = fumblePercentage - normalPercentage;
+  const failedPercentage = fumblePercentage - successPercentage;
 
   // Get the attack damage and attack type
   const attackerReduced = attackerReducedForAttack(attacker);
@@ -264,7 +266,25 @@ async function sendBattleWinners(kaotika: Player[], battleID: string | null) {
     });
     if (!response.ok) {
       console.error('Error sending winners to API:', response.statusText);
+      return;
     }
+
+    const json = await response.json();
+    if (!json || json.status !== 'OK' || !json.data) {
+      console.error('Unexpected battle rewards response:', json);
+      return;
+    }
+
+    const outcome: BattleOutcome = {
+      winner: 'Kaotika',
+      rewards: {
+        gold: json.data.gold,
+        experience: json.data.experience,
+        playerRewards: json.data.playerRewards,
+      },
+    };
+
+    sendBattleRewardsToWeb(outcome);
   } catch (error) {
     console.error('Error sending winners to API:', error);
   }

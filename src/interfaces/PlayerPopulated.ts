@@ -30,7 +30,7 @@ export interface PlayerPopulated {
   isBetrayer: boolean;
   equipment:{
     helmet: Helmet,
-    weapon: Weapon,
+    weapon: Weapon | null,
     armor: Armor,
     shield: Shield,
     artifact: Artifact,

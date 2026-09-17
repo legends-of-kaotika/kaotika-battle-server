@@ -32,9 +32,20 @@ export const fetchBattles = async () : Promise<Battle[]> => {
 export const getPlayerDataByEmail = async (email: string) : Promise<Player | null> => {
   try {
     const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/players/email/${email}/`);
+
+    if (!queryResponse.ok) {
+      console.error(`Error fetching player data for ${email}: ${queryResponse.status} ${queryResponse.statusText}`);
+      return null;
+    }
+
     const userData = await queryResponse.json();
-    if (userData.status === 'NOT FOUND'){
+    if (!userData || userData.status?.toUpperCase() === 'NOT FOUND') {
       console.log(`player with email: ${email} not found`);
+      return null;
+    }
+
+    if (!userData.data) {
+      console.log(`player with email: ${email} returned no data`);
       return null;
     }
 
