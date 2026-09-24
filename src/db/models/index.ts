@@ -10,3 +10,4 @@ export { Helmet } from './equipment.ts';
 export { Ring } from './equipment.ts';
 export { Weapon } from './equipment.ts';
 export { equipmentModels } from './equipment.ts';
+export { Ingredient, Skill } from './ingredient.ts';

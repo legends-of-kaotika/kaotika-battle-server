@@ -2,13 +2,12 @@ import { Mission, Npc } from '../db/models/index.ts';
 import type { Battle } from '../interfaces/Battles.ts';
 import type { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 
-const NPC_EQUIPMENT_PATHS = ['armor', 'weapon', 'artifact', 'ring', 'helmet', 'shield', 'boot'] as const;
+const NPC_EQUIPMENT_SLOTS = ['armor', 'weapon', 'artifact', 'ring', 'helmet', 'shield', 'boot'] as const;
+const npcEquipmentPaths = NPC_EQUIPMENT_SLOTS.map((slot) => `equipment.${slot}`);
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const populateNpc = async (npcId: unknown): Promise<any | null> => {
-  const npc: any = await Npc.findById(npcId).populate('profile').exec();
-  if (!npc) return null;
-  await Promise.all(NPC_EQUIPMENT_PATHS.map((path) => npc.populate(path, { profiles: 0 })));
+  const npc: any = await Npc.findById(npcId).populate('profile').populate(npcEquipmentPaths).exec();
   return npc;
 };
 
