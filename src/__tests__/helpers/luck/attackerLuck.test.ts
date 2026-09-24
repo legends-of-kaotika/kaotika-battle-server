@@ -39,7 +39,7 @@ describe('attackerLuck function', () => {
 
     expect(luckRolls).toHaveBeenCalledWith(attacker.attributes.charisma);
     expect(hasLuck).toHaveBeenCalledWith([10, 15]);
-    expect(applyAttackLuck).toHaveBeenCalledWith(baseDealedDamage, attackType, weaponRoll, attackPercentage, criticalPercentage, attacker, defender);
+    expect(applyAttackLuck).toHaveBeenCalledWith(baseDealedDamage, attackType, weaponRoll, attackPercentage, criticalPercentage, attacker);
     expect(result).toEqual({
       hasLuck: true,
       luckRolls: [10, 15],

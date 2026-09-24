@@ -1,9 +1,9 @@
-import { Attribute } from "../../../interfaces/Attribute.ts";
-import { calculateHitPoints } from "../../../helpers/player.ts";
+import { Attribute } from '../../../interfaces/Attribute.ts';
+import { calculateHitPoints } from '../../../helpers/player.ts';
 
-describe("Attribute calculation functions", () => {
-  describe("calculateHitPoints", () => {
-    it("should calculate player's HP appropriately", () => {
+describe('Attribute calculation functions', () => {
+  describe('calculateHitPoints', () => {
+    it('should calculate player\'s HP appropriately', () => {
       const attributes: Attribute = {
         constitution: 1,
         dexterity: 2,

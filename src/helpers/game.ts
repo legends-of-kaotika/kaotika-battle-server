@@ -8,6 +8,7 @@ import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
 import { BattleOutcome, PlayerReward } from '../interfaces/BattleRewards.ts';
+import { recordBattleOutcome } from '../services/battleRewardsService.ts';
 import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
 import { sendBattleRewardsToWeb } from '../sockets/emits/game.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
@@ -236,61 +237,38 @@ export const attackFlow = (targetId: string) => {
 };
 
 async function sendBattleResult(players: Player[], battleID: string | null, winner: string) {
-
-  if (!battleID) {
+  if (!battleID && winner !== 'dravokar') {
     console.error('No battleID assigned');
     return;
   }
 
   const parsedPlayers = parseWinners(players);
-  const body = {
-    players: parsedPlayers,
-    battleID,
-    winner
-  };
 
-  console.log('Sending battle result to API: ', body);
-
-  // Send the winners to the database
   try {
-    const response = await fetch(`${process.env.KAOTIKA_SERVER}/battle`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    if (!response.ok) {
-      console.error('Error sending winners to API:', response.statusText);
-      return;
-    }
+    const result = await recordBattleOutcome(parsedPlayers, battleID, winner);
 
-    const json = await response.json();
-    if (!json || json.status !== 'OK' || !json.data) {
-      console.error('Unexpected battle rewards response:', json);
+    if (!result || result.status !== 'OK' || !result.data) {
+      console.error('Unexpected battle rewards response:', result);
       return;
     }
 
     if (winner === 'dravokar') {
-      // Penalties are applied server-side (gold/item loss).
-      console.log('Battle penalties applied:', json.data.penalties);
+      console.log('Battle penalties applied:', result.data.penalties);
       return;
     }
 
-    const resolveItemImage = (image: string | undefined): string => {
-      if (!image) return '';
-      if (image.startsWith('http://') || image.startsWith('https://')) return image;
-      const base = (process.env.KAOTIKA_VERCEL || '').replace(/\/+$/, '');
-      const clean = image.replace(/^\/+/, '');
-      return `${base}/${clean}`;
+    const data = result.data as {
+      gold: number;
+      experience: number;
+      playerRewards?: PlayerReward[];
     };
 
     const outcome: BattleOutcome = {
       winner: 'Kaotika',
       rewards: {
-        gold: json.data.gold,
-        experience: json.data.experience,
-        playerRewards: (json.data.playerRewards || []).map((pr: PlayerReward) => ({
+        gold: data.gold,
+        experience: data.experience,
+        playerRewards: (data.playerRewards || []).map((pr) => ({
           ...pr,
           item: pr.item ? { ...pr.item, image: resolveItemImage(pr.item.image) } : pr.item,
         })),
@@ -299,9 +277,17 @@ async function sendBattleResult(players: Player[], battleID: string | null, winn
 
     sendBattleRewardsToWeb(outcome);
   } catch (error) {
-    console.error('Error sending winners to API:', error);
+    console.error('Error recording battle result:', error);
   }
 }
+
+const resolveItemImage = (image: string | undefined): string => {
+  if (!image) return '';
+  if (image.startsWith('http://') || image.startsWith('https://')) return image;
+  const base = (process.env.KAOTIKA_VERCEL || '').replace(/\/+$/, '');
+  const clean = image.replace(/^\/+/, '');
+  return `${base}/${clean}`;
+};
 
 function parseWinners(kaotika: Player[] ): { email: string; isAlive: boolean; }[] {
 

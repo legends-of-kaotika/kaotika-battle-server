@@ -1,4 +1,4 @@
-import { Weapon } from "./Weapon.ts";
+import { Weapon } from './Weapon.ts';
 
 export interface ReducedAttacker {
   attributes: {

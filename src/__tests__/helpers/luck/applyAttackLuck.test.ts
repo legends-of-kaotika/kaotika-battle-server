@@ -12,30 +12,28 @@ jest.mock('../../../constants/dies.ts', () => ({
 describe('applyAttackLuck', () => {
 
   let attacker: Player;
-  let defender: Player;
 
   beforeEach(() => {
     jest.clearAllMocks();
     attacker = playerMock;
-    defender = playerMock;
   });
   
   it('should execute no effect case when number is below 15', () => {
     (Die100.roll as jest.Mock).mockReturnValue(12); 
-    const result = applyAttackLuck(40, 'NORMAL', 30, 15, 30, attacker, defender);
+    const result = applyAttackLuck(40, 'NORMAL', 30, 15, 30, attacker);
     expect(result).toEqual({luckMessage: 'The luck roll has no effect', dealedDamage: 40});
   });
   
   it('should increase normal attack damage if roll is between 15-59 with slight increase when roll <= 35', () => {
     (Die100.roll as jest.Mock).mockReturnValue(30); 
-    const result = applyAttackLuck(8, 'NORMAL', 20, 15, 30, attacker, defender);
+    const result = applyAttackLuck(8, 'NORMAL', 20, 15, 30, attacker);
     expect(result).toEqual({luckMessage: 'The attack has been increased slightly', dealedDamage: 13});
   });
 
   it('should increase normal attack damage if roll is between 15-59 with slight increase when roll <= 35', () => {
     (Die100.roll as jest.Mock).mockReturnValue(30); 
     attacker.attributes.attack = 65;
-    const result = applyAttackLuck(20, 'NORMAL', 20, 15, 30, attacker, defender);
+    const result = applyAttackLuck(20, 'NORMAL', 20, 15, 30, attacker);
     expect(result).toEqual({luckMessage: 'The attack has been increased slightly', dealedDamage: 32});
   });
 
@@ -43,20 +41,20 @@ describe('applyAttackLuck', () => {
     
     (Die100.roll as jest.Mock).mockReturnValue(75); 
     
-    const failedAttackLuck = applyAttackLuck(0, 'FAILED', 20, 15, 30, attacker, defender);
+    const failedAttackLuck = applyAttackLuck(0, 'FAILED', 20, 15, 30, attacker);
     expect(failedAttackLuck).toEqual({ dealedDamage: 0, luckMessage: 'The luck roll has no effect' });
 
-    const fumbleAttackLuck = applyAttackLuck(10, 'FUMBLE', 20, 15, 30, attacker, defender);
+    const fumbleAttackLuck = applyAttackLuck(10, 'FUMBLE', 20, 15, 30, attacker);
     expect(fumbleAttackLuck).toEqual({ dealedDamage: 10, luckMessage: 'The luck roll has no effect' });
     
-    const normalAttackLuck = applyAttackLuck(20, 'CRITICAL', 20, 15, 30, attacker, defender);
+    const normalAttackLuck = applyAttackLuck(20, 'CRITICAL', 20, 15, 30, attacker);
     expect(normalAttackLuck).toEqual({ dealedDamage: 20, luckMessage: 'The luck roll has no effect' });
 
   });
 
   it('should transform a normal attack into a critical if roll is between 59-80', () => {
     (Die100.roll as jest.Mock).mockReturnValue(75); 
-    const result = applyAttackLuck(100, 'NORMAL', 20, 15, 30, attacker, defender);
+    const result = applyAttackLuck(100, 'NORMAL', 20, 15, 30, attacker);
     expect(result.luckMessage).toBe('The attack has been transformed into critical');
     expect(result.dealedDamage).toBeGreaterThanOrEqual(213);
     expect(result.dealedDamage).toBeLessThanOrEqual(713);
@@ -64,7 +62,7 @@ describe('applyAttackLuck', () => {
 
   it('should make the attacker start first the next round if roll is over 84', () => {
     (Die100.roll as jest.Mock).mockReturnValue(85); 
-    const result = applyAttackLuck(20, 'NORMAL', 20, 15, 30, attacker, defender);
+    const result = applyAttackLuck(20, 'NORMAL', 20, 15, 30, attacker);
     expect(result).toEqual({ dealedDamage: 20, luckMessage: 'The player will start first in the next round' });
   });
  

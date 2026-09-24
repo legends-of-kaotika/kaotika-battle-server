@@ -1,63 +1,37 @@
-
+import { getPlayerByEmail } from '../services/playerRetrievalService.ts';
+import { getMissions } from '../services/missionService.ts';
+import { Battle } from '../interfaces/Battles.ts';
 import { Player } from '../interfaces/Player.ts';
 import { parsePlayerData } from './player.ts';
-import { Battle } from '../interfaces/Battles.ts';
 
-export const fetchBattles = async () : Promise<Battle[]> => {
+export const fetchBattles = async (): Promise<Battle[]> => {
   try {
-
-    console.log('fetching missions');
-    
-    const request = await fetch(`${process.env.KAOTIKA_SERVER}/missions`);
-    const response = await request.json();
-
-    if (response.status !== 'OK') {
+    const battles = await getMissions();
+    if (!battles || !Array.isArray(battles) || battles.length === 0) {
       throw new Error('Error fetching battles.');
     }
-    
-    const battlesData = response.data;
-
-    if (!battlesData || !Array.isArray(battlesData)) {
-      throw new Error('Error fetching battles.');
-    }
-
-    return battlesData;
-
+    return battles;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
-export const getPlayerDataByEmail = async (email: string) : Promise<Player | null> => {
+export const getPlayerDataByEmail = async (email: string): Promise<Player | null> => {
   try {
-    const queryResponse = await fetch(`${process.env.KAOTIKA_SERVER}/players/email/${email}/`);
-
-    if (!queryResponse.ok) {
-      console.error(`Error fetching player data for ${email}: ${queryResponse.status} ${queryResponse.statusText}`);
-      return null;
-    }
-
-    const userData = await queryResponse.json();
-    if (!userData || userData.status?.toUpperCase() === 'NOT FOUND') {
+    const populated = await getPlayerByEmail(email);
+    if (!populated) {
       console.log(`player with email: ${email} not found`);
       return null;
     }
 
-    if (!userData.data) {
-      console.log(`player with email: ${email} returned no data`);
-      return null;
-    }
-
-    const user = parsePlayerData(userData.data);
+    const user = parsePlayerData(populated);
     console.log('New User Created:');
     console.log('Email: ', email);
     console.log('Role: ', user.role);
-
     return user;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-

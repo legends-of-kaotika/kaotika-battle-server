@@ -21,8 +21,8 @@ Global game state is primarily managed within [`src/game.ts`](src/game.ts). Key 
 
 - `GAME_USERS: Player[]`: Array of all players (including NPCs) currently in a game session. The player data will be updated in this array (HP, attributes, etc.)
 - `CONNECTED_USERS: Player[]`: Array of all players currently connected to the server via Socket.IO (this array is not directly related to the battle data).
-- `NPCS: Player[]`: Array of Non-Player Characters participating in the battle. They are fetched from the Kaotika's server. Each battle type has its own NPCs.
-- `BATTLES: Battle[]`: Array holding data defined battle scenarios. They are fetched from Kaotika's server.
+- `NPCS: Player[]`: Array of Non-Player Characters participating in the battle. They are loaded from MongoDB (profile `Kaotika`). Each battle type has its own NPCs.
+- `BATTLES: Battle[]`: Array holding data defined battle scenarios. They are loaded from MongoDB (missions collection).
 - `turn: number`: Current turn number in the round.
 - `round: number`: Current round number in the game.
 - `currentPlayer: Player | null`: The player whose turn it currently is.
@@ -36,7 +36,7 @@ Functions in this file allow for modification of these state variables (e.g., `s
 
 The player's data and its transformation are central to the game.
 
-- **Interfaces**: [`src/interfaces/PlayerPopulated.ts`](src/interfaces/PlayerPopulated.ts) defines the raw player data structure from Kaotika's API. [`src/interfaces/Player.ts`](src/interfaces/Player.ts) defines the in-game player object used during battles. [`src/interfaces/Attribute.ts`](src/interfaces/Attribute.ts) defines player statistics.
+- **Interfaces**: [`src/interfaces/PlayerPopulated.ts`](src/interfaces/PlayerPopulated.ts) defines the raw player data structure loaded from MongoDB. [`src/interfaces/Player.ts`](src/interfaces/Player.ts) defines the in-game player object used during battles. [`src/interfaces/Attribute.ts`](src/interfaces/Attribute.ts) defines player statistics.
 - **Data Parsing ([`src/helpers/player.ts`](src/helpers/player.ts) -> `parsePlayerData()`):**
   1.  Takes `PlayerPopulated` data as input.
   2.  **Base Attributes Calculation**: `calculateBaseAttributes()` sums the player's inherent stats with modifiers from all equipped items (weapon, armor, shield, etc.) to get the _base combat attributes_.
@@ -63,7 +63,7 @@ This section details the progression of a game session, reflecting the login and
 
 2. **Fetching Available Battles (Missions)**
    - If the logged player is Mortimer or Villain, the mobile client emits `mobile-getBattles` to request the list of available missions (battles).
-   - The server fetches battles from the Kaotika API (`GET /api/v1/mission/all`), stores them in a global variable, and emits `battles` with the array of available battles to mortimer or villain so they can select one.
+   - The server loads missions directly from MongoDB (`missionService.getMissions`), stores them in a global variable, and emits `battles` with the array of available battles to mortimer or villain so they can select one.
 
 3. **Mission Selection or Creation**
    - When a Mortimer or Villain selects a mission, the mobile client emits `mobile-selectedBattle` with the chosen battle ID.
@@ -254,3 +254,18 @@ All Socket.IO events are defined in [[`src/constants/sockets.ts`](src/constants/
 - **[`src/constants/messages.ts`](src/constants/messages.ts)**: User-facing messages for luck and fumble outcomes.
 - **[`src/constants/game.ts`](src/constants/game.ts)**: Game-specific constants like `TURN_TIMER`.
 - **[`src/interfaces/`](src/interfaces/)**: This directory contains all TypeScript interfaces defining the shape of data objects like `Player.ts`, `Attribute.ts`, `Equipment.ts`, `AttackJson.ts`, `Luck.ts`, `Fumble.ts`, `Battles.ts`, etc. Understanding these is key to understanding data flow.
+
+## Environment
+
+Required variables (`.env`):
+
+| Variable | Description |
+| --- | --- |
+| `MONGODB_ROUTE` | MongoDB connection string (database `Kaotika`) |
+| `KAOTIKA_VERCEL` | Base URL used to resolve relative asset paths (images/avatars) |
+| `ISTVAN_EMAIL` | Email that grants the `istvan` role |
+| `MORTIMER_EMAIL` | Email that grants the `mortimer` role |
+| `VILLAIN_EMAIL` | Email that grants the `villain` role |
+| `PORT` | HTTP/Socket port (default `3000`) |
+
+Optional variables for level-up emails (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`). When missing, the level-up email fails and is logged; the battle continues.

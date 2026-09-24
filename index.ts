@@ -5,6 +5,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { socketHandlers } from './src/sockets/handlers.ts';
+import { connectDatabase } from './src/db/connection.ts';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +52,7 @@ async function start() {
   // Start server only if NOT in test mode
   if (process.env.NODE_ENV !== 'test') {
     try {
+      await connectDatabase();
       await startServer(Number(PORT));
     } catch (error) {
       console.log(`Error starting the server: ${(error as Error).message}`);

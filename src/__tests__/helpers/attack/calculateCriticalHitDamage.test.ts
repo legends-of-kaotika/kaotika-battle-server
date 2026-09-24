@@ -1,5 +1,5 @@
 import { calculateCriticalHitDamage } from '../../../helpers/attack.ts';
-import { gamePlayerMock } from "./../../../__mocks__/game/gamePlayerMock.ts";
+import { gamePlayerMock } from './../../../__mocks__/game/gamePlayerMock.ts';
 
 describe('calculateCriticalHitDamage', () => {
 
@@ -7,7 +7,7 @@ describe('calculateCriticalHitDamage', () => {
     const result1 = calculateCriticalHitDamage(10, 5, 2, 1, gamePlayerMock.equipment.weapon);
     const result2 = calculateCriticalHitDamage(25, 30, 1, 0, gamePlayerMock.equipment.weapon);
     const result3 = calculateCriticalHitDamage(0, 0, 0, 0, gamePlayerMock.equipment.weapon);
-    const result4 = calculateCriticalHitDamage(50, 80, 5, 0, gamePlayerMock.equipment.weapon)
+    const result4 = calculateCriticalHitDamage(50, 80, 5, 0, gamePlayerMock.equipment.weapon);
     expect(result1).toBeGreaterThanOrEqual(110);
     expect(result1).toBeLessThanOrEqual(410);
     expect(result2).toBeGreaterThanOrEqual(125);

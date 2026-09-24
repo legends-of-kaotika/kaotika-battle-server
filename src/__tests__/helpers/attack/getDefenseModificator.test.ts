@@ -1,5 +1,5 @@
-import { getDefenseModificator } from "../../../helpers/attack"
-import { weapon } from "../../../__mocks__/attack/weapon.ts";
+import { getDefenseModificator } from '../../../helpers/attack';
+import { weapon } from '../../../__mocks__/attack/weapon.ts';
 
 
 describe('getDefenseModificator', () => {
@@ -46,8 +46,8 @@ describe('getDefenseModificator', () => {
         it('mult should not be null', () => {
           const mult = getDefenseModificator(defense, weaponRoll, attackAttribute, weapon);
           expect(mult).not.toBeNull();
-        })
-      })
+        });
+      });
     }
   });
 
@@ -57,7 +57,7 @@ describe('getDefenseModificator', () => {
         { attack: 1, weaponRoll: 34, defense: 500 },
         { attack: 1, weaponRoll: 24, defense: 400 },
         { attack: 1, weaponRoll: 14, defense: 300 },
-      ]
+      ];
 
       for (let i = 0; i < minDamageChance50.length; i++) {
         const defense = minDamageChance50[i].defense;
@@ -65,11 +65,11 @@ describe('getDefenseModificator', () => {
         const attackAttribute = minDamageChance50[i].attack;
 
 
-        it("mult should not be null", () => {
+        it('mult should not be null', () => {
           const mult = getDefenseModificator(defense, weaponRoll, attackAttribute, weapon);
 
           expect(mult).not.toBeNull();
-        })
+        });
       }
     });
     describe('cases where weaponRoll is <50% of weaponMaxRoll', () => {
@@ -78,26 +78,26 @@ describe('getDefenseModificator', () => {
         { attack: 32, weaponRoll: 1, defense: 500 },
         { attack: 32, weaponRoll: 1, defense: 400 },
         { attack: 32, weaponRoll: 1, defense: 300 },
-      ]
+      ];
 
       for (let i = 0; i < minDamageChance50.length; i++) {
         const defense = minDamageChance50[i].defense;
         const weaponRoll = minDamageChance50[i].weaponRoll;
         const attackAttribute = minDamageChance50[i].attack;
 
-        it("mult should be null", () => {
+        it('mult should be null', () => {
           const mult = getDefenseModificator(defense, weaponRoll, attackAttribute, weapon);
           expect(mult).toBeNull();
-        })
+        });
       }
-    })
-  })
+    });
+  });
   describe('cases where minDamageChance is 30,', () => {
     describe('cases where weaponRoll is >=30% of weaponMaxRoll', () => {
       const minDamageChance30 = [
         { attack: 20, weaponRoll: 34, defense: 500 },
         { attack: 20, weaponRoll: 24, defense: 500 },
-      ]
+      ];
 
       for (let i = 0; i < minDamageChance30.length; i++) {
         const defense = minDamageChance30[i].defense;
@@ -105,31 +105,31 @@ describe('getDefenseModificator', () => {
         const attackAttribute = minDamageChance30[i].attack;
 
 
-        it("mult should not be null", () => {
+        it('mult should not be null', () => {
           const mult = getDefenseModificator(defense, weaponRoll, attackAttribute, weapon);
 
           expect(mult).not.toBeNull();
-        })
+        });
       }
     });
     describe('cases where weaponRoll is <30% of weaponMaxRoll', () => {
       const minDamageChance30 = [
         { attack: 32, weaponRoll: 6, defense: 600 },
         { attack: 32, weaponRoll: 6, defense: 500 },
-      ]
+      ];
 
       for (let i = 0; i < minDamageChance30.length; i++) {
         const defense = minDamageChance30[i].defense;
         const weaponRoll = minDamageChance30[i].weaponRoll;
         const attackAttribute = minDamageChance30[i].attack;
 
-        it("mult should be null", () => {
+        it('mult should be null', () => {
           const mult = getDefenseModificator(defense, weaponRoll, attackAttribute, weapon);
           expect(mult).toBeNull();
-        })
+        });
       }
-    })
-  })
+    });
+  });
   describe('cases where minDamageChance is 0', () => {
     const minDamageChance0 = [
       { attack: 5, weaponRoll: 5, defense: 600 },
@@ -149,9 +149,9 @@ describe('getDefenseModificator', () => {
         it('mult should be null', () => {
           const mult = getDefenseModificator(defense, weaponRoll, attackAttribute, weapon);
           expect(mult).toBeNull();
-        })
-      })
+        });
+      });
     }
   });
 
-})
+});

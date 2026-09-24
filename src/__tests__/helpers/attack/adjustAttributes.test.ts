@@ -1,8 +1,8 @@
-import { adjustAttributes } from "../../../helpers/attack.ts";
-import { Player } from "../../../interfaces/Player.ts";
+import { adjustAttributes } from '../../../helpers/attack.ts';
+import { Player } from '../../../interfaces/Player.ts';
 
-describe("adjustAttributes", () => {
-  it("should round all attributes to integers", () => {
+describe('adjustAttributes', () => {
+  it('should round all attributes to integers', () => {
     const player: Player = {
       attributes: {
         intelligence: 10.7,
@@ -37,7 +37,7 @@ describe("adjustAttributes", () => {
     expect(player.attributes.resistance).toBe(5);
   });
 
-  it("should enforce minimum value rules", () => {
+  it('should enforce minimum value rules', () => {
     const player: Player = {
       attributes: {
         intelligence: -5,
@@ -71,7 +71,7 @@ describe("adjustAttributes", () => {
     expect(player.attributes.resistance).toBe(1);
   });
 
-  it("should enforce minimum and maximum values for insanity", () => {
+  it('should enforce minimum and maximum values for insanity', () => {
     const player: Player = {
       attributes: {
         insanity: -10,

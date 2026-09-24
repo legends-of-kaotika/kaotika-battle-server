@@ -9,13 +9,13 @@ jest.mock('./../../../helpers/attack.ts', () => ({
 
 describe('attack function', () => {
   const attacker = {
-  attributes: {
-    BCFA: GAME_USERS_MOCK[0].base_attributes.BCFA,
-    attack: GAME_USERS_MOCK[0].base_attributes.attack,
-    charisma: GAME_USERS_MOCK[0].base_attributes.charisma
-  },
-  weapon: GAME_USERS_MOCK[0].equipment.weapon
-};
+    attributes: {
+      BCFA: GAME_USERS_MOCK[0].base_attributes.BCFA,
+      attack: GAME_USERS_MOCK[0].base_attributes.attack,
+      charisma: GAME_USERS_MOCK[0].base_attributes.charisma
+    },
+    weapon: GAME_USERS_MOCK[0].equipment.weapon
+  };
 
   const target = GAME_USERS_MOCK[1];
   beforeEach(() => {

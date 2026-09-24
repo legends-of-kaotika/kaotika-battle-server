@@ -1,4 +1,4 @@
-import { Equipment } from "./Equipment.ts";
+import { Equipment } from './Equipment.ts';
 
 export type LuckAttacker = {
     _id: string,

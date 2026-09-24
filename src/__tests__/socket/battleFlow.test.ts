@@ -15,6 +15,10 @@ jest.mock('../../helpers/api.ts', () => ({
   getPlayerDataByEmail: jest.fn(),
 }));
 
+jest.mock('../../services/battleRewardsService.ts', () => ({
+  recordBattleOutcome: jest.fn(),
+}));
+
 jest.mock('../../timer/timer.ts', () => ({
   turnTime: 30,
   startTimer: jest.fn(),
@@ -181,7 +185,7 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     setSelectedBattleId(battles[0]._id);
 
     const rewardsData = {
-      status: 'OK',
+      status: 'OK' as const,
       data: {
         gold: 300,
         experience: 1500,
@@ -196,10 +200,8 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
       },
     };
 
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: async () => rewardsData,
-    }) as any;
+    const { recordBattleOutcome } = jest.requireMock('../../services/battleRewardsService.ts');
+    (recordBattleOutcome as jest.Mock).mockResolvedValue(rewardsData);
 
     const gameEnd = waitFor<string>(web, SOCKETS.GAME_END);
     const battleRewards = waitFor<any>(web, SOCKETS.WEB_BATTLE_REWARDS);

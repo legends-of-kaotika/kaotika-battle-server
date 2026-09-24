@@ -96,14 +96,14 @@ export const attackerLuck = ( attacker: LuckAttacker,
   const attackerHasLuck = hasLuck(attackerLuckRolls);
 
   if (attackerHasLuck) {
-    const {dealedDamage, luckMessage} = applyAttackLuck(baseDealedDamage, attackType, weaponRoll, attackPercentage, criticalPercentage, attacker, defender);
+    const {dealedDamage, luckMessage} = applyAttackLuck(baseDealedDamage, attackType, weaponRoll, attackPercentage, criticalPercentage, attacker);
     return { hasLuck: attackerHasLuck, luckRolls: attackerLuckRolls, luckMessage, dealedDamage };
   }
 
   return { hasLuck: attackerHasLuck, luckRolls: attackerLuckRolls, dealedDamage: baseDealedDamage, luckMessage: LUCK_MESSAGE.ATTACKER_NO_LUCK};
 };
 
-export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number, attacker: LuckAttacker, defender: LuckDefender): ApplyLuck => {
+export const applyAttackLuck = (dealedDamage: number, attackType: AttackTypes, weaponRoll: number, attackPercentage: number, criticalPercentage: number, attacker: LuckAttacker): ApplyLuck => {
 
   const roll = Die100.roll();
   let luckMessage = LUCK_MESSAGE.NO_EFFECT;

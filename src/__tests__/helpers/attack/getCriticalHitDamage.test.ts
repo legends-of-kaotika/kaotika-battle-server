@@ -1,5 +1,5 @@
 import { getCriticalHitDamage } from '../../../helpers/attack.ts';
-import { gamePlayerMock } from "./../../../__mocks__/game/gamePlayerMock.ts"
+import { gamePlayerMock } from './../../../__mocks__/game/gamePlayerMock.ts';
 
 describe('getCriticalHitDamage', () => {
   it('should calculate the critical hit damage correctly', () => {
@@ -10,7 +10,7 @@ describe('getCriticalHitDamage', () => {
     expect(result1).toBeLessThanOrEqual(650);
     expect(result2).toBeGreaterThanOrEqual(200);
     expect(result2).toBeLessThanOrEqual(700);
-    expect(result3).toBeGreaterThanOrEqual(186)
+    expect(result3).toBeGreaterThanOrEqual(186);
     expect(result3).toBeLessThanOrEqual(686);
   });
 
