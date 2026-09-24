@@ -112,5 +112,5 @@
     "src/**/*", // You can keep this as it is
     "index.ts" // <-- Add the root file here
   ],
-  "exclude": ["node_modules", "src/__tests__"]
+  "exclude": ["node_modules", "**/__tests__", "**/*.test.ts"]
 }
