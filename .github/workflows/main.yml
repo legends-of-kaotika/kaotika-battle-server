@@ -8,25 +8,49 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    concurrency:
+      group: kaotika-battle-server-production
+      cancel-in-progress: true
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create .env file from GitHub secret
-        run: echo "${{ secrets.MOBILE_ENV_FILE }}" > .env
+      - name: Create runtime environment file
+        env:
+          ENV_FILE: ${{ secrets.MOBILE_ENV_FILE }}
+        run: printf '%s' "$ENV_FILE" > .env
 
-      - name: Pull latest changes
-        run: git pull origin main
+      - name: Validate deployment secrets
+        env:
+          MONGODB_ROUTE: ${{ secrets.MONGODB_ROUTE }}
+        run: |
+          if [ -z "$MONGODB_ROUTE" ]; then
+            echo "MONGODB_ROUTE GitHub secret is required"
+            exit 1
+          fi
 
       - name: Build and restart Docker container
+        env:
+          MONGODB_ROUTE: ${{ secrets.MONGODB_ROUTE }}
+          CONTAINER_NAME: kaotika-battle-server
         run: |
-          cd $GITHUB_WORKSPACE
-          if [ $(docker ps -aq -f name=$CONTAINER_NAME) ]; then
-            docker rm -f $CONTAINER_NAME
-          fi
           docker compose -f docker-compose.yml build server
+          docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
           docker compose -f docker-compose.yml up -d server
 
-      - name: Clean up
-        run: echo "Deployment complete."
+      - name: Verify deployment
+        run: |
+          for attempt in {1..12}; do
+            if curl --fail --silent http://localhost:3000/health >/dev/null; then
+              echo "Deployment healthy"
+              exit 0
+            fi
+            sleep 5
+          done
+          docker logs kaotika-battle-server
+          exit 1
+
+      - name: Remove runtime environment file
+        if: always()
+        run: rm -f .env

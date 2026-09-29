@@ -275,6 +275,11 @@ Required variables (`.env`):
 
 Optional variables for level-up emails (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`). When missing, the level-up email fails and is logged; the battle continues.
 
+Production deployment reads `MONGODB_ROUTE` from the GitHub Actions secret of
+the same name and passes it directly to Docker Compose. Other runtime settings
+continue to come from `MOBILE_ENV_FILE`; the checkout copy is removed after
+every deployment.
+
 ### Web State Sync
 
 After successful `web-sendSocketId`, the server emits `web-syncState` and includes the same snapshot as `response.state` in the acknowledgement. A registered web socket can request it again by emitting `web-syncState` with an acknowledgement callback.
