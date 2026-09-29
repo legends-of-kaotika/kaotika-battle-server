@@ -18,11 +18,14 @@ export const getMissions = async (): Promise<Battle[]> => {
   const missions = await Mission.find().exec();
   return missions.map((mission) => {
     const plain = mission.toObject() as unknown as Battle & { enemies: unknown[] };
+    plain._id = String(plain._id);
     const missingNpcIds: string[] = [];
     plain.enemies = plain.enemies.map((enemyId) => {
       const npc = npcsPopulated.find((candidate) => candidate && String(candidate._id) === String(enemyId));
       if (!npc) missingNpcIds.push(String(enemyId));
-      return npc as PlayerPopulated;
+      if (!npc) return npc as PlayerPopulated;
+      const npcData = typeof npc.toObject === 'function' ? npc.toObject() : npc;
+      return { ...npcData, _id: String(npcData._id) } as PlayerPopulated;
     });
     if (missingNpcIds.length > 0) {
       throw new Error(`Mission ${String(plain._id)} references missing NPCs: ${missingNpcIds.join(', ')}`);
