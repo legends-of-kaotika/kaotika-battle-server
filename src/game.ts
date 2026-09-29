@@ -89,6 +89,14 @@ export const claimActionCompletion = (targetId: string): number | null => {
   return claimTurnAdvance(actionTurn) ? actionTurn : null;
 };
 
+export const cancelPendingAction = (): void => {
+  pendingAction = null;
+  if (actionTimeout) clearTimeout(actionTimeout);
+  actionTimeout = undefined;
+};
+
+export const getPendingActionTargetId = (): string | null => pendingAction?.targetId ?? null;
+
 export const beginGameEnd = (generation: number): boolean => {
   if (generation !== gameGeneration || endingGeneration === generation) return false;
   endingGeneration = generation;

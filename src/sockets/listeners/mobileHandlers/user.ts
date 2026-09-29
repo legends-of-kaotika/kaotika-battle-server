@@ -65,9 +65,6 @@ export const mobileUserHandlers = (socket: Socket): void => {
       return;
     }
 
-    const reconnectingPlayer = GAME_USERS.find((player) => player.email.trim().toLowerCase() === verifiedEmail);
-    if (reconnectingPlayer) cancelDisconnectGrace(reconnectingPlayer._id);
-
     const playerData = await getPlayerDataByEmail(verifiedEmail);
     if (!playerData) {
       callback({ status: 'FAILED', error: `No player found for email ${email}.` });
@@ -78,25 +75,23 @@ export const mobileUserHandlers = (socket: Socket): void => {
       return;
     }
 
-    cancelDisconnectGrace(playerData._id);
-
     const existingIndex = CONNECTED_USERS.findIndex((user) => user._id === playerData._id);
     const existingPlayer = CONNECTED_USERS[existingIndex];
     if (existingPlayer && existingPlayer.socketId !== socket.id && io.sockets.sockets.has(existingPlayer.socketId)) {
       callback({ status: 'FAILED', error: 'Player already logged in.' });
       return;
     }
-    if (existingIndex !== -1) CONNECTED_USERS.splice(existingIndex, 1);
-    playerData.socketId = socket.id;
-    CONNECTED_USERS.push(playerData);
-
     const gamePlayer = GAME_USERS.find((player) => player._id === playerData._id);
-    if (gamePlayer) gamePlayer.socketId = socket.id;
+    const activePlayer = gamePlayer ?? playerData;
+    if (existingIndex !== -1) CONNECTED_USERS.splice(existingIndex, 1);
+    activePlayer.socketId = socket.id;
+    CONNECTED_USERS.push(activePlayer);
+    cancelDisconnectGrace(activePlayer._id);
 
-    bindPlayerToSocket(socket, playerData);
+    bindPlayerToSocket(socket, activePlayer);
     socket.join(SOCKETS.MOBILE);
     printUsers();
-    callback({ status: 'OK', player: playerData });
+    callback({ status: 'OK', player: activePlayer });
   });
 
   socket.on(SOCKETS.MOBILE_GAME_START, (callback?: SocketAck) => {

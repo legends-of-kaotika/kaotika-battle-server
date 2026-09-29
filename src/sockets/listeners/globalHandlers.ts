@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import { DISCONNECT } from '../../constants/sockets.ts';
-import { CONNECTED_USERS, GAME_USERS, claimTurnAdvance, currentPlayer, isGameStarted, setWebSocket, target, turnGeneration, webSocketId } from '../../game.ts';
-import { changeTurn, handleGameEnd, isGameEnded } from '../../helpers/game.ts';
+import { CONNECTED_USERS, GAME_USERS, claimTurnAdvance, currentPlayer, getPendingActionTargetId, isAttackPending, isGameStarted, setWebSocket, target, turnGeneration, webSocketId } from '../../game.ts';
+import { changeTurn, completeAttackTurn, handleGameEnd, isGameEnded } from '../../helpers/game.ts';
 import { findPlayerBySocketId, removePlayerConnected, removePlayerFromGameUsersById } from '../../helpers/player.ts';
 import { sleep } from '../../helpers/utils.ts';
 import { sendWebTurnFinished } from '../emits/game.ts';
@@ -21,9 +21,16 @@ export const globalHandlers = (socket: Socket): void => {
     if (player && isGameStarted) {
       removePlayerConnected(socket, true);
       scheduleDisconnectGrace(player._id, socket.id, async () => {
-        const gamePlayer = GAME_USERS.find((candidate) => candidate._id === player._id);
+        let gamePlayer = GAME_USERS.find((candidate) => candidate._id === player._id);
         const reconnected = CONNECTED_USERS.some((candidate) => candidate._id === player._id);
         if (!gamePlayer || gamePlayer.socketId !== socket.id || reconnected) return;
+
+        if (isAttackPending()) {
+          const pendingTargetId = getPendingActionTargetId();
+          if (pendingTargetId) await completeAttackTurn(pendingTargetId);
+          gamePlayer = GAME_USERS.find((candidate) => candidate._id === player._id);
+          if (!gamePlayer) return;
+        }
 
         removePlayerFromGameUsersById(player._id);
         sendPlayerRemoved(player._id);

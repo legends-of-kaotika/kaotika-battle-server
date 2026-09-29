@@ -1,4 +1,5 @@
 import { Socket } from 'socket.io';
+import { io } from '../../../../index.ts';
 import { WEB_ATTACK_ANIMATION_END, WEB_SEND_SOCKET_ID, WEB_SEND_USERS, WEB_SYNC_STATE } from '../../../constants/sockets.ts';
 import { GAME_USERS, currentPlayer, gameGeneration, isAttackPending, isGameCreated, isGameStarted, round, selectedBattleId, setWebSocket, target, webSocketId } from '../../../game.ts';
 import { findResolvedBattleById, parseWebBattleData } from '../../../helpers/battle.ts';
@@ -33,8 +34,7 @@ const sendSyncState = (socket: Socket, callback?: SocketAck): void => {
 export const webUserHandlers = (socket: Socket): void => {
   socket.on(WEB_SEND_SOCKET_ID, (callback?: SocketAck) => {
     if (webSocketId && webSocketId !== socket.id) {
-      reject(WEB_SEND_SOCKET_ID, callback, 'A web socket is already registered.');
-      return;
+      io.sockets.sockets.get(webSocketId)?.disconnect(true);
     }
     registerWebSocket(socket);
     setWebSocket(socket.id);

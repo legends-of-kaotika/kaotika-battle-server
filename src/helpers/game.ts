@@ -1,7 +1,7 @@
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { ACTION_FALLBACK_MS } from '../constants/game.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
-import { GAME_USERS, KILLED_PLAYERS, beginAction, beginGameEnd, beginTurn, claimActionCompletion, currentPlayer, gameGeneration, increaseTurn, resetInitialGameValues, scheduleActionFallback, selectedBattleId, setCurrentPlayer, setTarget, target, turn, turnGeneration, updatePendingActionTarget } from '../game.ts';
+import { GAME_USERS, KILLED_PLAYERS, beginAction, beginGameEnd, beginTurn, cancelPendingAction, claimActionCompletion, currentPlayer, gameGeneration, increaseTurn, resetInitialGameValues, scheduleActionFallback, selectedBattleId, setCurrentPlayer, setTarget, target, turn, turnGeneration, updatePendingActionTarget } from '../game.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
@@ -42,6 +42,11 @@ export const changeTurn = async (expectedTurnGeneration?: number, advanceAlready
   if (expectedTurnGeneration !== undefined && expectedTurnGeneration !== turnGeneration) return;
   if (expectedTurnGeneration !== undefined && !advanceAlreadyClaimed) return;
 
+  if (isGameEnded()) {
+    await handleGameEnd();
+    return;
+  }
+
   increaseTurn();
   const nextPlayer = GAME_USERS[turn];
   if (!nextPlayer) return;
@@ -56,10 +61,6 @@ export const changeTurn = async (expectedTurnGeneration?: number, advanceAlready
       void Promise.resolve(npcAttack()).catch((error) => console.error('NPC action failed:', error));
     }
   }
-  if (isGameEnded()) {
-    await handleGameEnd();
-  }
-
 };
 
 // Returns true if any of the sides has no players
@@ -173,102 +174,119 @@ export const attackFlow = (targetId: string): boolean => {
     return false;
   }
 
-  console.log('Attacker: ', attacker.nickname);
-  console.log('Target: ', target.nickname);
+  let damageApplied = false;
+  try {
 
-  // Pause the timer when a player attacks.
-  clearTimer();
+    console.log('Attacker: ', attacker.nickname);
+    console.log('Target: ', target.nickname);
 
-  // Adjust player attributes
-  adjustAttributes(attacker);
-  adjustAttributes(target);
+    // Pause the timer when a player attacks.
+    clearTimer();
 
-  // Get general variables.
-  const attackRoll = getAttackRoll();
-  const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
-  const maxWeaponRoll = getMaxWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier); //Get max weapon roll possible
-  const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.intelligence, attacker.attributes.charisma);
-  let dealedDamage: number = 0;
-  let dealedObjectDamage: DealedDamage | null = null;
-  let fumble: Fumble | null = null;
-  let attackerLuckResult: Luck | null = null;
-  let defenderLuckResult: Luck | null = null;
-  let fumbleToWeb: FumbleWeb | null = null;
+    // Adjust player attributes
+    adjustAttributes(attacker);
+    adjustAttributes(target);
+
+    // Get general variables.
+    const attackRoll = getAttackRoll();
+    const weaponRoll = getWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier);
+    const maxWeaponRoll = getMaxWeaponDieRoll(attacker.equipment.weapon.die_num, attacker.equipment.weapon.die_faces, attacker.equipment.weapon.die_modifier); //Get max weapon roll possible
+    const successPercentage = getSuccessPercentage(attacker.equipment.weapon.base_percentage, attacker.attributes.dexterity, attacker.attributes.intelligence, attacker.attributes.charisma);
+    let dealedDamage: number = 0;
+    let dealedObjectDamage: DealedDamage | null = null;
+    let fumble: Fumble | null = null;
+    let attackerLuckResult: Luck | null = null;
+    let defenderLuckResult: Luck | null = null;
+    let fumbleToWeb: FumbleWeb | null = null;
 
 
-  // Get the percentages of attack types.
-  const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
-  const fumblePercentage = getFumblePercentage(attacker.attributes.CFP, successPercentage);
-  const normalPercentage = successPercentage - criticalPercentage;
-  const failedPercentage = fumblePercentage - successPercentage;
+    // Get the percentages of attack types.
+    const criticalPercentage = getCriticalPercentage(attacker.attributes.CFP, successPercentage);
+    const fumblePercentage = getFumblePercentage(attacker.attributes.CFP, successPercentage);
+    const normalPercentage = successPercentage - criticalPercentage;
+    const failedPercentage = fumblePercentage - successPercentage;
 
-  // Get the attack damage and attack type
-  const attackerReduced = attackerReducedForAttack(attacker);
-  const defenderReduced = defenderReducedForAttack(target);
-  const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
-  let attackType = attackResult.attackType;
+    // Get the attack damage and attack type
+    const attackerReduced = attackerReducedForAttack(attacker);
+    const defenderReduced = defenderReducedForAttack(target);
+    const attackResult = attack(defenderReduced, attackerReduced, attackRoll, successPercentage, criticalPercentage, fumblePercentage, weaponRoll);
+    let attackType = attackResult.attackType;
 
-  //----------------------------fumble-----------------------------//
-  if (attackType === ATTACK_TYPES.FUMBLE) {
-    const fumblePercentile = getCalculationFumblePercentile(fumblePercentage, attackRoll);
-    const fumbleEffect = getFumbleEffect(fumblePercentile);
+    //----------------------------fumble-----------------------------//
+    if (attackType === ATTACK_TYPES.FUMBLE) {
+      const fumblePercentile = getCalculationFumblePercentile(fumblePercentage, attackRoll);
+      const fumbleEffect = getFumbleEffect(fumblePercentile);
 
-    if (attacker) {
-      setTarget(attacker); //change target to attacker self player
-      fumble = getFumble(fumbleEffect, target.attributes, maxWeaponRoll, fumblePercentile);
-      if (fumble) {
-        dealedObjectDamage = fumble.damage;
-        fumbleToWeb = fumble;
-        delete fumbleToWeb['damage'];
+      if (attacker) {
+        setTarget(attacker); //change target to attacker self player
+        fumble = getFumble(fumbleEffect, target.attributes, maxWeaponRoll, fumblePercentile);
+        if (fumble) {
+          dealedObjectDamage = fumble.damage;
+          fumbleToWeb = fumble;
+          delete fumbleToWeb['damage'];
+        }
       }
     }
-  }
-  //----------------------normal, critical, failed------------------//
-  else {
+    //----------------------normal, critical, failed------------------//
+    else {
     // Construct attacker and defender player reduced
-    const luckAttacker = attackerReducedForLuck(attacker);
-    const luckDefender = defenderReducedForLuck(target);
+      const luckAttacker = attackerReducedForLuck(attacker);
+      const luckDefender = defenderReducedForLuck(target);
 
-    // Execute attacker luck
-    attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
-    dealedDamage = attackerLuckResult.dealedDamage;
+      // Execute attacker luck
+      attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+      dealedDamage = attackerLuckResult.dealedDamage;
 
-    if (attackerLuckResult.luckMessage === LUCK_MESSAGE.CRITICAL_EFFECT) {
-      attackType = ATTACK_TYPES.CRITICAL;
+      if (attackerLuckResult.luckMessage === LUCK_MESSAGE.CRITICAL_EFFECT) {
+        attackType = ATTACK_TYPES.CRITICAL;
+      }
+
+      // Execute defender luck
+      defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
+      dealedDamage = defenderLuckResult.dealedDamage;
+
+      //Dealed damage to objectDamage
+      dealedObjectDamage = { hit_points: dealedDamage };
     }
 
-    // Execute defender luck
-    defenderLuckResult = defenderLuck(dealedDamage, luckDefender);
-    dealedDamage = defenderLuckResult.dealedDamage;
+    //-----------------------------------------------------------------------------//
 
-    //Dealed damage to objectDamage
-    dealedObjectDamage = { hit_points: dealedDamage };
+    // Update player's attributes in GAME_USERS
+    applyDamage(target._id, dealedObjectDamage);
+    damageApplied = true;
+
+    //---------------------------send JSON to web-----------------------------------//
+    // Construct the return data JSON.
+    const percentages: Percentages = {
+      critical: criticalPercentage,
+      normal: normalPercentage,
+      failed: failedPercentage,
+      fumble: 100 - fumblePercentage,
+    };
+
+    const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
+    sendAttackInformationToWeb(attackJSON);
+
+    const actionTargetId = target._id;
+    updatePendingActionTarget(actionTargetId);
+    scheduleActionFallback(() => {
+      void completeAttackTurn(actionTargetId).catch((error) => console.error('Attack fallback failed:', error));
+    }, ACTION_FALLBACK_MS);
+
+    return true;
+  } catch (error) {
+    console.error('Attack flow failed:', error);
+    if (damageApplied) {
+      const affectedPlayerId = target._id;
+      updatePendingActionTarget(affectedPlayerId);
+      void completeAttackTurn(affectedPlayerId)
+        .catch((completionError) => console.error('Attack recovery failed:', completionError));
+    } else {
+      cancelPendingAction();
+      startTimer();
+    }
+    return false;
   }
-
-  //-----------------------------------------------------------------------------//
-
-  // Update player's attributes in GAME_USERS
-  applyDamage(target._id, dealedObjectDamage);
-
-  //---------------------------send JSON to web-----------------------------------//
-  // Construct the return data JSON.
-  const percentages: Percentages = {
-    critical: criticalPercentage,
-    normal: normalPercentage,
-    failed: failedPercentage,
-    fumble: 100 - fumblePercentage,
-  };
-
-  const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
-  sendAttackInformationToWeb(attackJSON);
-
-  const actionTargetId = target._id;
-  updatePendingActionTarget(actionTargetId);
-  scheduleActionFallback(() => {
-    void completeAttackTurn(actionTargetId).catch((error) => console.error('Attack fallback failed:', error));
-  }, ACTION_FALLBACK_MS);
-
-  return true;
 };
 
 export const completeAttackTurn = async (defenderId: string): Promise<boolean> => {

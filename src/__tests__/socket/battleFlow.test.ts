@@ -319,6 +319,7 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
   it('replaces a reconnected player socket in connected and game state', async () => {
     const first = await emitAck<{ player: Player }>(mobiles[0], SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
     GAME_USERS.push(clone(first.player));
+    GAME_USERS[0].attributes.hit_points = 7;
     setGameStarted(true);
     mobiles[0].disconnect();
     await new Promise((resolve) => setTimeout(resolve, 20));
@@ -327,11 +328,10 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     const replacement = await connect(port, { idToken: `token:${EMAILS.admin}` });
     mobiles.push(replacement);
 
-    await emitAck(replacement, SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
+    const reconnected = await emitAck<{ player: Player }>(replacement, SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
     expect(CONNECTED_USERS.filter((player) => player._id === first.player._id)).toHaveLength(1);
     expect(GAME_USERS[0].socketId).toBe(replacement.id);
-
-    expect(GAME_USERS[0].socketId).toBe(replacement.id);
+    expect(reconnected.player.attributes.hit_points).toBe(7);
   });
 
   it('does not let a duplicate login invalidate an active player socket', async () => {
@@ -347,14 +347,15 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     expect((await emitAck<{ status: string }>(mobiles[1], SOCKETS.MOBILE_IS_GAME_CREATED)).status).toBe('OK');
   });
 
-  it('rejects web-only events until the socket registers as web', async () => {
+  it('rejects web-only events until registration and allows monitor takeover', async () => {
     const unregistered = await connect(port);
     mobiles.push(unregistered);
     const response = await emitAck<{ status: string }>(unregistered, SOCKETS.WEB_SEND_USERS);
     expect(response.status).toBe('FAILED');
     const registration = await emitAck<{ status: string }>(unregistered, SOCKETS.WEB_SEND_SOCKET_ID);
-    expect(registration.status).toBe('FAILED');
-
+    expect(registration.status).toBe('OK');
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(web.connected).toBe(false);
   });
 
   it('requires a valid verified Firebase identity matching the requested email', async () => {
