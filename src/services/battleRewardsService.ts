@@ -90,8 +90,7 @@ export const applyBattleRewards = async (battleID: string,
 
     await checkIfLevelUpAndUpdatePlayer(rewardPlayer, player.experience + earnedExperience);
 
-    const newGold = Math.max(0, player.gold + earnedGold);
-    const update: Record<string, unknown> = { $set: { gold: newGold } };
+    const update: Record<string, unknown> = { $inc: { gold: earnedGold } };
     let item: DropPiece | undefined;
 
     if (isAlive) {
@@ -131,8 +130,6 @@ export const applyBattlePenalties = async (players: BattlePlayerInput[],): Promi
 
     const currentGold = player.gold || 0;
     const goldLost = Math.floor(currentGold * 0.25);
-    const newGold = Math.max(0, currentGold - goldLost);
-
     const available: { slot: string; itemId: unknown }[] = [];
     for (const slot of INVENTORY_SLOTS) {
       const slotItems = (player.inventory as Record<string, unknown[] | undefined>)[slot] ?? [];
@@ -141,7 +138,7 @@ export const applyBattlePenalties = async (players: BattlePlayerInput[],): Promi
       }
     }
 
-    const update: Record<string, unknown> = { $set: { gold: newGold } };
+    const update: Record<string, unknown> = { $inc: { gold: -goldLost } };
     let lostItem: unknown = null;
     if (available.length > 0) {
       const picked = available[Math.floor(Math.random() * available.length)];

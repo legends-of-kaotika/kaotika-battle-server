@@ -11,12 +11,11 @@ consumer, and payload, and flags the known contract drifts that must be resolved
 | Mobile | `~/Documentos/NextJSProjects/kaotika-battle-mobile` | Vite + React + TS + Zustand + Firebase | Login, admin selects battle |
 | **Battle server** | `~/Documentos/NodeProjects/kaotika-battle-server` | Node + TS + Express + Socket.IO | Game brain / state machine |
 | Web | `~/Documentos/ReactProjects/kaotika-battle-web` | Vite + React + TS + framer-motion | Animated battle visualization |
-| Kaotika API | `~/Documentos/NodeProjects/kaotika-server` | Express + Mongoose | Source of players / missions (REST) |
 
 ```
  Mobile  ──(Socket.IO)──►  Battle server  ◄──(Socket.IO)──  Web
    │                            │
-   │                            └──(REST)──► Kaotika API  (/missions, /players/email/:email, /battle)
+   │                            └──(Mongoose)──► MongoDB
    └──(Firebase auth)──► Firebase
 ```
 
@@ -25,11 +24,14 @@ The battle server is the contract owner: it defines the event names
 
 ## 2. Connection model
 
-- A single **web client** connects and registers itself via `web-sendSocketId`.
+- A single **web client** connects with `auth.webToken` and registers itself via
+  `web-sendSocketId`.
   Its socket id is stored in `webSocketId`; all web-bound events are emitted to
   that socket (`io.to(webSocketId).emit(...)`).
 - **Mobile clients** join the `mobile` room (`socket.join('mobile')`).
   Broadcast events to mobiles use `io.to('mobile').emit(...)`.
+- Mobile connections provide `auth.idToken`; `mobile-signIn` verifies the
+  Firebase token and requires its verified email to match the requested player.
 - `GAME_USERS` holds players + NPCs in the current battle; `CONNECTED_USERS`
   holds logged-in sockets.
 
@@ -43,14 +45,12 @@ The battle server is the contract owner: it defines the event names
 | `web-setSelectedPlayer` | web | `string` (player `_id`) | `emits/user.ts` |
 | `web-sendUser` | web | `Player` | `emits/user.ts` |
 | `web-playerDisconnected` | web | `string` (nickname) | `emits/user.ts` |
-| `web-selectHeal` | web | — | `emits/user.ts` |
-| `web-selectCurse` | web | — | `emits/user.ts` |
-| `web-selectUsePotion` | web | — | `emits/user.ts` |
 | `web-joinedBattle` | web | `string` (player `_id`) | `mobileHandlers/user.ts` |
 | `web-createdBattle` | web | `WebBattle` | `emits/game.ts` |
 | `web-battleConfig` | web | `WebBattle` | `emits/game.ts` |
 | `web-battleRewards` | web | `BattleOutcome` | `emits/game.ts` |
 | `web-selectedBattle` | web | `WebBattle` | `emits/game.ts` |
+| `web-syncState` | web | `WebSyncState` | `webHandlers/user.ts` |
 | `web-currentRound` | web | `number` | `emits/game.ts` |
 | `web-turnFinished` | web | — | `emits/game.ts` |
 | `web-attackInformation` | web | `AttackJson` | `emits/user.ts` |
@@ -70,35 +70,32 @@ The battle server is the contract owner: it defines the event names
 
 | Event | Client | Payload | Ack callback |
 | --- | --- | --- | --- |
-| `mobile-signIn` | mobile | `email` | `{ status, player }` / `{ status, error }` |
+| `mobile-signIn` | mobile | `email` plus handshake `auth.idToken` | `{ status, player }` / `{ status, error }` |
 | `mobile-getBattles` | mobile | — | `{ status, battles }` / `{ status, error }` |
 | `mobile-joinBattle` | mobile | `playerId` | `{ status, joinBattle }` |
-| `mobile-selectedBattle` | mobile | battle `_id` | — |
-| `mobile-createGame` | mobile | battle `_id` | — |
-| `mobile-gameStart` | mobile | — | — |
-| `mobile-setSelectedPlayer` | mobile | player `_id` | — |
-| `mobile-attack` | mobile | target `_id` | — |
-| `mobile-selectHeal` | mobile | — | — |
-| `mobile-selectCurse` | mobile | — | — |
-| `mobile-selectUsePotion` | mobile | — | — |
-| `mobile-gameReset` | mobile | — | — |
+| `mobile-selectedBattle` | mobile admin | battle `_id` | `{ status, error? }` |
+| `mobile-createGame` | mobile admin | battle `_id` | `{ status, error? }` |
+| `mobile-gameStart` | mobile admin | — | `{ status, error? }` |
+| `mobile-setSelectedPlayer` | current player | opponent `_id` | `{ status, error? }` |
+| `mobile-attack` | current player | target `_id` | `{ status, error? }` |
+| `mobile-gameReset` | mobile admin | — | `{ status, error? }` |
 | `mobile-isGameCreated` | mobile | — | — |
 | `mobile-isGameStarted` | mobile | — | — |
-| `web-sendSocketId` | web | — | — |
-| `web-sendUsers` | web | — | — |
-| `web-attackAnimationEnd` | web | defender `_id` | — |
+| `web-sendSocketId` | web with handshake `auth.webToken` | — | `{ status, state?, error? }` |
+| `web-sendUsers` | registered web | — | `{ status, error? }` |
+| `web-syncState` | registered web | — | `{ status, state?, error? }` |
+| `web-attackAnimationEnd` | registered web | affected player `_id` | `{ status, error? }` |
 | `disconnect` | any | — | — |
 
-### 3.3 Battle rewards (REST)
+### 3.3 Battle rewards (MongoDB)
 
-On game end (Kaotika wins), `kaotika-battle-server` calls the Kaotika API:
+On game end, `kaotika-battle-server` updates MongoDB directly:
 
-- `POST /battle` — body `{ battleID, players: [{ email, isAlive }] }`.
-- kaotika-server (`services/battle/battleRewardsService.js`) resolves the mission
-  by `battleID` and, for each winner: adds `exp` via the level-up algorithm
+- `battleRewardsService` resolves the mission by `battleID` and, for each winner:
+  adds `exp` via the level-up algorithm
   (`checkIfLevelUpAndUpdatePlayer`), adds the full mission `gold`, and assigns a
   random item of `drop_item_level` **only to survivors** (`isAlive === true`).
-- Response: `{ status: "OK", data: { gold, experience, playerRewards: [{ playerId, playerName, playerAvatar, item? }] } }`.
+- Result: `{ status: "OK", data: { gold, experience, playerRewards: [{ playerId, playerName, playerAvatar, item? }] } }`.
 - The battle server wraps this into `BattleOutcome` (`{ winner, rewards }`) and
   emits `web-battleRewards` to the web client.
 
@@ -113,7 +110,7 @@ These must be decided and fixed. They are the reason the three apps can desync.
 | D3 | ~~`updatePlayer` payload~~ | RESOLVED: removed unused `totalDamage` from mobile `PlayerToUpdate`, mocks and listener type; server correctly sends `{ _id, attributes, isBetrayer }`. | Mobile (done) |
 | D4 | ~~Dead mobile listeners~~ | RESOLVED: removed `listenToBattles`/`battles` and `PLAYER_DATA`/`playerData` dead listeners and constants from mobile. | Mobile (done) |
 | D5 | ~~`web-turnTimeout` vs `web-turnFinished`~~ | RESOLVED: removed dead `web-turnTimeout` constant from web. | Web (done) |
-| D6 | `web-selectHeal/Curse/UsePotion` | Server emits these; web has no constant or listener for them yet. | Web (implement) or Backend (remove) |
+| D6 | ~~`web-selectHeal/Curse/UsePotion`~~ | RESOLVED: removed the unused no-op protocol branch until item actions have authoritative game logic. | Backend (done) |
 | D7 | ~~`turn-start` dead constant~~ | RESOLVED: removed from server `sockets.ts`. | Backend (done) |
 
 ## 5. Testing strategy

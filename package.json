@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "NODE_ENV=test jest --detectOpenHandles --roots src",
+    "test:e2e": "tsx scripts/e2e-smoke.ts",
     "build": "tsc",
-    "dev": "tsx watch index.ts",
+    "dev": "NODE_ENV=development tsx watch index.ts",
     "start": "node dist/index.js",
     "lint": "npx eslint"
   },
@@ -20,6 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "firebase-admin": "^14.5.0",
     "mongoose": "^9.10.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^10.0.10",

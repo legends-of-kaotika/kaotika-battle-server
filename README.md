@@ -57,9 +57,10 @@ This section details the progression of a game session, reflecting the login and
 1. **Authentication & Connection**
    - Players log in via Firebase on their mobile device.
    - The mobile client establishes a Socket.IO connection to the server.
-   - Upon connection, the client emits `mobile-signIn` with the user's email.
+   - The Socket.IO connection must include a Firebase ID token in `auth.idToken`.
+   - Upon connection, the client emits `mobile-signIn` with the user's email. The server verifies the token, requires a verified matching email, and uses that verified email for player lookup.
    - The server inserts the user into the `CONNECTED_USERS` array and responds to the client with their player data so they can display it.
-   - When the web client connects, emits `WEB_CLIENT_SOCKET_ID` to the server to manage it different from the mobile clients.
+   - The web client connects with `auth.webToken` and emits `web-sendSocketId`. Only one registered web socket may be active.
 
 2. **Fetching Available Battles (Missions)**
    - If the logged player is Mortimer or Villain, the mobile client emits `mobile-getBattles` to request the list of available missions (battles).
@@ -84,7 +85,7 @@ This section details the progression of a game session, reflecting the login and
 6. **Turn Management & Combat**
    - The game proceeds in turns, managed by the server (see Section 5 for details).
    - The server tracks the current player, manages timers, and handles both player and NPC actions.
-   - After an attack, the server schedules a fallback (`TURN_CHANGE_FALLBACK_MS`, 10s) to advance the turn on its own if the web client never emits `web-attackAnimationEnd`. A re-entrancy guard and the pending fallback check prevent the turn from advancing twice.
+   - After an attack, the server schedules a 35-second fallback (`ACTION_FALLBACK_MS`) to advance the turn on its own if the web client never emits `web-attackAnimationEnd`. A re-entrancy guard and the pending fallback check prevent the turn from advancing twice.
 
 7. **Win/Loss & Reset**
    - After each turn or significant event, the server checks for win/loss conditions.
@@ -211,6 +212,7 @@ All Socket.IO events are defined in [[`src/constants/sockets.ts`](src/constants/
 | `web-battleConfig`          | Web     | Sends the battle configuration data to the web client. |
 | `web-battleRewards`         | Web     | Sends the battle rewards outcome to the web client.   |
 | `web-selectedBattle`         | Web     | Sends the selected battle data to the web client.     |
+| `web-syncState`              | Web     | Sends the authoritative current battle snapshot.      |
 | `mobile-insufficientPlayers` | Mobile  | Notifies mobile clients there are not enough players. |
 | `connectedUsers`             | Shared  | Sends the list of currently connected users.          |
 | `gameReset`                  | Shared  | Notifies clients that the game has been reset.        |
@@ -231,6 +233,7 @@ All Socket.IO events are defined in [[`src/constants/sockets.ts`](src/constants/
 | `web-sendUsers`            | Web     | Web client requests the list of users.                               |
 | `web-sendSocketId`         | Web     | Web client sends its socket ID to the server.                        |
 | `web-attackAnimationEnd`   | Web     | Web client notifies server that attack animation has ended.          |
+| `web-syncState`            | Web     | Registered web client requests an authoritative state snapshot.      |
 | `mobile-signIn`            | Mobile  | Player attempts to log in (expects email and callback for response). |
 | `mobile-gameStart`         | Mobile  | Initiates the game from a mobile client.                             |
 | `mobile-setSelectedPlayer` | Mobile  | Player selects a target player.                                      |
@@ -267,5 +270,57 @@ Required variables (`.env`):
 | `MORTIMER_EMAIL` | Email that grants the `mortimer` role |
 | `VILLAIN_EMAIL` | Email that grants the `villain` role |
 | `PORT` | HTTP/Socket port (default `3000`) |
+| `CORS_ORIGIN` | Optional comma-separated browser origins. Credentials are disabled when unset (`*`). |
+| `FIREBASE_PROJECT_ID` | Firebase project used by Admin SDK token verification. |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Optional path to an explicit service-account JSON file. If omitted, Firebase Admin uses Application Default Credentials from the runtime. |
+| `WEB_SOCKET_TOKEN` | Shared web socket handshake token. Required outside development; tests must also configure it explicitly. |
 
 Optional variables for level-up emails (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`). When missing, the level-up email fails and is logged; the battle continues.
+
+### Web State Sync
+
+After successful `web-sendSocketId`, the server emits `web-syncState` and includes the same snapshot as `response.state` in the acknowledgement. A registered web socket can request it again by emitting `web-syncState` with an acknowledgement callback.
+
+```ts
+interface WebSyncState {
+  generation: number;
+  gameCreated: boolean;
+  gameStarted: boolean;
+  selectedBattle: WebBattle | null;
+  players: { kaotika: Player[]; dravokar: Player[] };
+  currentPlayerId: string | null;
+  targetId: string | null;
+  round: number;
+  turnTime: number;
+  attackPending: boolean;
+}
+```
+
+Clients must treat `generation` as authoritative and discard older snapshots or delayed events. When `attackPending` is true, the server retains turn authority and will complete the action through its fallback if no valid animation acknowledgement arrives.
+
+### Local end-to-end smoke test
+
+The E2E Compose file builds and runs the server, web display, and mobile client.
+It waits for MongoDB-backed server startup and for all three health checks:
+
+```bash
+export FIREBASE_PROJECT_ID=your-firebase-project
+docker compose -f docker-compose.e2e.yml up --build -d --wait
+WEB_SOCKET_TOKEN=development-e2e-web-token npm run test:e2e
+```
+
+The smoke test verifies Socket.IO connectivity, web registration and takeover,
+state snapshots, and rejection of missing or invalid Firebase credentials. To
+also verify a real Firebase player login without storing credentials in the
+repository:
+
+```bash
+FIREBASE_ID_TOKEN=... FIREBASE_EMAIL=player@example.com \
+  WEB_SOCKET_TOKEN=development-e2e-web-token npm run test:e2e
+```
+
+Stop the local stack with:
+
+```bash
+docker compose -f docker-compose.e2e.yml down
+```

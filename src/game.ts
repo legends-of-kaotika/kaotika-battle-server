@@ -4,10 +4,11 @@ import { Battle } from './interfaces/Battles.ts';
 import { Player } from './interfaces/Player.ts';
 import { sendCurrentRound } from './sockets/emits/game.ts';
 import { sendConnectedUsersArrayToWeb } from './sockets/emits/user.ts';
-import { clearTimer } from './timer/timer.ts';
+import { clearTimer, resetTimer } from './timer/timer.ts';
 import { io } from '../index.ts';
 import * as SOCKETS from './constants/sockets.ts';
 import { logUnlessTesting } from './helpers/utils.ts';
+import { clearDisconnectGraceTimers } from './sockets/reconnect.ts';
 
 export const GAME_USERS: Player[] = [];
 export const CONNECTED_USERS: Player[] = [];
@@ -24,6 +25,12 @@ export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
 export let selectedBattleId: string | null = null;
 export let isGameCreated: boolean = false; 
+export let gameGeneration = 0;
+export let turnGeneration = 0;
+let turnAdvanceClaimed = false;
+let pendingAction: { turnGeneration: number; targetId: string } | null = null;
+let endingGeneration: number | null = null;
+let actionTimeout: NodeJS.Timeout | undefined;
 
 export const setIdPlayerFirstTurn = (playerId: string | null): void => {
   idPlayerFirstTurn = playerId;
@@ -44,6 +51,54 @@ export const setCurrentPlayer = (player: Player): void => {
   currentPlayer = player;
 };
 
+export const beginTurn = (): number => {
+  turnGeneration++;
+  turnAdvanceClaimed = false;
+  pendingAction = null;
+  return turnGeneration;
+};
+
+export const claimTurnAdvance = (expectedTurnGeneration: number): boolean => {
+  if (expectedTurnGeneration !== turnGeneration || turnAdvanceClaimed) return false;
+  turnAdvanceClaimed = true;
+  return true;
+};
+
+export const beginAction = (targetId: string): boolean => {
+  if (pendingAction || turnAdvanceClaimed) return false;
+  pendingAction = { turnGeneration, targetId };
+  return true;
+};
+
+export const updatePendingActionTarget = (targetId: string): void => {
+  if (pendingAction) pendingAction.targetId = targetId;
+};
+
+export const scheduleActionFallback = (callback: () => void, delay: number): void => {
+  if (actionTimeout) clearTimeout(actionTimeout);
+  actionTimeout = setTimeout(callback, delay);
+  actionTimeout.unref();
+};
+
+export const claimActionCompletion = (targetId: string): number | null => {
+  if (!pendingAction || pendingAction.targetId !== targetId) return null;
+  const actionTurn = pendingAction.turnGeneration;
+  pendingAction = null;
+  if (actionTimeout) clearTimeout(actionTimeout);
+  actionTimeout = undefined;
+  return claimTurnAdvance(actionTurn) ? actionTurn : null;
+};
+
+export const beginGameEnd = (generation: number): boolean => {
+  if (generation !== gameGeneration || endingGeneration === generation) return false;
+  endingGeneration = generation;
+  return true;
+};
+
+export const isGameEnding = (): boolean => endingGeneration === gameGeneration;
+
+export const isAttackPending = (): boolean => pendingAction !== null;
+
 //changes the turn number
 export const increaseTurn = (): void => {
   turn++;
@@ -51,6 +106,10 @@ export const increaseTurn = (): void => {
     turn = 0;
     increaseRound();
   }
+};
+
+export const adjustTurnForRemovedIndex = (removedIndex: number): void => {
+  if (removedIndex <= turn) turn--;
 };
 
 export const setSelectedBattleId = (_id:string | null):void => {
@@ -84,6 +143,13 @@ export const resetInitialGameValues = (): void => {
   console.log('Resetting game');
 
   isGameStarted = false;
+  gameGeneration++;
+  turnGeneration++;
+  turnAdvanceClaimed = false;
+  pendingAction = null;
+  if (actionTimeout) clearTimeout(actionTimeout);
+  actionTimeout = undefined;
+  endingGeneration = null;
   target = undefined;
   currentPlayer = undefined;
   turn = -1;
@@ -92,6 +158,8 @@ export const resetInitialGameValues = (): void => {
   setSelectedBattleId(null);
   setIdPlayerFirstTurn(null);
   clearTimer();
+  resetTimer();
+  clearDisconnectGraceTimers();
   
   // Empty the players and NPC arrays
   while (GAME_USERS.length > 0) {

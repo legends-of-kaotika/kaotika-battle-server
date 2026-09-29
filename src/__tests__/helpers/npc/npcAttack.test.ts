@@ -11,6 +11,10 @@ jest.mock('../../../helpers/utils.ts', () => ({
 }));
 
 jest.mock('../../../game.ts', () => ({
+  currentPlayer: { _id: 'npc' },
+  gameGeneration: 0,
+  turnGeneration: 0,
+  isGameEnding: jest.fn(() => false),
   setTarget: jest.fn(),
 }));
 

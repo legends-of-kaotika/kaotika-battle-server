@@ -1,6 +1,7 @@
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
+import { ACTION_FALLBACK_MS } from '../constants/game.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
-import { GAME_USERS, KILLED_PLAYERS, currentPlayer, increaseTurn, resetInitialGameValues, selectedBattleId, setCurrentPlayer, setTarget, target, turn } from '../game.ts';
+import { GAME_USERS, KILLED_PLAYERS, beginAction, beginGameEnd, beginTurn, claimActionCompletion, currentPlayer, gameGeneration, increaseTurn, resetInitialGameValues, scheduleActionFallback, selectedBattleId, setCurrentPlayer, setTarget, target, turn, turnGeneration, updatePendingActionTarget } from '../game.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
@@ -9,14 +10,14 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
 import { BattleOutcome, PlayerReward } from '../interfaces/BattleRewards.ts';
 import { recordBattleOutcome } from '../services/battleRewardsService.ts';
-import { assignTurn, sendAttackInformationToWeb, sendGameEnd } from '../sockets/emits/user.ts';
+import { assignTurn, sendAttackInformationToWeb, sendGameEnd, sendUpdatedPlayerToMobile } from '../sockets/emits/user.ts';
 import { sendBattleRewardsToWeb } from '../sockets/emits/game.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
 import { adjustAttributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getMaxWeaponDieRoll } from './attack.ts';
 import { getCalculationFumblePercentile, getFumble, getFumbleEffect } from './fumble.ts';
 import { attackerLuck, attackerReducedForAttack, attackerReducedForLuck, defenderLuck, defenderReducedForAttack, defenderReducedForLuck } from './luck.ts';
 import { npcAttack } from './npc.ts';
-import { applyDamage, findPlayerById } from './player.ts';
+import { applyDamage, findPlayerById, findPlayerDeadId, handlePlayerDeath } from './player.ts';
 import { sleep } from './utils.ts';
 
 // Returns a object of loyals and betrayers
@@ -36,18 +37,23 @@ export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
 };
 
 // Changes the turn players
-export const changeTurn = async (): Promise<void> => {
+export const changeTurn = async (expectedTurnGeneration?: number, advanceAlreadyClaimed = false): Promise<void> => {
+
+  if (expectedTurnGeneration !== undefined && expectedTurnGeneration !== turnGeneration) return;
+  if (expectedTurnGeneration !== undefined && !advanceAlreadyClaimed) return;
 
   increaseTurn();
   const nextPlayer = GAME_USERS[turn];
+  if (!nextPlayer) return;
   setCurrentPlayer(nextPlayer);
+  beginTurn();
   if (currentPlayer) {
     assignTurn(currentPlayer);
     clearTimer();
     startTimer();
 
     if (currentPlayer.role === 'npc') {
-      npcAttack();
+      void Promise.resolve(npcAttack()).catch((error) => console.error('NPC action failed:', error));
     }
   }
   if (isGameEnded()) {
@@ -79,12 +85,16 @@ export const getWinnerSide = (): 'kaotika' | 'dravokar' | 'draw' | null => {
 
 // Handles the game end
 export const handleGameEnd = async (): Promise<void> => {
+  const endingGameGeneration = gameGeneration;
   const winnerSide = getWinnerSide();
 
   if (!winnerSide) {
     console.error('No winner side found. Probably game is not ended.');
     return;
   }
+  if (!beginGameEnd(endingGameGeneration)) return;
+
+  clearTimer();
 
   // Send the winner side to all devices
   const winnerSideCapitalized = winnerSide.charAt(0).toUpperCase() + winnerSide.slice(1);
@@ -94,14 +104,14 @@ export const handleGameEnd = async (): Promise<void> => {
   if (winnerSide === 'kaotika' || winnerSide === 'dravokar') {
     const aliveKaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
     const deadKaotika = KILLED_PLAYERS.filter((player) => !player.isBetrayer);
-    await sendBattleResult([...aliveKaotika, ...deadKaotika], selectedBattleId, winnerSide);
+    await sendBattleResult([...aliveKaotika, ...deadKaotika], selectedBattleId, winnerSide, endingGameGeneration);
   }
 
   // Wait for 5 seconds to show the winner side 
   await sleep(5000);
 
   // Restart game values
-  resetInitialGameValues();
+  if (gameGeneration === endingGameGeneration) resetInitialGameValues();
 };
   
 // Check if the game can start: needs at least 1 master (istvan/villain/mortimer)
@@ -123,18 +133,26 @@ export const nextRoundStartFirst = (id: string, players: Player[]): void => {
   players.unshift(player);
 };
 
+export const isValidAttackTarget = (attacker: Player, defender: Player): boolean => {
+  return attacker._id !== defender._id
+    && defender.isAlive !== false
+    && defender.attributes.hit_points > 0
+    && GAME_USERS.some((player) => player._id === defender._id)
+    && attacker.isBetrayer !== defender.isBetrayer;
+};
 
-export const attackFlow = (targetId: string) => {
+
+export const attackFlow = (targetId: string): boolean => {
 
   // Ensure that there's a target selected
   if (!target) {
     console.error('Target not found');
-    return;
+    return false;
   }
 
   if (target._id !== targetId) {
     console.error(`Attack target mismatch. Expected: ${target._id}, Received: ${targetId}`);
-    return;
+    return false;
   }
 
   // Define the current attacker, and ensure there's one
@@ -142,7 +160,17 @@ export const attackFlow = (targetId: string) => {
 
   if (!attacker) {
     console.error('Attacker not found');
-    return;
+    return false;
+  }
+
+  if (!isValidAttackTarget(attacker, target)) {
+    console.error('Attack target is not a living opponent');
+    return false;
+  }
+
+  if (!beginAction(targetId)) {
+    console.error('An action is already pending for this turn');
+    return false;
   }
 
   console.log('Attacker: ', attacker.nickname);
@@ -234,9 +262,35 @@ export const attackFlow = (targetId: string) => {
   const attackJSON = parseAttackData(target._id, target.attributes, percentages, attackRoll, dealedObjectDamage, attackType, attackerLuckResult, defenderLuckResult, fumbleToWeb);
   sendAttackInformationToWeb(attackJSON);
 
+  const actionTargetId = target._id;
+  updatePendingActionTarget(actionTargetId);
+  scheduleActionFallback(() => {
+    void completeAttackTurn(actionTargetId).catch((error) => console.error('Attack fallback failed:', error));
+  }, ACTION_FALLBACK_MS);
+
+  return true;
 };
 
-async function sendBattleResult(players: Player[], battleID: string | null, winner: string) {
+export const completeAttackTurn = async (defenderId: string): Promise<boolean> => {
+  const actionTurnGeneration = claimActionCompletion(defenderId);
+  if (actionTurnGeneration === null) return false;
+
+  const updatedPlayer = findPlayerById(defenderId);
+  if (updatedPlayer) {
+    sendUpdatedPlayerToMobile(defenderId, updatedPlayer.attributes, updatedPlayer.isBetrayer);
+  }
+
+  const deadPlayerId = findPlayerDeadId();
+  if (deadPlayerId) handlePlayerDeath(deadPlayerId);
+
+  await sleep(2000);
+  await changeTurn(actionTurnGeneration, true);
+  return true;
+};
+
+async function sendBattleResult(players: Player[], battleID: string | null, winner: string,
+  expectedGameGeneration: number): Promise<void> {
+  if (gameGeneration !== expectedGameGeneration) return;
   if (!battleID && winner !== 'dravokar') {
     console.error('No battleID assigned');
     return;
@@ -246,6 +300,7 @@ async function sendBattleResult(players: Player[], battleID: string | null, winn
 
   try {
     const result = await recordBattleOutcome(parsedPlayers, battleID, winner);
+    if (gameGeneration !== expectedGameGeneration) return;
 
     if (!result || result.status !== 'OK' || !result.data) {
       console.error('Unexpected battle rewards response:', result);
@@ -254,6 +309,7 @@ async function sendBattleResult(players: Player[], battleID: string | null, winn
 
     if (winner === 'dravokar') {
       console.log('Battle penalties applied:', result.data.penalties);
+      sendBattleRewardsToWeb({ winner: 'Dravokar', rewards: null });
       return;
     }
 
@@ -275,7 +331,7 @@ async function sendBattleResult(players: Player[], battleID: string | null, winn
       },
     };
 
-    sendBattleRewardsToWeb(outcome);
+    if (gameGeneration === expectedGameGeneration) sendBattleRewardsToWeb(outcome);
   } catch (error) {
     console.error('Error recording battle result:', error);
   }
@@ -299,4 +355,3 @@ function parseWinners(kaotika: Player[] ): { email: string; isAlive: boolean; }[
   return parsedPlayers;
 
 }
-

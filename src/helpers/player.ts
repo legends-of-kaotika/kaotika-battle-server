@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 import { MOBILE } from '../constants/sockets.ts';
-import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS, KILLED_PLAYERS } from '../game.ts';
+import { idPlayerFirstTurn, GAME_USERS, setIdPlayerFirstTurn, CONNECTED_USERS, KILLED_PLAYERS, adjustTurnForRemovedIndex } from '../game.ts';
 import { Attribute } from '../interfaces/Attribute.ts';
 import { FumbleDamage } from '../interfaces/Fumble.ts';
 import { Player } from '../interfaces/Player.ts';
@@ -74,7 +74,7 @@ export const printUsers = (): void => {
 };
 
 // Removes the player that got disconnected from playerConnected[] global variable
-export const removePlayerConnected = (socket: Socket): void => {
+export const removePlayerConnected = (socket: Socket, preserveGameUser = false): void => {
 
   let userInfo: { email: string; _id: string; nickname: string } | undefined;
 
@@ -82,8 +82,10 @@ export const removePlayerConnected = (socket: Socket): void => {
   const gameUsersIndex = GAME_USERS.findIndex(user => user.socketId === socket.id);
   if (gameUsersIndex !== -1) {
     userInfo = GAME_USERS[gameUsersIndex];
-    GAME_USERS.splice(gameUsersIndex, 1);
-    logUnlessTesting('Player ' + userInfo.nickname + ' removed from GAME_USERS');
+    if (!preserveGameUser) {
+      GAME_USERS.splice(gameUsersIndex, 1);
+      logUnlessTesting('Player ' + userInfo.nickname + ' removed from GAME_USERS');
+    }
   }
 
   // Remove from CONNECTED_USERS if exists.
@@ -97,8 +99,10 @@ export const removePlayerConnected = (socket: Socket): void => {
   if (userInfo) {
     logUnlessTesting(`${userInfo.email} has disconnected`);
     socket.leave(MOBILE);
-    sendPlayerRemoved(userInfo._id);
-    sendPlayerDisconnectedToWeb(userInfo.nickname);
+    if (!preserveGameUser) {
+      sendPlayerRemoved(userInfo._id);
+      sendPlayerDisconnectedToWeb(userInfo.nickname);
+    }
   } else {
     logUnlessTesting('No players found with the received socket');
   }
@@ -147,6 +151,7 @@ export function removePlayerFromGameUsersById(id: string): void {
     return;
   }
   GAME_USERS.splice(index, 1);
+  adjustTurnForRemovedIndex(index);
 }
 
 export const findPlayerDeadId = (): string | null => {
@@ -313,7 +318,5 @@ export const assignRole = (email: string) => {
     return 'acolyte';
   }
 };
-
-
 
 

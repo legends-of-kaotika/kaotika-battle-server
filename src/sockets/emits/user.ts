@@ -29,24 +29,6 @@ export const sendSelectedPlayerIdToWeb = ( player: Player | undefined): void => 
   }
 };
 
-// Sends tho the web that tha actual turn player selected to heal
-export const sendHealSelectedToWeb = (): void => {
-  logUnlessTesting(`Emitting ${SOCKETS.WEB_SELECT_HEAL} socket to web.`);
-  io.to(webSocketId).emit(SOCKETS.WEB_SELECT_HEAL);
-};
-
-// Sends tho the web that tha actual turn player selected to heal
-export const sendCurseSelectedToWeb = (): void => {
-  logUnlessTesting(`Emitting ${SOCKETS.WEB_SELECT_CURSE} socket to web.`);
-  io.to(webSocketId).emit(SOCKETS.WEB_SELECT_CURSE);
-};
-
-// Sends tho the web that tha actual turn player selected to use a potion
-export const sendUsePotionSelectedToWeb = (): void => {
-  logUnlessTesting(`Emitting ${SOCKETS.WEB_SELECT_USE_POTION} socket to web.`);
-  io.to(webSocketId).emit(SOCKETS.WEB_SELECT_USE_POTION);
-};
-
 // Sends the player data to server
 export const sendUserDataToWeb = (player: Player): void => {
   logUnlessTesting(`Emitting ${SOCKETS.WEB_SEND_USER} socket to web with ${player.name}'s player data.`);

@@ -6,9 +6,6 @@ export const MOBILE = 'mobile';
 
 export const CONNECTED_USERS = 'connectedUsers';
 export const WEB_SET_SELECTED_PLAYER = 'web-setSelectedPlayer';
-export const WEB_SELECT_HEAL = 'web-selectHeal';
-export const WEB_SELECT_CURSE = 'web-selectCurse';
-export const WEB_SELECT_USE_POTION = 'web-selectUsePotion';
 export const WEB_SEND_USER = 'web-sendUser';
 export const WEB_USER_DISCONNECT = 'web-playerDisconnected';
 export const SEND_TIMER = 'send-timer';
@@ -28,6 +25,7 @@ export const WEB_JOINED_BATTLE = 'web-joinedBattle';
 export const IS_GAME_STARTED = 'isGameStarted';
 export const WEB_BATTLE_CONFIG = 'web-battleConfig';
 export const WEB_BATTLE_REWARDS = 'web-battleRewards';
+export const WEB_SYNC_STATE = 'web-syncState';
 
 // ---- LISTENERS ---- //
 
@@ -35,9 +33,6 @@ export const WEB_BATTLE_REWARDS = 'web-battleRewards';
 export const MOBILE_SIGN_IN = 'mobile-signIn';
 export const MOBILE_GAME_START = 'mobile-gameStart';
 export const MOBILE_SET_SELECTED_PLAYER = 'mobile-setSelectedPlayer';
-export const MOBILE_SELECT_HEAL = 'mobile-selectHeal';
-export const MOBILE_SELECT_CURSE = 'mobile-selectCurse';
-export const MOBILE_SELECT_USE_POTION = 'mobile-selectUsePotion';
 export const MOBILE_ATTACK = 'mobile-attack';
 export const MOBILE_RESET_GAME = 'mobile-gameReset';
 export const MOBILE_CREATE_GAME = 'mobile-createGame';
@@ -56,4 +51,3 @@ export const WEB_SEND_SOCKET_ID = 'web-sendSocketId';
 export const WEB_ATTACK_ANIMATION_END = 'web-attackAnimationEnd';
 export const WEB_CREATE_BATTLE = 'web-createdBattle';
 export const WEB_SEND_SELECTED_BATTLE = 'web-selectedBattle';
-

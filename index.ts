@@ -7,21 +7,26 @@ import { Server, Socket } from 'socket.io';
 import { socketHandlers } from './src/sockets/handlers.ts';
 import { connectDatabase } from './src/db/connection.ts';
 
+dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+const configuredOrigins = process.env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean);
+const corsOrigin = configuredOrigins?.length ? configuredOrigins : '*';
+const corsCredentials = corsOrigin !== '*';
 
-app.use(cors());
+app.use(cors({ origin: corsOrigin, credentials: corsCredentials }));
 app.use(bodyParser.json());
-
-// Load .env file
-dotenv.config();
+app.get('/health', (_request, response): void => {
+  response.status(200).json({ status: 'OK' });
+});
 
 const server = createServer(app);
 export const io = new Server(server, {
   cors: {
-    origin: '*', 
+    origin: corsOrigin,
     methods: ['GET', 'POST'],
-    credentials:true,           
+    credentials: corsCredentials,
     optionsSuccessStatus:200,
   }
 });
@@ -55,7 +60,8 @@ async function start() {
       await connectDatabase();
       await startServer(Number(PORT));
     } catch (error) {
-      console.log(`Error starting the server: ${(error as Error).message}`);
+      console.error(`Error starting the server: ${(error as Error).message}`);
+      process.exitCode = 1;
     }
   }
 }

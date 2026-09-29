@@ -2,6 +2,7 @@ import { FumbleType } from '../helpers/fumble.ts';
 
 // Timer
 export const TURN_TIMER = 30;
+export const ACTION_FALLBACK_MS = 35000;
 
 // LUCK CONSTANTS 
 export const DEFENSE_LUCK_EFFECTS = {

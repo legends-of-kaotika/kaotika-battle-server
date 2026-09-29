@@ -9,6 +9,7 @@ const missionSchema = new Schema({
   gold: Number,
   exp: Number,
   battle_background: String,
+  battle_video_background: String,
   battle_music: { type: String, default: 'battle.ogg' },
   battle_animations: [String],
   end_of_battle_background: [String],

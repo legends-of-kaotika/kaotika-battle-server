@@ -1,37 +1,48 @@
 import { Socket } from 'socket.io';
 import { DISCONNECT } from '../../constants/sockets.ts';
-import { findPlayerBySocketId, removePlayerConnected } from '../../helpers/player.ts';
-import { currentPlayer, isGameStarted, target } from '../../game.ts';
+import { CONNECTED_USERS, GAME_USERS, claimTurnAdvance, currentPlayer, isGameStarted, setWebSocket, target, turnGeneration, webSocketId } from '../../game.ts';
 import { changeTurn, handleGameEnd, isGameEnded } from '../../helpers/game.ts';
-import { sendWebTurnFinished } from '../emits/game.ts';
+import { findPlayerBySocketId, removePlayerConnected, removePlayerFromGameUsersById } from '../../helpers/player.ts';
 import { sleep } from '../../helpers/utils.ts';
+import { sendWebTurnFinished } from '../emits/game.ts';
+import { sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../emits/user.ts';
+import { onAsync } from '../guards.ts';
+import { scheduleDisconnectGrace } from '../reconnect.ts';
 
-export const globalHandlers = (socket: Socket): void => { 
+export const globalHandlers = (socket: Socket): void => {
+  onAsync(socket, DISCONNECT, async () => {
+    if (socket.id === webSocketId) setWebSocket('');
 
-  socket.on(DISCONNECT, async () => {
-    
     const player = findPlayerBySocketId(socket.id);
+    const disconnectedTurnGeneration = turnGeneration;
+    const shouldAdvance = Boolean(player && (player._id === currentPlayer?._id || player._id === target?._id));
     console.log(`${player?.nickname || `Player with socket id ${socket.id}`} disconnected.`);
-    
-    // Remove from connected users.
-    removePlayerConnected(socket);
 
-    // Check if any team wins.
-    if (isGameStarted) { 
-      if (isGameEnded()) {
-        await handleGameEnd();
-      }
+    if (player && isGameStarted) {
+      removePlayerConnected(socket, true);
+      scheduleDisconnectGrace(player._id, socket.id, async () => {
+        const gamePlayer = GAME_USERS.find((candidate) => candidate._id === player._id);
+        const reconnected = CONNECTED_USERS.some((candidate) => candidate._id === player._id);
+        if (!gamePlayer || gamePlayer.socketId !== socket.id || reconnected) return;
+
+        removePlayerFromGameUsersById(player._id);
+        sendPlayerRemoved(player._id);
+        sendPlayerDisconnectedToWeb(player.nickname);
+
+        if (isGameStarted && isGameEnded()) {
+          await handleGameEnd();
+          return;
+        }
+        if (shouldAdvance && claimTurnAdvance(disconnectedTurnGeneration)) {
+          sendWebTurnFinished();
+          await sleep(1000);
+          await changeTurn(disconnectedTurnGeneration, true);
+        }
+      });
+    } else {
+      removePlayerConnected(socket);
     }
 
-    // If the disconnected player is the current attacker, change turn.
-    if (player && (player._id === currentPlayer?._id || player._id === target?._id)) {
-      sendWebTurnFinished();
-      await sleep(1000);
-      changeTurn();
-    }
-
-    // Clear all the listeners
     socket.removeAllListeners();
   });
-
 };

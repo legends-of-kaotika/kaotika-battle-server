@@ -1,9 +1,9 @@
 ARG NODE_VERSION=22.13.1
-FROM node:${NODE_VERSION}-slim as base
+FROM node:${NODE_VERSION}-slim AS base
 
 WORKDIR /app
 
-FROM base as build
+FROM base AS build
 
 RUN apt-get update -qq && apt-get install -y build-essential python3 && rm -rf /var/lib/apt/lists/*
 

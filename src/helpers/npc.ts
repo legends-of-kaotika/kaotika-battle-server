@@ -1,4 +1,4 @@
-import { GAME_USERS, NPCS, setTarget } from '../game.ts';
+import { GAME_USERS, NPCS, currentPlayer, gameGeneration, isGameEnding, setTarget, turnGeneration } from '../game.ts';
 import { Player } from '../interfaces/Player.ts';
 import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { sendConnectedUsersArrayToWeb, sendSelectedPlayerIdToWeb } from '../sockets/emits/user.ts';
@@ -15,10 +15,14 @@ export const selectKaotikaPlayerRandom = (): Player | undefined => {
 };
 
 export const npcAttack = async () : Promise<void> => {
+  const activeGameGeneration = gameGeneration;
+  const activeTurnGeneration = turnGeneration;
+  const npcId = currentPlayer?._id;
   
   logUnlessTesting('Entered npcAttack() function...');
   
   await sleep(2000);
+  if (isGameEnding() || activeGameGeneration !== gameGeneration || activeTurnGeneration !== turnGeneration || currentPlayer?._id !== npcId) return;
   logUnlessTesting('The NPC is selecting a player to attack...');
   const npcSelectedPlayer = selectKaotikaPlayerRandom();
 
@@ -27,6 +31,7 @@ export const npcAttack = async () : Promise<void> => {
     sendSelectedPlayerIdToWeb(npcSelectedPlayer);
     logUnlessTesting(`The NPC selected ${npcSelectedPlayer.nickname}`);
     await sleep(3000);
+    if (isGameEnding() || activeGameGeneration !== gameGeneration || activeTurnGeneration !== turnGeneration || currentPlayer?._id !== npcId) return;
     attackFlow(npcSelectedPlayer._id);
   }
 };

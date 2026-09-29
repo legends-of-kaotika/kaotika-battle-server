@@ -52,8 +52,10 @@ export const checkIfLevelUpAndUpdatePlayer = async (player: RewardPlayer,
     newGold = rewards.gold;
     inventory = rewards.inventory;
 
-    await Player.updateOne({ _id: player._id },
-      { $set: { attributes: rewards.attributes, inventory, gold: newGold, level: newLevel } },);
+    await Player.updateOne({ _id: player._id }, {
+      $set: { attributes: rewards.attributes, inventory, level: newLevel },
+      $inc: { gold: Math.max(0, newGold - player.gold) },
+    });
 
     try {
       await sendLevelUpEmail(player.email, newLevel);
