@@ -6,9 +6,9 @@ export const connectDatabase = async (): Promise<void> => {
   if (connected) return;
   const uri = process.env.MONGODB_ROUTE;
   if (!uri) {
-    throw new Error('MONGODB_ROUTE is not defined in .env');
+    throw new Error('MONGODB_ROUTE is not defined in the environment');
   }
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, { dbName: 'Kaotika' });
   connected = true;
 };
 
