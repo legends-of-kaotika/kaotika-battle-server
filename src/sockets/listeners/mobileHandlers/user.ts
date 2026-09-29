@@ -81,6 +81,11 @@ export const mobileUserHandlers = (socket: Socket): void => {
     cancelDisconnectGrace(playerData._id);
 
     const existingIndex = CONNECTED_USERS.findIndex((user) => user._id === playerData._id);
+    const existingPlayer = CONNECTED_USERS[existingIndex];
+    if (existingPlayer && existingPlayer.socketId !== socket.id && io.sockets.sockets.has(existingPlayer.socketId)) {
+      callback({ status: 'FAILED', error: 'Player already logged in.' });
+      return;
+    }
     if (existingIndex !== -1) CONNECTED_USERS.splice(existingIndex, 1);
     playerData.socketId = socket.id;
     CONNECTED_USERS.push(playerData);

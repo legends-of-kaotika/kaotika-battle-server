@@ -334,6 +334,19 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     expect(GAME_USERS[0].socketId).toBe(replacement.id);
   });
 
+  it('does not let a duplicate login invalidate an active player socket', async () => {
+    const firstSignIn = await emitAck<{ status: string }>(mobiles[1], SOCKETS.MOBILE_SIGN_IN, EMAILS.loyal);
+    expect(firstSignIn.status).toBe('OK');
+
+    const duplicate = await connect(port, { idToken: `token:${EMAILS.loyal}` });
+    mobiles.push(duplicate);
+    const duplicateSignIn = await emitAck<{ status: string; error: string }>(duplicate, SOCKETS.MOBILE_SIGN_IN, EMAILS.loyal);
+
+    expect(duplicateSignIn.status).toBe('FAILED');
+    expect(duplicateSignIn.error).toBe('Player already logged in.');
+    expect((await emitAck<{ status: string }>(mobiles[1], SOCKETS.MOBILE_IS_GAME_CREATED)).status).toBe('OK');
+  });
+
   it('rejects web-only events until the socket registers as web', async () => {
     const unregistered = await connect(port);
     mobiles.push(unregistered);
