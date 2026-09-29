@@ -22,12 +22,6 @@ export const registerWebSocket = (socket: Socket): void => {
   socket.data.clientType = 'web';
 };
 
-export const hasValidWebSocketToken = (socket: Socket): boolean => {
-  const configuredToken = process.env.WEB_SOCKET_TOKEN;
-  if (!configuredToken) return process.env.NODE_ENV === 'development';
-  return socket.handshake.auth?.webToken === configuredToken;
-};
-
 export const getSocketPlayer = (socket: Socket): Player | undefined => {
   if (socket.data.clientType !== 'mobile' || typeof socket.data.playerId !== 'string') return undefined;
   return CONNECTED_USERS.find((player) => player._id === socket.data.playerId && player.socketId === socket.id);

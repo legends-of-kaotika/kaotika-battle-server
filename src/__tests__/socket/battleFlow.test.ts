@@ -43,7 +43,6 @@ jest.mock('../../helpers/npc.ts', () => {
 });
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
-process.env.WEB_SOCKET_TOKEN = 'test-web-token';
 
 type ClientSocket = any;
 
@@ -104,7 +103,7 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
 
     port = await startServer(0);
 
-    web = await connect(port, { webToken: 'test-web-token' });
+    web = await connect(port);
     mobiles = await Promise.all(Object.values(EMAILS).map((email) => connect(port, { idToken: `token:${email}` })));
   });
 
@@ -336,18 +335,13 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
   });
 
   it('rejects web-only events until the socket registers as web', async () => {
-    const unregistered = await connect(port, { webToken: 'test-web-token' });
+    const unregistered = await connect(port);
     mobiles.push(unregistered);
     const response = await emitAck<{ status: string }>(unregistered, SOCKETS.WEB_SEND_USERS);
     expect(response.status).toBe('FAILED');
     const registration = await emitAck<{ status: string }>(unregistered, SOCKETS.WEB_SEND_SOCKET_ID);
     expect(registration.status).toBe('FAILED');
 
-    const invalidToken = await connect(port, { webToken: 'wrong-token' });
-    mobiles.push(invalidToken);
-    const invalidRegistration = await emitAck<{ status: string; error: string }>(invalidToken, SOCKETS.WEB_SEND_SOCKET_ID);
-    expect(invalidRegistration.status).toBe('FAILED');
-    expect(invalidRegistration.error).toContain('Invalid');
   });
 
   it('requires a valid verified Firebase identity matching the requested email', async () => {
@@ -376,7 +370,7 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
   it('releases web registration when the active web socket disconnects', async () => {
     web.disconnect();
     await new Promise((resolve) => setTimeout(resolve, 20));
-    const replacementWeb = await connect(port, { webToken: 'test-web-token' });
+    const replacementWeb = await connect(port);
     const response = await emitAck<{ status: string }>(replacementWeb, SOCKETS.WEB_SEND_SOCKET_ID);
     expect(response.status).toBe('OK');
     web = replacementWeb;

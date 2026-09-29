@@ -60,7 +60,7 @@ This section details the progression of a game session, reflecting the login and
    - The Socket.IO connection must include a Firebase ID token in `auth.idToken`.
    - Upon connection, the client emits `mobile-signIn` with the user's email. The server verifies the token, requires a verified matching email, and uses that verified email for player lookup.
    - The server inserts the user into the `CONNECTED_USERS` array and responds to the client with their player data so they can display it.
-   - The web client connects with `auth.webToken` and emits `web-sendSocketId`. Only one registered web socket may be active.
+   - The web client emits `web-sendSocketId`. Only one registered web socket may be active.
 
 2. **Fetching Available Battles (Missions)**
    - If the logged player is Mortimer or Villain, the mobile client emits `mobile-getBattles` to request the list of available missions (battles).
@@ -273,7 +273,6 @@ Required variables (`.env`):
 | `CORS_ORIGIN` | Optional comma-separated browser origins. Credentials are disabled when unset (`*`). |
 | `FIREBASE_PROJECT_ID` | Firebase project used by Admin SDK token verification. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Optional path to an explicit service-account JSON file. If omitted, Firebase Admin uses Application Default Credentials from the runtime. |
-| `WEB_SOCKET_TOKEN` | Shared web socket handshake token. Required outside development; tests must also configure it explicitly. |
 
 Optional variables for level-up emails (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`). When missing, the level-up email fails and is logged; the battle continues.
 
@@ -306,7 +305,7 @@ It waits for MongoDB-backed server startup and for all three health checks:
 ```bash
 export FIREBASE_PROJECT_ID=your-firebase-project
 docker compose -f docker-compose.e2e.yml up --build -d --wait
-WEB_SOCKET_TOKEN=development-e2e-web-token npm run test:e2e
+npm run test:e2e
 ```
 
 The smoke test verifies Socket.IO connectivity, web registration and takeover,
@@ -315,8 +314,7 @@ also verify a real Firebase player login without storing credentials in the
 repository:
 
 ```bash
-FIREBASE_ID_TOKEN=... FIREBASE_EMAIL=player@example.com \
-  WEB_SOCKET_TOKEN=development-e2e-web-token npm run test:e2e
+FIREBASE_ID_TOKEN=... FIREBASE_EMAIL=player@example.com npm run test:e2e
 ```
 
 Stop the local stack with:

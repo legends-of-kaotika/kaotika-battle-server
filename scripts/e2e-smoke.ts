@@ -8,7 +8,6 @@ interface Ack {
 }
 
 const serverUrl = process.env.E2E_SERVER_URL || 'http://localhost:3000';
-const webToken = process.env.WEB_SOCKET_TOKEN || 'development-e2e-web-token';
 
 const connectOnce = (auth: Record<string, string>): Promise<Socket> => new Promise((resolve, reject) => {
   const socket = io(serverUrl, {
@@ -53,12 +52,7 @@ const expectStatus = (response: Ack, status: Ack['status'], step: string): void 
 const sockets: Socket[] = [];
 
 try {
-  const invalidWeb = await connect({ webToken: `${webToken}-invalid` });
-  sockets.push(invalidWeb);
-  expectStatus(await emitAck(invalidWeb, 'web-sendSocketId'), 'FAILED', 'invalid web token');
-  invalidWeb.disconnect();
-
-  const web = await connect({ webToken });
+  const web = await connect();
   sockets.push(web);
   const registration = await emitAck(web, 'web-sendSocketId');
   expectStatus(registration, 'OK', 'web registration');
@@ -66,7 +60,7 @@ try {
     throw new Error('web registration: authoritative state snapshot is missing');
   }
 
-  const duplicateWeb = await connect({ webToken });
+  const duplicateWeb = await connect();
   sockets.push(duplicateWeb);
   expectStatus(await emitAck(duplicateWeb, 'web-sendSocketId'), 'FAILED', 'duplicate web registration');
 

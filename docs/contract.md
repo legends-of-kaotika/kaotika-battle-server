@@ -24,8 +24,7 @@ The battle server is the contract owner: it defines the event names
 
 ## 2. Connection model
 
-- A single **web client** connects with `auth.webToken` and registers itself via
-  `web-sendSocketId`.
+- A single **web client** registers itself via `web-sendSocketId`.
   Its socket id is stored in `webSocketId`; all web-bound events are emitted to
   that socket (`io.to(webSocketId).emit(...)`).
 - **Mobile clients** join the `mobile` room (`socket.join('mobile')`).
@@ -81,7 +80,7 @@ The battle server is the contract owner: it defines the event names
 | `mobile-gameReset` | mobile admin | — | `{ status, error? }` |
 | `mobile-isGameCreated` | mobile | — | — |
 | `mobile-isGameStarted` | mobile | — | — |
-| `web-sendSocketId` | web with handshake `auth.webToken` | — | `{ status, state?, error? }` |
+| `web-sendSocketId` | web | — | `{ status, state?, error? }` |
 | `web-sendUsers` | registered web | — | `{ status, error? }` |
 | `web-syncState` | registered web | — | `{ status, state?, error? }` |
 | `web-attackAnimationEnd` | registered web | affected player `_id` | `{ status, error? }` |

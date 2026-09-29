@@ -6,7 +6,7 @@ import { completeAttackTurn, returnLoyalsAndBetrayers } from '../../../helpers/g
 import { WebSyncState } from '../../../interfaces/WebSyncState.ts';
 import { turnTime } from '../../../timer/timer.ts';
 import { sendConnectedUsersArrayToWeb } from '../../emits/user.ts';
-import { hasValidWebSocketToken, isRegisteredWebSocket, onAsync, registerWebSocket, reject, SocketAck } from '../../guards.ts';
+import { isRegisteredWebSocket, onAsync, registerWebSocket, reject, SocketAck } from '../../guards.ts';
 
 const getWebSyncState = (): WebSyncState => {
   const battle = selectedBattleId ? findResolvedBattleById(selectedBattleId) : undefined;
@@ -32,10 +32,6 @@ const sendSyncState = (socket: Socket, callback?: SocketAck): void => {
 
 export const webUserHandlers = (socket: Socket): void => {
   socket.on(WEB_SEND_SOCKET_ID, (callback?: SocketAck) => {
-    if (!hasValidWebSocketToken(socket)) {
-      reject(WEB_SEND_SOCKET_ID, callback, 'Invalid web socket token.');
-      return;
-    }
     if (webSocketId && webSocketId !== socket.id) {
       reject(WEB_SEND_SOCKET_ID, callback, 'A web socket is already registered.');
       return;
