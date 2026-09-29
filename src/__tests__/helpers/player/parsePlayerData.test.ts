@@ -13,4 +13,11 @@ describe('parsePlayerData', () => {
     expect(player.equipment.weapon.die_num).toBe(1);
     expect(player.equipment.weapon.base_percentage).toBe(50);
   });
+
+  it('normalizes MongoDB ObjectIds for socket authorization', () => {
+    const fullNpc = JSON.parse(JSON.stringify(NPCS_MOCK[0])) as PlayerPopulated;
+    fullNpc._id = { toString: () => 'mongo-player-id' } as unknown as string;
+
+    expect(parsePlayerData(fullNpc)._id).toBe('mongo-player-id');
+  });
 });

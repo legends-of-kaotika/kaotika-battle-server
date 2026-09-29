@@ -251,7 +251,7 @@ export const parsePlayerData = (data: PlayerPopulated): Player => {
   };
 
   const player: Player = {
-    _id: data._id,
+    _id: String(data._id),
     name: data.name || '',
     nickname: data.nickname || '',
     avatar: data.avatar || '',
@@ -318,5 +318,4 @@ export const assignRole = (email: string) => {
     return 'acolyte';
   }
 };
-
 
