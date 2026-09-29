@@ -14,7 +14,6 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:?FIREBASE_PROJECT_ID is required}
       CORS_ORIGIN: http://localhost:5000,http://localhost:5001
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]

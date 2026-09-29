@@ -271,7 +271,6 @@ Required variables (`.env`):
 | `VILLAIN_EMAIL` | Email that grants the `villain` role |
 | `PORT` | HTTP/Socket port (default `3000`) |
 | `CORS_ORIGIN` | Optional comma-separated browser origins. Credentials are disabled when unset (`*`). |
-| `FIREBASE_PROJECT_ID` | Firebase project used by Admin SDK token verification. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Optional path to an explicit service-account JSON file. If omitted, Firebase Admin uses Application Default Credentials from the runtime. |
 
 Optional variables for level-up emails (`EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASSWORD`). When missing, the level-up email fails and is logged; the battle continues.
@@ -303,7 +302,6 @@ The E2E Compose file builds and runs the server, web display, and mobile client.
 It waits for MongoDB-backed server startup and for all three health checks:
 
 ```bash
-export FIREBASE_PROJECT_ID=your-firebase-project
 docker compose -f docker-compose.e2e.yml up --build -d --wait
 npm run test:e2e
 ```

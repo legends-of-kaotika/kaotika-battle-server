@@ -47,7 +47,10 @@ export const mobileUserHandlers = (socket: Socket): void => {
     let verifiedIdentity;
     try {
       verifiedIdentity = await verifyFirebaseIdToken(idToken);
-    } catch {
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'test') {
+        console.error('Firebase token verification failed:', error instanceof Error ? error.message : error);
+      }
       callback({ status: 'FAILED', error: 'Invalid Firebase ID token.' });
       return;
     }
