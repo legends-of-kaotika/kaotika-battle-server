@@ -6,6 +6,7 @@ export const gamePlayerMock: Player =
   name: 'AITOR MENDIBURU BOTAS',
   nickname: 'Dr Github',
   avatar: 'https://lh3.googleusercontent.com/a/ACg8ocIs9M5Fz0Dg1M7KgxcDGVyUSOeCIrXQmEVToR9cipfo71RLlOE=s96-c',
+  model3d: '',
   email: 'aitor.mendiburu@ikasle.aeg.eus',
   level: 18,
   role: 'acolyte',

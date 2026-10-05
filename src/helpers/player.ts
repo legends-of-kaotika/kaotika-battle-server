@@ -265,6 +265,7 @@ export const parsePlayerData = (data: PlayerPopulated): Player => {
     name: data.name || '',
     nickname: data.nickname || '',
     avatar: data.avatar || '',
+    model3d: data.model3d || '',
     email: data.email || '',
     level: data.level || 0,
     role: assignRole(data.email) || '',

@@ -21,6 +21,20 @@ describe('parsePlayerData', () => {
     expect(parsePlayerData(fullNpc)._id).toBe('mongo-player-id');
   });
 
+  it('keeps the assigned 3D model when the player has one', () => {
+    const fullNpc = JSON.parse(JSON.stringify(NPCS_MOCK[0])) as PlayerPopulated;
+    fullNpc.model3d = 'brute.glb';
+
+    expect(parsePlayerData(fullNpc).model3d).toBe('brute.glb');
+  });
+
+  it('defaults the 3D model to an empty string when the player has none', () => {
+    const fullNpc = JSON.parse(JSON.stringify(NPCS_MOCK[0])) as PlayerPopulated;
+    fullNpc.model3d = undefined as unknown as string;
+
+    expect(parsePlayerData(fullNpc).model3d).toBe('');
+  });
+
   it('normalizes negative equipped attributes before calculating hit points', () => {
     const fullNpc = JSON.parse(JSON.stringify(NPCS_MOCK[0])) as PlayerPopulated;
     fullNpc.level = 2;

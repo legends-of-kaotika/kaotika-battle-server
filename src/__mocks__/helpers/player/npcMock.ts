@@ -252,6 +252,7 @@ export const NPCS_MOCK: PlayerPopulated[] = [
     name: '',
     nickname: '',
     avatar: '',
+    model3d: '',
     email: '',
     experience: 0,
     level: 0,

@@ -39,7 +39,12 @@ export const findResolvedBattleById = (_id: string): Battle | undefined => {
 
 export const parseWebBattleData = (battle: Battle): WebBattle => {
   const webBattleData = { ...battle } as WebBattle;
-  webBattleData.enemies = battle.enemies?.map(({ _id, name, avatar }) => ({ _id, name, avatar }));
+  webBattleData.enemies = battle.enemies?.map(({ _id, name, avatar, model3d }) => ({
+    _id,
+    name,
+    avatar,
+    model3d: model3d || '',
+  }));
   return webBattleData;
 };
 

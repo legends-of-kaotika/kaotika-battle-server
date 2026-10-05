@@ -6,6 +6,7 @@ const npcSchema = new Schema({
   nickname: String,
   email: String,
   avatar: String,
+  model3d: { type: String, default: '' },
   classroom_Id: { type: String, default: null },
   level: { type: Number, default: 1 },
   experience: { type: Number, default: 0 },

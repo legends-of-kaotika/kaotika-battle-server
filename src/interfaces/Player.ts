@@ -11,6 +11,7 @@ export interface Player {
   name: string;
   nickname: string;
   avatar: string;
+  model3d: string;
   email: string;
   level: number;
   socketId: string;

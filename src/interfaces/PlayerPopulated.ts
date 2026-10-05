@@ -18,6 +18,7 @@ export interface PlayerPopulated {
   name: string;
   nickname: string;
   avatar: string;
+  model3d: string;
   email: string;
   experience: number;
   level: number;

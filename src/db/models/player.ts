@@ -17,6 +17,7 @@ const playerSchema = new Schema({
   nickname: String,
   email: { type: String, required: true, unique: true, index: true },
   avatar: String,
+  model3d: { type: String, default: '' },
   classroom_Id: { type: String, default: null },
   level: { type: Number, default: 1 },
   experience: { type: Number, default: 0 },
