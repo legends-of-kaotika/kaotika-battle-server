@@ -8,6 +8,7 @@ import { PlayerPopulated } from '../interfaces/PlayerPopulated.ts';
 import { Weapon } from '../interfaces/Weapon.ts';
 import { sendKilledPlayer, sendPlayerDisconnectedToWeb, sendPlayerRemoved } from '../sockets/emits/user.ts';
 import { logUnlessTesting } from './utils.ts';
+import { MAX_INSANITY, MIN_INSANITY } from '../constants/attributes.ts';
 
 // Fallback weapon for players that have no weapon equipped, so combat never
 // crashes on undefined weapon fields.
@@ -238,7 +239,16 @@ export const calculateBCFA = (attributes: Attribute): number => {
 };
 
 export const parsePlayerData = (data: PlayerPopulated): Player => {
-  const baseAttributes = calculateBaseAttributes(data);
+  const rawBaseAttributes = calculateBaseAttributes(data);
+  const baseAttributes = {
+    ...rawBaseAttributes,
+    intelligence: Math.max(1, Math.round(rawBaseAttributes.intelligence)),
+    dexterity: Math.max(1, Math.round(rawBaseAttributes.dexterity)),
+    charisma: Math.max(1, Math.round(rawBaseAttributes.charisma)),
+    constitution: Math.max(1, Math.round(rawBaseAttributes.constitution)),
+    strength: Math.max(1, Math.round(rawBaseAttributes.strength)),
+    insanity: Math.max(MIN_INSANITY, Math.min(MAX_INSANITY, Math.round(rawBaseAttributes.insanity))),
+  };
 
   const calculatedAttributes = {
     ...baseAttributes,
@@ -318,4 +328,3 @@ export const assignRole = (email: string) => {
     return 'acolyte';
   }
 };
-

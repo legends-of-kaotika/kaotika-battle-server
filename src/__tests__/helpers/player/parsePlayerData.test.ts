@@ -20,4 +20,29 @@ describe('parsePlayerData', () => {
 
     expect(parsePlayerData(fullNpc)._id).toBe('mongo-player-id');
   });
+
+  it('normalizes negative equipped attributes before calculating hit points', () => {
+    const fullNpc = JSON.parse(JSON.stringify(NPCS_MOCK[0])) as PlayerPopulated;
+    fullNpc.level = 2;
+    fullNpc.attributes = {
+      ...fullNpc.attributes,
+      constitution: 4,
+      dexterity: 10,
+      insanity: 16,
+      intelligence: 2,
+      charisma: 0,
+      strength: 0,
+    };
+    fullNpc.equipment.weapon!.modifiers = {
+      ...fullNpc.equipment.weapon!.modifiers,
+      charisma: -8,
+      strength: -2,
+    };
+
+    const player = parsePlayerData(fullNpc);
+
+    expect(player.attributes.charisma).toBeGreaterThanOrEqual(1);
+    expect(player.attributes.strength).toBeGreaterThanOrEqual(1);
+    expect(player.attributes.hit_points).toBeGreaterThan(1);
+  });
 });

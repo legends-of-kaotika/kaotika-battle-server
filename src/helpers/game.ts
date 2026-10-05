@@ -120,7 +120,7 @@ export const handleGameEnd = async (): Promise<void> => {
 export const checkStartGameRequirement = (): boolean => {
   const masterRoles = ['istvan', 'villain', 'mortimer'];
   const hasMaster = GAME_USERS.some((user) => masterRoles.includes(user.role));
-  const hasAcolyte = GAME_USERS.some((user) => (user.role === 'acolyte' && user.isBetrayer === false));
+  const hasAcolyte = GAME_USERS.some((user) => user.role === 'acolyte' && user.isBetrayer !== true);
   return hasMaster || hasAcolyte;
 };
 
