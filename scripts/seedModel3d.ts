@@ -31,7 +31,7 @@ const MID_POOL = ['arissa', 'ch40', 'kachujin', 'arissa', 'ch40'];
 const WEAK_POOL = ['archer', 'paladin', 'maria', 'eve', 'arissa', 'kachujin'];
 
 const NPC_MODELS: Record<string, string> = {
-  Dicerius: 'brute',
+  Dicerius: 'enemy-ganfaul',
   Demetrius: 'demon',
   Elias: 'enemy-knight',
   Lazarus: 'enemy-ganfaul',
