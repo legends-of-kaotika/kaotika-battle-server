@@ -1,4 +1,5 @@
 import { BATTLES } from '../game.ts';
+import { fillNpcModel3d } from './model3d.ts';
 import { Battle } from '../interfaces/Battles.ts';
 import { WebBattle } from '../interfaces/WebBattle.ts';
 
@@ -45,6 +46,7 @@ export const parseWebBattleData = (battle: Battle): WebBattle => {
     avatar,
     model3d: model3d || '',
   }));
+  fillNpcModel3d(webBattleData.enemies ?? []);
   return webBattleData;
 };
 

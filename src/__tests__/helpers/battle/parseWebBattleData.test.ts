@@ -41,10 +41,10 @@ const buildBattle = (enemies: PlayerPopulated[]): Battle => ({
 });
 
 describe('parseWebBattleData', () => {
-  it('keeps the 3D model of every enemy', () => {
+  it('keeps the stored 3D model of an enemy that is not in the assignment table', () => {
     const battle = buildBattle([
-      buildEnemy({ _id: 'e1', model3d: 'brute.glb' }),
-      buildEnemy({ _id: 'e2', model3d: 'demon.glb' }),
+      buildEnemy({ _id: 'e1', name: 'Unknown Foe', model3d: 'brute.glb' }),
+      buildEnemy({ _id: 'e2', name: 'Another Foe', model3d: 'demon.glb' }),
     ]);
 
     const parsed = parseWebBattleData(battle);
@@ -52,15 +52,26 @@ describe('parseWebBattleData', () => {
     expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['brute.glb', 'demon.glb']);
   });
 
-  it('normalizes enemies without a stored model to an empty string', () => {
+  it('overrides a stored model with the one the assignment table gives the enemy', () => {
     const battle = buildBattle([
-      buildEnemy({ model3d: undefined as unknown as string }),
-      buildEnemy({ _id: 'e2', model3d: '' }),
+      buildEnemy({ _id: 'e1', model3d: 'brute.glb' }),
+      buildEnemy({ _id: 'e2', name: 'Nausea', model3d: 'demon.glb' }),
     ]);
 
     const parsed = parseWebBattleData(battle);
 
-    expect(parsed.enemies.every((enemy) => enemy.model3d === '')).toBe(true);
+    expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['enemy-ganfaul', 'enemy-vampire']);
+  });
+
+  it('falls back to the assignment table when the enemy has no stored model', () => {
+    const battle = buildBattle([
+      buildEnemy({ model3d: undefined as unknown as string }),
+      buildEnemy({ _id: 'e2', name: 'Nobody', model3d: '' }),
+    ]);
+
+    const parsed = parseWebBattleData(battle);
+
+    expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['enemy-ganfaul', '']);
   });
 
   it('trims the enemy payload to the fields the web renderer needs', () => {
@@ -70,7 +81,7 @@ describe('parseWebBattleData', () => {
       _id: 'enemy-1',
       name: 'Lazarus',
       avatar: 'images/enemies/lazarus.webp',
-      model3d: 'enemy-knight.glb',
+      model3d: 'enemy-ganfaul',
     });
   });
 

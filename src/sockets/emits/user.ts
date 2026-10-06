@@ -2,6 +2,7 @@ import { io } from '../../../index.ts';
 import * as SOCKETS from '../../constants/sockets.ts';
 import { webSocketId } from '../../game.ts';
 import { returnLoyalsAndBetrayers } from '../../helpers/game.ts';
+import { fillMissingModel3d } from '../../helpers/model3d.ts';
 import { logUnlessTesting } from '../../helpers/utils.ts';
 import { AttackJson } from '../../interfaces/AttackJson.ts';
 import { Attribute } from '../../interfaces/Attribute.ts';
@@ -11,12 +12,14 @@ import { Player } from '../../interfaces/Player.ts';
 //sends an array with the connected users to web client on user connection
 export const sendConnectedUsersArrayToWeb = ( users: Player[] ): void => {
   logUnlessTesting(`Emitting ${SOCKETS.CONNECTED_USERS} socket message with online user list to everyone.`);
+  fillMissingModel3d(users);
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   io.to(webSocketId).emit(SOCKETS.CONNECTED_USERS, dividedPlayers);
 };
 
 export const sendConnectedUsersArrayToAll = ( users: Player[] ): void => {
   logUnlessTesting('Emitting connectedUsers socket message with online user list to everyone.');
+  fillMissingModel3d(users);
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(users);
   io.emit(SOCKETS.CONNECTED_USERS, dividedPlayers);
 };
