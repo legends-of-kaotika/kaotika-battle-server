@@ -131,15 +131,17 @@ export const getEquipmentDefense = (equipment: Equipment): number => {
 
 // ---- CRITICAL ATTACK ---- //
 
-export const getCriticalAttackModifier1 = (attackPercentage: number,
+export const getCriticalAttackModifier1 = (successPercentage: number,
   criticalPercentage: number,) => {
-  const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
+  if (successPercentage <= 0 || criticalPercentage <= 0) return 0;
+  const criticalPercentageMod = (criticalPercentage / successPercentage) * 100;
   return getValueFromRule(CRITICAL_MOD1, criticalPercentageMod);
 };
 
-export const getCriticalAttackModifier2 = (attackPercentage: number,
+export const getCriticalAttackModifier2 = (successPercentage: number,
   criticalPercentage: number,) => {
-  const criticalPercentageMod = (attackPercentage / criticalPercentage) * 100;
+  if (successPercentage <= 0 || criticalPercentage <= 0) return 0;
+  const criticalPercentageMod = (criticalPercentage / successPercentage) * 100;
   return getValueFromRule(CRITICAL_MOD2, criticalPercentageMod);
 };
 
@@ -170,12 +172,12 @@ export const getAdditionalWeaponDieRolls = (throws: number,
 
 export const getCriticalHitDamage = (BCFA: number,
   charisma: number,
-  attackPercentage: number,
+  successPercentage: number,
   criticalPercentage: number,
   weapon: Weapon) => {
-  const critMod1 = getCriticalAttackModifier1(attackPercentage,
+  const critMod1 = getCriticalAttackModifier1(successPercentage,
     criticalPercentage,);
-  const critMod2 = getCriticalAttackModifier2(attackPercentage,
+  const critMod2 = getCriticalAttackModifier2(successPercentage,
     criticalPercentage,);
   return calculateCriticalHitDamage(BCFA, charisma, critMod1, critMod2, weapon);
 };
@@ -248,7 +250,7 @@ export const attack = (target: ReducedDefender,
   case ATTACK_TYPES.CRITICAL:
     dealedDamage = getCriticalHitDamage(attacker.attributes.BCFA,
       attacker.attributes.charisma,
-      attackRoll,
+      successPercentage,
       criticalPercentage,
       attacker.weapon,);
     break;

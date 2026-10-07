@@ -234,7 +234,7 @@ export const attackFlow = (targetId: string): boolean => {
       const luckDefender = defenderReducedForLuck(target);
 
       // Execute attacker luck
-      attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, attackRoll, criticalPercentage);
+      attackerLuckResult = attackerLuck(luckAttacker, luckDefender, attackResult.dealedDamage, attackResult.attackType, weaponRoll, successPercentage, criticalPercentage);
       dealedDamage = attackerLuckResult.dealedDamage;
 
       if (attackerLuckResult.luckMessage === LUCK_MESSAGE.CRITICAL_EFFECT) {

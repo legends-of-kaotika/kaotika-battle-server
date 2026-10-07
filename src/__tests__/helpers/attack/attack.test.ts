@@ -23,7 +23,7 @@ describe('attack function', () => {
   });
   test('returns critical hit damage when attack type is CRITICAL with correct damage', () => {
     const result = attack(target, attacker, 5, 80, 10, 10, 5);
-    expect(result.dealedDamage).toBeGreaterThanOrEqual(213);
+    expect(result.dealedDamage).toBeGreaterThanOrEqual(218);
     expect(result.dealedDamage).toBeLessThanOrEqual(713);
     expect(result.attackType).toBe(ATTACK_TYPES.CRITICAL);
   });
@@ -35,7 +35,7 @@ describe('attack function', () => {
   test('returns critical hit damage when attack type is CRITICAL with correct damage', () => {
     const result = attack(target, attacker, 1, 80, 10, 10, 95);
     expect(result.attackType).toBe(ATTACK_TYPES.CRITICAL);
-    expect(result.dealedDamage).toBeGreaterThanOrEqual(213);
+    expect(result.dealedDamage).toBeGreaterThanOrEqual(218);
     expect(result.dealedDamage).toBeLessThanOrEqual(713);
   });
   test('returns zero damage when attack type is FAILED', () => {

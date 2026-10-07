@@ -54,9 +54,9 @@ describe('applyAttackLuck', () => {
 
   it('should transform a normal attack into a critical if roll is between 59-80', () => {
     (Die100.roll as jest.Mock).mockReturnValue(75); 
-    const result = applyAttackLuck(100, 'NORMAL', 20, 15, 30, attacker);
+    const result = applyAttackLuck(100, 'NORMAL', 20, 75, 9, attacker);
     expect(result.luckMessage).toBe('The attack has been transformed into critical');
-    expect(result.dealedDamage).toBeGreaterThanOrEqual(213);
+    expect(result.dealedDamage).toBeGreaterThanOrEqual(218);
     expect(result.dealedDamage).toBeLessThanOrEqual(713);
   });
 
