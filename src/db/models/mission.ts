@@ -13,6 +13,11 @@ const missionSchema = new Schema({
   battle_music: { type: String, default: 'battle.ogg' },
   battle_animations: [String],
   end_of_battle_background: [String],
+  scene3d: {
+    type: String,
+    enum: ['legacy-cathedral', 'dark-diorama'],
+    default: 'legacy-cathedral',
+  },
 });
 
 export const Mission = model('Mission', missionSchema);

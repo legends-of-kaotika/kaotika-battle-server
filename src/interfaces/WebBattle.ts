@@ -14,5 +14,5 @@ export interface WebBattle {
   battle_video_background: string;
   battle_animations: string[];
   end_of_battle_background: string[];
+  scene3d?: 'legacy-cathedral' | 'dark-diorama';
 };
-
