@@ -34,7 +34,7 @@ export const NPC_MODELS: Record<string, string> = {
   Dicerius: 'enemy-ganfaul',
   Demetrius: 'demon',
   Elias: 'enemy-knight',
-  Lazarus: 'enemy-ganfaul',
+  Lazarus: 'brute',
   Nausea: 'enemy-vampire',
   Zachariah: 'mutant',
   Ascetum: 'enemy-heraklios',
@@ -77,7 +77,7 @@ export const hash = (value: string): number => {
 export const masterModelByEmail = (): Record<string, string> => {
   const masters: Record<string, string> = {};
   if (process.env.ISTVAN_EMAIL) masters[process.env.ISTVAN_EMAIL] = 'brute';
-  if (process.env.MORTIMER_EMAIL) masters[process.env.MORTIMER_EMAIL] = 'enemy-ganfaul';
+  if (process.env.MORTIMER_EMAIL) masters[process.env.MORTIMER_EMAIL] = 'paladin';
   if (process.env.VILLAIN_EMAIL) masters[process.env.VILLAIN_EMAIL] = 'ch40';
   return masters;
 };

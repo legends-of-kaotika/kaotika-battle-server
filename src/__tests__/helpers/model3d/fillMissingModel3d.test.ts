@@ -115,7 +115,7 @@ describe('model3d assignment', () => {
 
     fillNpcModel3d(enemies);
 
-    expect(enemies.map((enemy) => enemy.model3d)).toEqual(['enemy-ganfaul', 'brute']);
+    expect(enemies.map((enemy) => enemy.model3d)).toEqual(['brute', 'brute']);
   });
 
   it('only publishes models the web client ships', () => {
