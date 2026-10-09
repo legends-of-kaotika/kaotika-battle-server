@@ -65,10 +65,9 @@ export const webUserHandlers = (socket: Socket): void => {
       reject(WEB_ATTACK_ANIMATION_END, callback, 'Web socket is not registered.');
       return;
     }
-    if (typeof defenderId !== 'string' || !await completeAttackTurn(defenderId)) {
+    if (typeof defenderId !== 'string' || !await completeAttackTurn(defenderId, () => callback?.({ status: 'OK' }))) {
       reject(WEB_ATTACK_ANIMATION_END, callback, 'No matching action is pending.');
       return;
     }
-    callback?.({ status: 'OK' });
   });
 };

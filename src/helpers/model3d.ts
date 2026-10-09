@@ -13,7 +13,7 @@
 export const KNOWN_MODELS = [
   'archer', 'arissa', 'ascetum', 'bishop', 'brute', 'ch40', 'demon', 'demetrius', 'dicerius',
   'enemy-ganfaul', 'enemy-heraklios', 'enemy-knight', 'enemy-vampire',
-  'eve', 'kachujin', 'lazarus', 'maria', 'mutant', 'nausea', 'paladin', 'poluctus',
+  'eve', 'guardian', 'kachujin', 'lazarus', 'maria', 'mutant', 'nausea', 'paladin', 'poluctus',
 ] as const;
 
 /** Big silhouettes for the L60+ crowd: mostly mages plus a couple of bruisers.

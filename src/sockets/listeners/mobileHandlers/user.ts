@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
-  BATTLES, CONNECTED_USERS, GAME_USERS, isGameCreated, isGameStarted, resetInitialGameValues,
+  BATTLES, CONNECTED_USERS, GAME_USERS, isAttackPending, isGameCreated, isGameStarted, resetInitialGameValues,
   round, setGameStarted, setIsGameCreated, setSelectedBattleId, setTarget, target, webSocketId,
 } from '../../../game.ts';
 import { fetchBattles, getPlayerDataByEmail } from '../../../helpers/api.ts';
@@ -113,6 +113,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_SET_SELECTED_PLAYER, (_id: unknown, callback?: SocketAck) => {
     if (!ownsCurrentTurn(socket)) return void reject(SOCKETS.MOBILE_SET_SELECTED_PLAYER, callback);
+    if (isAttackPending()) return void reject(SOCKETS.MOBILE_SET_SELECTED_PLAYER, callback, 'An attack is already pending.');
     if (typeof _id !== 'string') return void reject(SOCKETS.MOBILE_SET_SELECTED_PLAYER, callback, 'Invalid target.');
     const newTarget = findPlayerById(_id);
     if (!newTarget) return void reject(SOCKETS.MOBILE_SET_SELECTED_PLAYER, callback, 'Selected player not found.');

@@ -203,6 +203,7 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     expect((await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_SET_SELECTED_PLAYER, defender._id)).status).toBe('OK');
 
     const attackInfo = waitFor<any>(web, SOCKETS.ATTACK_INFORMATION);
+    const pausedTimer = waitFor<number>(web, SOCKETS.SEND_TIMER);
     defender.isAlive = false;
     expect((await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_ATTACK, defender._id)).status).toBe('FAILED');
     defender.isAlive = true;
@@ -212,6 +213,8 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     expect(duplicateAttackAck.status).toBe('FAILED');
     const info = await attackInfo;
     expect(info.attack).toBeDefined();
+    expect(await pausedTimer).toBe(-1);
+    expect((await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_SET_SELECTED_PLAYER, defender._id)).status).toBe('FAILED');
 
     const nextTurn = waitFor<string>(web, SOCKETS.ASSIGN_TURN);
     const animationAck = await emitAck<{ status: string }>(web, SOCKETS.WEB_ATTACK_ANIMATION_END, defender._id);

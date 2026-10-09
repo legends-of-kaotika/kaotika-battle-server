@@ -10,7 +10,7 @@ import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
 import { BattleOutcome, PlayerReward } from '../interfaces/BattleRewards.ts';
 import { recordBattleOutcome } from '../services/battleRewardsService.ts';
-import { assignTurn, sendAttackInformationToWeb, sendGameEnd, sendUpdatedPlayerToMobile } from '../sockets/emits/user.ts';
+import { assignTurn, sendAttackInformationToWeb, sendGameEnd, sendTimerDataToWeb, sendUpdatedPlayerToMobile } from '../sockets/emits/user.ts';
 import { sendBattleRewardsToWeb } from '../sockets/emits/game.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
 import { adjustAttributes, attack, getAttackRoll, getCriticalPercentage, getFumblePercentage, getSuccessPercentage, getWeaponDieRoll, parseAttackData, getMaxWeaponDieRoll } from './attack.ts';
@@ -182,6 +182,7 @@ export const attackFlow = (targetId: string): boolean => {
 
     // Pause the timer when a player attacks.
     clearTimer();
+    sendTimerDataToWeb(-1);
 
     // Adjust player attributes
     adjustAttributes(attacker);
@@ -289,9 +290,10 @@ export const attackFlow = (targetId: string): boolean => {
   }
 };
 
-export const completeAttackTurn = async (defenderId: string): Promise<boolean> => {
+export const completeAttackTurn = async (defenderId: string, onClaimed?: () => void): Promise<boolean> => {
   const actionTurnGeneration = claimActionCompletion(defenderId);
   if (actionTurnGeneration === null) return false;
+  onClaimed?.();
 
   const updatedPlayer = findPlayerById(defenderId);
   if (updatedPlayer) {

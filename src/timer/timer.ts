@@ -25,6 +25,7 @@ export const startTimer = () : void => {
   console.log('Turn started');
   turnTime = TURN_TIMER;
   console.log('turn time', turnTime);
+  sendTimerDataToWeb(turnTime);
   // set an interval to decrease timer every second
   intervalId = setInterval(() => {
     if (activeTimerGeneration === timerGeneration) decreaseTimer(activeTurnGeneration);
