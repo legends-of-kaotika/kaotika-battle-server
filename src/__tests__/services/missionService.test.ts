@@ -25,13 +25,14 @@ describe('missionService', () => {
     (Npc.findById as jest.Mock).mockReturnValue(npcQuery);
     (Mission.find as jest.Mock).mockReturnValue({
       exec: jest.fn().mockResolvedValue([{
-        toObject: () => ({ _id: missionId, name: 'Battle', enemies: [npcId] }),
+        toObject: () => ({ _id: missionId, name: 'Battle', scene3d: 'dark-diorama', enemies: [npcId] }),
       }]),
     });
 
     const [mission] = await getMissions();
 
     expect(mission._id).toBe('mission-id');
+    expect(mission.scene3d).toBe('dark-diorama');
     expect(mission.enemies[0]._id).toBe('npc-id');
   });
 });

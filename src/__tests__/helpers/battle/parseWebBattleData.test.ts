@@ -38,6 +38,7 @@ const buildBattle = (enemies: PlayerPopulated[]): Battle => ({
   battle_video_background: 'videos/battle/intro.mp4',
   battle_animations: ['videos/battle/attack.mp4'],
   end_of_battle_background: ['images/battle/victory.webp'],
+  scene3d: 'dark-diorama',
 });
 
 describe('parseWebBattleData', () => {
@@ -89,5 +90,6 @@ describe('parseWebBattleData', () => {
     const parsed = parseWebBattleData(buildBattle([]));
 
     expect(parsed.enemies).toEqual([]);
+    expect(parsed.scene3d).toBe('dark-diorama');
   });
 });
