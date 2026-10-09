@@ -37,7 +37,7 @@ describe('model3d assignment', () => {
 
     fillMissingModel3d(roster);
 
-    expect(roster.map((member) => member.model3d)).toEqual(['enemy-ganfaul', 'enemy-vampire']);
+    expect(roster.map((member) => member.model3d)).toEqual(['dicerius', 'nausea']);
   });
 
   it('gives the master the model of the table', () => {
@@ -58,6 +58,16 @@ describe('model3d assignment', () => {
     fillMissingModel3d(roster);
 
     expect(roster[0].model3d).toBe('maria');
+  });
+
+  it('always assigns the brute model to a Bumbler acolyte', () => {
+    const roster: Model3dMember[] = [
+      { _id: 'p1', email: 'bumbler@kaotika.test', level: 5, model3d: 'archer', profile: { name: 'Bumbler' } },
+    ];
+
+    fillMissingModel3d(roster);
+
+    expect(roster[0].model3d).toBe('brute');
   });
 
   it('fills an acolyte without a model from the pool of its level tier', () => {
@@ -115,7 +125,23 @@ describe('model3d assignment', () => {
 
     fillNpcModel3d(enemies);
 
-    expect(enemies.map((enemy) => enemy.model3d)).toEqual(['brute', 'brute']);
+    expect(enemies.map((enemy) => enemy.model3d)).toEqual(['lazarus', 'brute']);
+  });
+
+  it.each([
+    ['Ascetum', 'ascetum'],
+    ['Bishop', 'bishop'],
+    ['Demetrius', 'demetrius'],
+    ['Dicerius', 'dicerius'],
+    ['Lazarus', 'lazarus'],
+    ['Nausea', 'nausea'],
+    ['Poluctus', 'poluctus'],
+  ])('assigns %s its dedicated model', (name, expected) => {
+    const enemies: Model3dMember[] = [{ name, model3d: '' }];
+
+    fillNpcModel3d(enemies);
+
+    expect(enemies[0].model3d).toBe(expected);
   });
 
   it('only publishes models the web client ships', () => {

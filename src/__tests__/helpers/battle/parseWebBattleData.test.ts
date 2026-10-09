@@ -61,7 +61,7 @@ describe('parseWebBattleData', () => {
 
     const parsed = parseWebBattleData(battle);
 
-    expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['brute', 'enemy-vampire']);
+    expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['lazarus', 'nausea']);
   });
 
   it('falls back to the assignment table when the enemy has no stored model', () => {
@@ -72,7 +72,7 @@ describe('parseWebBattleData', () => {
 
     const parsed = parseWebBattleData(battle);
 
-    expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['brute', '']);
+    expect(parsed.enemies.map((enemy) => enemy.model3d)).toEqual(['lazarus', '']);
   });
 
   it('trims the enemy payload to the fields the web renderer needs', () => {
@@ -82,7 +82,7 @@ describe('parseWebBattleData', () => {
       _id: 'enemy-1',
       name: 'Lazarus',
       avatar: 'images/enemies/lazarus.webp',
-      model3d: 'brute',
+      model3d: 'lazarus',
     });
   });
 

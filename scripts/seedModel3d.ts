@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { Npc } from '../src/db/models/npc.ts';
-import { Player } from '../src/db/models/player.ts';
-import { NPC_MODELS, acolyteAssignments, assertKnown, masterModelByEmail } from '../src/helpers/model3d.ts';
+import { Npc, Player } from '../src/db/models/index.ts';
+import { NPC_MODELS, PROFILE_MODELS, acolyteAssignments, assertKnown, masterModelByEmail } from '../src/helpers/model3d.ts';
 
 dotenv.config();
 
@@ -30,13 +29,14 @@ const run = async (): Promise<void> => {
       }
     }
 
-    const players = await Player.find({}).lean();
+    const players = await Player.find({}).populate('profile').lean();
     const acolytes = players.filter((player) => !masters[player.email]);
     const assignments = acolyteAssignments(acolytes);
 
     for (const player of players) {
       const label = player.nickname || player.name || String(player._id);
-      const model = masters[player.email] ?? assignments.get(String(player._id));
+      const profileName = (player.profile as { name?: string } | null)?.name ?? '';
+      const model = masters[player.email] ?? PROFILE_MODELS[profileName] ?? assignments.get(String(player._id));
       if (!model) throw new Error(`No model assigned to player "${label}"`);
       assertKnown(model, `player ${label}`);
       const current = (player as { model3d?: string }).model3d ?? '';

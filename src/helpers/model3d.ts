@@ -11,9 +11,9 @@
  * MODEL_SCALE, so the value is a file name without extension.
  */
 export const KNOWN_MODELS = [
-  'archer', 'arissa', 'brute', 'ch40', 'demon',
+  'archer', 'arissa', 'ascetum', 'bishop', 'brute', 'ch40', 'demon', 'demetrius', 'dicerius',
   'enemy-ganfaul', 'enemy-heraklios', 'enemy-knight', 'enemy-vampire',
-  'eve', 'kachujin', 'maria', 'mutant', 'paladin',
+  'eve', 'kachujin', 'lazarus', 'maria', 'mutant', 'nausea', 'paladin', 'poluctus',
 ] as const;
 
 /** Big silhouettes for the L60+ crowd: mostly mages plus a couple of bruisers.
@@ -31,19 +31,19 @@ export const MID_POOL = ['arissa', 'ch40', 'kachujin', 'arissa', 'ch40'];
 export const WEAK_POOL = ['archer', 'paladin', 'maria', 'eve', 'arissa', 'kachujin'];
 
 export const NPC_MODELS: Record<string, string> = {
-  Dicerius: 'enemy-ganfaul',
-  Demetrius: 'demon',
+  Dicerius: 'dicerius',
+  Demetrius: 'demetrius',
   Elias: 'enemy-knight',
-  Lazarus: 'brute',
-  Nausea: 'enemy-vampire',
+  Lazarus: 'lazarus',
+  Nausea: 'nausea',
   Zachariah: 'mutant',
-  Ascetum: 'enemy-heraklios',
+  Ascetum: 'ascetum',
   Banger: 'demon',
   Leoric: 'brute',
   Szar: 'enemy-knight',
   'Angelo di Mortis': 'ch40',
-  Poluctus: 'enemy-vampire',
-  Bishop: 'arissa',
+  Poluctus: 'poluctus',
+  Bishop: 'bishop',
   Strombo: 'kachujin',
   'PAZUS-DESPISTADUS': 'paladin',
   'Dr Github': 'archer',
@@ -52,6 +52,10 @@ export const NPC_MODELS: Record<string, string> = {
   Rous: 'eve',
   Angelo: 'arissa',
   'El Biuti': 'maria',
+};
+
+export const PROFILE_MODELS: Record<string, string> = {
+  Bumbler: 'brute',
 };
 
 /** Anything that travels to the client with a name and a model slot. */
@@ -63,6 +67,7 @@ export interface Model3dMember {
   level?: number;
   role?: string;
   model3d?: string;
+  profile?: { name?: string } | null;
 }
 
 export const hash = (value: string): number => {
@@ -104,7 +109,7 @@ const isNpcMember = (member: Model3dMember): boolean => member.role === 'npc';
  */
 export const acolyteAssignments = (roster: Model3dMember[]): Map<string, string> => {
   const masters = masterModelByEmail();
-  const acolytes = roster.filter((member) => !member.email || !masters[member.email]);
+  const acolytes = roster.filter((member) => (!member.email || !masters[member.email]) && !PROFILE_MODELS[member.profile?.name ?? '']);
   const tiers = new Map<readonly string[], Model3dMember[]>();
   for (const member of acolytes) {
     const tier = tierForLevel(member.level ?? 0);
@@ -124,6 +129,8 @@ export const acolyteAssignments = (roster: Model3dMember[]): Map<string, string>
 const resolveMember = (member: Model3dMember, masters: Record<string, string>, assignments: Map<string, string>): string => {
   if (isNpcMember(member)) return NPC_MODELS[labelFor(member)] ?? member.model3d ?? '';
   if (member.email && masters[member.email]) return masters[member.email];
+  const profileModel = PROFILE_MODELS[member.profile?.name ?? ''];
+  if (profileModel) return profileModel;
   if (member.model3d) return member.model3d;
   return assignments.get(String(member._id ?? '')) ?? '';
 };
