@@ -4,6 +4,7 @@ const missionSchema = new Schema({
   name: String,
   description: String,
   enemies: [{ type: Schema.Types.ObjectId, ref: 'Npc' }],
+  allied: [{ type: Schema.Types.ObjectId, ref: 'Npc' }],
   suggested_level: Number,
   drop_item_level: Number,
   gold: Number,

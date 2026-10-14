@@ -5,6 +5,7 @@ export interface Battle {
   name: string;
   description: string;
   enemies: PlayerPopulated[];
+  allied?: PlayerPopulated[];
   suggested_level: number;
   drop_item_level: number;
   gold: number;

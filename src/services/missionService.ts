@@ -17,16 +17,18 @@ export const getMissions = async (): Promise<Battle[]> => {
 
   const missions = await Mission.find().exec();
   return missions.map((mission) => {
-    const plain = mission.toObject() as unknown as Battle & { enemies: unknown[] };
+    const plain = mission.toObject() as unknown as Battle & { enemies: unknown[]; allied?: unknown[] };
     plain._id = String(plain._id);
     const missingNpcIds: string[] = [];
-    plain.enemies = plain.enemies.map((enemyId) => {
-      const npc = npcsPopulated.find((candidate) => candidate && String(candidate._id) === String(enemyId));
-      if (!npc) missingNpcIds.push(String(enemyId));
+    const hydrateNpc = (npcId: unknown): PlayerPopulated => {
+      const npc = npcsPopulated.find((candidate) => candidate && String(candidate._id) === String(npcId));
+      if (!npc) missingNpcIds.push(String(npcId));
       if (!npc) return npc as PlayerPopulated;
       const npcData = typeof npc.toObject === 'function' ? npc.toObject() : npc;
       return { ...npcData, _id: String(npcData._id) } as PlayerPopulated;
-    });
+    };
+    plain.enemies = plain.enemies.map(hydrateNpc);
+    plain.allied = (plain.allied ?? []).map(hydrateNpc);
     if (missingNpcIds.length > 0) {
       throw new Error(`Mission ${String(plain._id)} references missing NPCs: ${missingNpcIds.join(', ')}`);
     }

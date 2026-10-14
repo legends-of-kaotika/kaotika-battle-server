@@ -34,5 +34,37 @@ describe('missionService', () => {
     expect(mission._id).toBe('mission-id');
     expect(mission.scene3d).toBe('dark-diorama');
     expect(mission.enemies[0]._id).toBe('npc-id');
+    expect(mission.allied).toEqual([]);
+  });
+
+  it('hydrates allied npcs and defaults to empty when field is missing', async () => {
+    const npcId = objectId('ally-id');
+    const missionId = objectId('mission-id');
+    const populatedNpc = {
+      _id: npcId,
+      toObject: () => ({ _id: npcId, name: 'Ally' }),
+    };
+    const npcQuery = {
+      populate: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue(populatedNpc),
+    };
+
+    (Npc.find as jest.Mock).mockReturnValue({ exec: jest.fn().mockResolvedValue([{ _id: npcId }]) });
+    (Npc.findById as jest.Mock).mockReturnValue(npcQuery);
+    (Mission.find as jest.Mock).mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          toObject: () => ({ _id: missionId, name: 'WithAlly', enemies: [], allied: [npcId] }),
+        },
+        {
+          toObject: () => ({ _id: missionId, name: 'Legacy', enemies: [] }),
+        },
+      ]),
+    });
+
+    const [withAlly, legacy] = await getMissions();
+
+    expect(withAlly.allied?.[0]._id).toBe('ally-id');
+    expect(legacy.allied).toEqual([]);
   });
 });
