@@ -29,7 +29,7 @@ export const POWERFUL_POOL = [
 export const MID_POOL = ['arissa', 'ch40', 'kachujin', 'arissa', 'ch40'];
 
 /** Small human models for the weakest characters. */
-export const WEAK_POOL = ['archer', 'paladin', 'maria', 'eve', 'arissa', 'kachujin'];
+export const WEAK_POOL = ['archer', 'paladin', 'maria', 'eve', 'arissa', 'kachujin', 'viking', 'warden', 'sentinel'];
 
 export const NPC_MODELS: Record<string, string> = {
   Dicerius: 'dicerius',
