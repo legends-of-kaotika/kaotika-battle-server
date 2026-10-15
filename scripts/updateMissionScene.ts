@@ -4,7 +4,7 @@ import { Mission } from '../src/db/models/index.ts';
 
 dotenv.config();
 
-const VALID_SCENES = ['legacy-cathedral', 'dark-diorama'] as const;
+const VALID_SCENES = ['legacy-cathedral', 'dark-diorama', 'gothic-courtyard'] as const;
 type Scene3D = typeof VALID_SCENES[number];
 
 const missionId = process.env.MISSION_ID;

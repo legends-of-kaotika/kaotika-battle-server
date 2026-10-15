@@ -16,7 +16,7 @@ const missionSchema = new Schema({
   end_of_battle_background: [String],
   scene3d: {
     type: String,
-    enum: ['legacy-cathedral', 'dark-diorama'],
+    enum: ['legacy-cathedral', 'dark-diorama', 'gothic-courtyard'],
     default: 'legacy-cathedral',
   },
 });
