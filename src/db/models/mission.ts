@@ -19,6 +19,11 @@ const missionSchema = new Schema({
     enum: ['legacy-cathedral', 'dark-diorama', 'gothic-courtyard'],
     default: 'legacy-cathedral',
   },
+  mission_type: {
+    type: String,
+    enum: ['team', 'free-for-all'],
+    default: 'team',
+  },
 });
 
 export const Mission = model('Mission', missionSchema);

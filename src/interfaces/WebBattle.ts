@@ -15,4 +15,5 @@ export interface WebBattle {
   battle_animations: string[];
   end_of_battle_background: string[];
   scene3d?: 'legacy-cathedral' | 'dark-diorama' | 'gothic-courtyard';
+  mission_type?: 'team' | 'free-for-all';
 };

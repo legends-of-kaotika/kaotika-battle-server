@@ -25,6 +25,7 @@ export let isGameStarted: boolean = false;
 export let idPlayerFirstTurn: string | null = null;
 export let selectedBattleId: string | null = null;
 export let isGameCreated: boolean = false; 
+export let missionType: 'team' | 'free-for-all' = 'team';
 export let gameGeneration = 0;
 export let turnGeneration = 0;
 let turnAdvanceClaimed = false;
@@ -124,6 +125,10 @@ export const setSelectedBattleId = (_id:string | null):void => {
   selectedBattleId = _id;
 };
 
+export const setMissionType = (type: 'team' | 'free-for-all'):void => {
+  missionType = type;
+};
+
 //changes the turn number
 export const increaseRound = (): void => {
   round++;
@@ -165,6 +170,7 @@ export const resetInitialGameValues = (): void => {
   setIsGameCreated(false);
   setSelectedBattleId(null);
   setIdPlayerFirstTurn(null);
+  missionType = 'team';
   clearTimer();
   resetTimer();
   clearDisconnectGraceTimers();

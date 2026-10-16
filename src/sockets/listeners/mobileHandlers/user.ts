@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
   BATTLES, CONNECTED_USERS, GAME_USERS, isAttackPending, isGameCreated, isGameStarted, resetInitialGameValues,
-  round, setGameStarted, setIsGameCreated, setSelectedBattleId, setTarget, target, webSocketId,
+  round, setGameStarted, setIsGameCreated, setMissionType, setSelectedBattleId, setTarget, target, webSocketId,
 } from '../../../game.ts';
 import { fetchBattles, getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { findResolvedBattleById, getResolvedBattles, parseWebBattleData } from '../../../helpers/battle.ts';
@@ -141,7 +141,10 @@ export const mobileUserHandlers = (socket: Socket): void => {
     const battleData = findResolvedBattleById(_id);
     if (!battleData) return void reject(SOCKETS.MOBILE_CREATE_GAME, callback, `Battle with id ${_id} not found.`);
     setSelectedBattleId(_id);
-    addBattleNPCsToGame(battleData.enemies);
+    setMissionType(battleData.mission_type ?? 'team');
+    if (battleData.mission_type !== 'free-for-all') {
+      addBattleNPCsToGame(battleData.enemies);
+    }
     setIsGameCreated(true);
     sendCreatedBattleToWeb(parseWebBattleData(battleData));
     sendIsGameCreated();
@@ -173,6 +176,8 @@ export const mobileUserHandlers = (socket: Socket): void => {
       return void reject(SOCKETS.MOBILE_SELECTED_BATTLE, callback, 'Invalid battle ID.');
     }
     setSelectedBattleId(_id);
+    const battleData = findResolvedBattleById(_id);
+    if (battleData) setMissionType(battleData.mission_type ?? 'team');
     sendSelectedBattleToWeb();
     callback?.({ status: 'OK' });
   });

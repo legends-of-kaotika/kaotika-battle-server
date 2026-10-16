@@ -1,7 +1,7 @@
 import { ATTACK_TYPES } from '../constants/combatRules.ts';
 import { ACTION_FALLBACK_MS } from '../constants/game.ts';
 import { LUCK_MESSAGE } from '../constants/messages.ts';
-import { GAME_USERS, KILLED_PLAYERS, beginAction, beginGameEnd, beginTurn, cancelPendingAction, claimActionCompletion, currentPlayer, gameGeneration, increaseTurn, resetInitialGameValues, scheduleActionFallback, selectedBattleId, setCurrentPlayer, setTarget, target, turn, turnGeneration, updatePendingActionTarget } from '../game.ts';
+import { GAME_USERS, KILLED_PLAYERS, beginAction, beginGameEnd, beginTurn, cancelPendingAction, claimActionCompletion, currentPlayer, gameGeneration, increaseTurn, missionType, resetInitialGameValues, scheduleActionFallback, selectedBattleId, setCurrentPlayer, setTarget, target, turn, turnGeneration, updatePendingActionTarget } from '../game.ts';
 import { DealedDamage } from '../interfaces/DealedDamage.ts';
 import { DividedPlayers } from '../interfaces/DividedPlayers.ts';
 import { Fumble, FumbleWeb } from '../interfaces/Fumble.ts';
@@ -21,11 +21,16 @@ import { applyDamage, findPlayerById, findPlayerDeadId, handlePlayerDeath } from
 import { sleep } from './utils.ts';
 
 // Returns a object of loyals and betrayers
+// In free-for-all mode, all players are treated as kaotika (single roster)
 export const returnLoyalsAndBetrayers = (users: Player[]): DividedPlayers => {
   const obj: DividedPlayers = {
     kaotika: [],
     dravokar: [],
   };
+  if (missionType === 'free-for-all') {
+    obj.kaotika.push(...users);
+    return obj;
+  }
   users.forEach(player => {
     if (player.isBetrayer) {
       obj.dravokar.push(player);
@@ -64,15 +69,29 @@ export const changeTurn = async (expectedTurnGeneration?: number, advanceAlready
 };
 
 // Returns true if any of the sides has no players
+// In free-for-all, the game ends when 1 or 0 players remain alive
 export const isGameEnded = (): boolean => {
+  if (missionType === 'free-for-all') {
+    const alivePlayers = GAME_USERS.filter((player) => player.isAlive !== false && player.attributes.hit_points > 0);
+    return alivePlayers.length <= 1;
+  }
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
   return (dividedPlayers.dravokar.length === 0 || dividedPlayers.kaotika.length === 0); 
 };
 
 // Returns the winner side
-export const getWinnerSide = (): 'kaotika' | 'dravokar' | 'draw' | null => {
+// In free-for-all, returns the surviving player's name as the "side"
+export const getWinnerSide = (): 'kaotika' | 'dravokar' | 'draw' | string | null => {
   if (!isGameEnded()) {
     return null;
+  }
+
+  if (missionType === 'free-for-all') {
+    const alivePlayers = GAME_USERS.filter((player) => player.isAlive !== false && player.attributes.hit_points > 0);
+    if (alivePlayers.length === 1) {
+      return alivePlayers[0].nickname || alivePlayers[0].name || 'Unknown';
+    }
+    return 'draw';
   }
 
   const dividedPlayers: DividedPlayers = returnLoyalsAndBetrayers(GAME_USERS);
@@ -97,18 +116,25 @@ export const handleGameEnd = async (): Promise<void> => {
 
   clearTimer();
 
-  // Send the winner side to all devices
+  // Send the winner to all devices
   const winnerSideCapitalized = winnerSide.charAt(0).toUpperCase() + winnerSide.slice(1);
   sendGameEnd(winnerSideCapitalized);
 
-  // Store the result in the database: rewards on a Kaotika win, penalties on a loss.
-  if (winnerSide === 'kaotika' || winnerSide === 'dravokar') {
+  if (missionType === 'free-for-all') {
+    // FFA: reward only the surviving winner
+    const alivePlayers = GAME_USERS.filter((player) => player.isAlive !== false && player.attributes.hit_points > 0);
+    const deadPlayers = KILLED_PLAYERS;
+    // Winner gets full rewards; dead players get partial (via isAlive flag)
+    const participants = [...alivePlayers, ...deadPlayers];
+    await sendBattleResult(participants, selectedBattleId, 'kaotika', endingGameGeneration);
+  } else if (winnerSide === 'kaotika' || winnerSide === 'dravokar') {
+    // Team mode: rewards on a Kaotika win, penalties on a loss.
     const aliveKaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
     const deadKaotika = KILLED_PLAYERS.filter((player) => !player.isBetrayer);
     await sendBattleResult([...aliveKaotika, ...deadKaotika], selectedBattleId, winnerSide, endingGameGeneration);
   }
 
-  // Wait for 5 seconds to show the winner side 
+  // Wait for 5 seconds to show the winner 
   await sleep(5000);
 
   // Restart game values
@@ -117,9 +143,14 @@ export const handleGameEnd = async (): Promise<void> => {
   
 // Check if the game can start: needs at least 1 master (istvan/villain/mortimer)
 // or 1 acolyte who is not a betrayer
+// In free-for-all, any player with a valid role can start
 export const checkStartGameRequirement = (): boolean => {
   const masterRoles = ['istvan', 'villain', 'mortimer'];
   const hasMaster = GAME_USERS.some((user) => masterRoles.includes(user.role));
+  if (missionType === 'free-for-all') {
+    // FFA: any player can start (master or acolyte)
+    return hasMaster || GAME_USERS.some((user) => user.role === 'acolyte');
+  }
   const hasAcolyte = GAME_USERS.some((user) => user.role === 'acolyte' && user.isBetrayer !== true);
   return hasMaster || hasAcolyte;
 };
@@ -135,11 +166,18 @@ export const nextRoundStartFirst = (id: string, players: Player[]): void => {
 };
 
 export const isValidAttackTarget = (attacker: Player, defender: Player): boolean => {
-  return attacker._id !== defender._id
+  const baseValid = attacker._id !== defender._id
     && defender.isAlive !== false
     && defender.attributes.hit_points > 0
-    && GAME_USERS.some((player) => player._id === defender._id)
-    && attacker.isBetrayer !== defender.isBetrayer;
+    && GAME_USERS.some((player) => player._id === defender._id);
+  
+  if (missionType === 'free-for-all') {
+    // FFA: anyone alive (except self) is a valid target
+    return baseValid;
+  }
+  
+  // Team mode: must be from opposite team
+  return baseValid && attacker.isBetrayer !== defender.isBetrayer;
 };
 
 
