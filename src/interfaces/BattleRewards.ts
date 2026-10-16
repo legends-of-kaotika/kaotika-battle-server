@@ -24,7 +24,30 @@ export interface BattleRewards {
   playerRewards: PlayerReward[];
 }
 
+export interface FfaWinnerReward {
+  playerId: string;
+  playerName: string;
+  playerAvatar: string;
+  gold: number;
+  experience: number;
+  item?: ItemData;
+  stolenItems: ItemData[];
+}
+
+export interface FfaLoserResult {
+  playerId: string;
+  playerName: string;
+  playerAvatar: string;
+  lostItem?: ItemData;
+}
+
+export interface FfaOutcome {
+  winner: FfaWinnerReward;
+  losers: FfaLoserResult[];
+}
+
 export interface BattleOutcome {
   winner: string;
   rewards: BattleRewards | null;
+  ffa?: FfaOutcome;
 }

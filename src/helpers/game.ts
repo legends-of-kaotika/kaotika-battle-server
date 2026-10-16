@@ -9,7 +9,7 @@ import { Luck } from '../interfaces/Luck.ts';
 import { Percentages } from '../interfaces/Percentages.ts';
 import { Player } from '../interfaces/Player.ts';
 import { BattleOutcome, PlayerReward } from '../interfaces/BattleRewards.ts';
-import { recordBattleOutcome } from '../services/battleRewardsService.ts';
+import { applyFfaRewards, recordBattleOutcome } from '../services/battleRewardsService.ts';
 import { assignTurn, sendAttackInformationToWeb, sendGameEnd, sendTimerDataToWeb, sendUpdatedPlayerToMobile } from '../sockets/emits/user.ts';
 import { sendBattleRewardsToWeb } from '../sockets/emits/game.ts';
 import { clearTimer, startTimer } from '../timer/timer.ts';
@@ -121,12 +121,14 @@ export const handleGameEnd = async (): Promise<void> => {
   sendGameEnd(winnerSideCapitalized);
 
   if (missionType === 'free-for-all') {
-    // FFA: reward only the surviving winner
+    // FFA: single winner takes all (gold, exp, unique drop + stolen items)
     const alivePlayers = GAME_USERS.filter((player) => player.isAlive !== false && player.attributes.hit_points > 0);
     const deadPlayers = KILLED_PLAYERS;
-    // Winner gets full rewards; dead players get partial (via isAlive flag)
-    const participants = [...alivePlayers, ...deadPlayers];
-    await sendBattleResult(participants, selectedBattleId, 'kaotika', endingGameGeneration);
+    const winner = alivePlayers[0];
+    const losers = [...alivePlayers.slice(1), ...deadPlayers];
+    if (winner) {
+      await sendFfaBattleResult(winner, losers, selectedBattleId, endingGameGeneration);
+    }
   } else if (winnerSide === 'kaotika' || winnerSide === 'dravokar') {
     // Team mode: rewards on a Kaotika win, penalties on a loss.
     const aliveKaotika = returnLoyalsAndBetrayers(GAME_USERS).kaotika;
@@ -392,6 +394,50 @@ async function sendBattleResult(players: Player[], battleID: string | null, winn
     if (gameGeneration === expectedGameGeneration) sendBattleRewardsToWeb(outcome);
   } catch (error) {
     console.error('Error recording battle result:', error);
+  }
+}
+
+async function sendFfaBattleResult(winner: Player, losers: Player[], battleID: string | null,
+  expectedGameGeneration: number): Promise<void> {
+  if (gameGeneration !== expectedGameGeneration) return;
+  if (!battleID) {
+    console.error('No battleID assigned for FFA');
+    return;
+  }
+
+  try {
+    const outcome = await applyFfaRewards(battleID,
+      { email: winner.email, isAlive: true },
+      losers.map((p) => ({ email: p.email, isAlive: p.isAlive !== false })),);
+    if (gameGeneration !== expectedGameGeneration) return;
+
+    const resolvedOutcome: BattleOutcome = {
+      winner: outcome.winner.playerName || 'Kaotika',
+      rewards: {
+        gold: outcome.winner.gold,
+        experience: outcome.winner.experience,
+        playerRewards: [],
+      },
+      ffa: {
+        winner: {
+          ...outcome.winner,
+          item: outcome.winner.item
+            ? { ...outcome.winner.item, image: resolveItemImage(outcome.winner.item.image) }
+            : undefined,
+          stolenItems: outcome.winner.stolenItems.map((i) => ({ ...i, image: resolveItemImage(i.image) })),
+        },
+        losers: outcome.losers.map((l) => ({
+          ...l,
+          lostItem: l.lostItem
+            ? { ...l.lostItem, image: resolveItemImage(l.lostItem.image) }
+            : undefined,
+        })),
+      },
+    };
+
+    if (gameGeneration === expectedGameGeneration) sendBattleRewardsToWeb(resolvedOutcome);
+  } catch (error) {
+    console.error('Error recording FFA result:', error);
   }
 }
 

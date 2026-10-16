@@ -1,6 +1,7 @@
-import { Mission, Player } from '../db/models/index.ts';
+import { Armor, Artifact, Boot, Helmet, Mission, Player, Ring, Shield, Weapon } from '../db/models/index.ts';
 import { checkIfLevelUpAndUpdatePlayer } from '../levelup/CheckLevelUp.ts';
-import { getAllEquipment, getRandomEquipment } from '../levelup/EquipmentRepository.ts';
+import { deactivateEquipment, getAllEquipment, getRandomEquipment } from '../levelup/EquipmentRepository.ts';
+import { pickRandom, selectAvailableEquipment } from '../levelup/EquipmentSelection.ts';
 import type { EquipmentPiece, RewardPlayer } from '../levelup/types.ts';
 import type { ItemData, PlayerReward } from '../interfaces/BattleRewards.ts';
 
@@ -169,4 +170,170 @@ export const recordBattleOutcome = async (players: BattlePlayerInput[],
   if (!battleID) throw new Error('Missing required field: battleID');
   const rewards = await applyBattleRewards(battleID, players);
   return { status: 'OK', data: rewards };
+};
+
+// ---------------------------------------------------------------------------
+// Free-for-All rewards
+// ---------------------------------------------------------------------------
+
+export const FFA_WINNER_GOLD = 10000;
+export const FFA_WINNER_EXP = 1750;
+
+export interface FfaWinnerReward {
+  playerId: string;
+  playerName: string;
+  playerAvatar: string;
+  gold: number;
+  experience: number;
+  item?: ItemData;
+  stolenItems: ItemData[];
+}
+
+export interface FfaLoserResult {
+  playerId: string;
+  playerName: string;
+  playerAvatar: string;
+  lostItem?: ItemData;
+}
+
+export interface FfaOutcome {
+  winner: FfaWinnerReward;
+  losers: FfaLoserResult[];
+}
+
+/**
+ * Picks a unique equipment piece for `level` (+2 levels) and deactivates it
+ * so it can never be assigned to another player again.
+ */
+const rollFfaDrop = async (level: number): Promise<DropPiece | undefined> => {
+  const allEquipment = await getAllEquipment();
+  const targetLevel = level + 2;
+  const nonUnique = allEquipment.filter((item) => item.isUnique === false || item.isUnique === undefined);
+  const available = selectAvailableEquipment(nonUnique, targetLevel, false);
+  const picked = pickRandom(available);
+  if (!picked) return undefined;
+  // Unique drop: deactivate so it cannot be assigned again
+  await deactivateEquipment(picked);
+  return picked as DropPiece;
+};
+
+/**
+ * Picks one random item from the loser's inventory (by slot), removes it
+ * and returns its data. Returns undefined when the inventory is empty.
+ */
+const stealOneItemFromLoser = async (email: string,): Promise<{ stolen: ItemData; slot: string; itemId: string } | undefined> => {
+  const player = await Player.findOne({ email }).exec();
+  if (!player) return undefined;
+  const inventory = (player.inventory ?? {}) as Record<string, unknown[] | undefined>;
+
+  const INVENTORY_SLOTS = ['helmets', 'weapons', 'armors', 'shields', 'artifacts', 'boots', 'rings'] as const;
+  const candidates: { slot: string; itemId: string }[] = [];
+  for (const slot of INVENTORY_SLOTS) {
+    for (const itemId of inventory[slot] ?? []) {
+      candidates.push({ slot, itemId: String(itemId) });
+    }
+  }
+  if (candidates.length === 0) return undefined;
+
+  const picked = candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Remove from loser
+  await Player.updateOne({ _id: player._id }, { $pull: { [`inventory.${picked.slot}`]: picked.itemId } });
+
+  // Fetch item data for display
+  const itemData = await fetchItemData(picked.itemId, picked.slot);
+  return { stolen: itemData, slot: picked.slot, itemId: picked.itemId };
+};
+
+/** Resolves an item id + inventory slot to an ItemData for the UI. */
+const fetchItemData = async (itemId: string, slot: string): Promise<ItemData> => {
+  const modelBySlot: Record<string, typeof Weapon> = {
+    helmets: Helmet, weapons: Weapon, armors: Armor,
+    shields: Shield, artifacts: Artifact, boots: Boot, rings: Ring,
+  };
+  const Model = modelBySlot[slot];
+  if (Model) {
+    const doc = await Model.findById(itemId).exec();
+    if (doc) {
+      return {
+        _id: itemId,
+        name: (doc as unknown as Record<string, unknown>).name as string ?? '',
+        description: (doc as unknown as Record<string, unknown>).description as string | undefined,
+        image: (doc as unknown as Record<string, unknown>).image as string | undefined,
+        type: (doc as unknown as Record<string, unknown>).type as string ?? slot.slice(0, -1),
+        value: (doc as unknown as Record<string, unknown>).value as number | undefined,
+        modifiers: (doc as unknown as Record<string, unknown>).modifiers as Record<string, number> | undefined,
+        min_lvl: (doc as unknown as Record<string, unknown>).min_lvl as number | undefined,
+        isUnique: (doc as unknown as Record<string, unknown>).isUnique as boolean | undefined,
+        isActive: (doc as unknown as Record<string, unknown>).isActive as boolean | undefined,
+      };
+    }
+  }
+  return { _id: itemId, name: 'Unknown item', type: slot.slice(0, -1) };
+};
+
+/**
+ * Applies Free-for-All rewards:
+ *  - Winner: +10000 gold, +1750 exp, unique drop at (level + 2) deactivated after grant.
+ *  - Each loser loses 1 random inventory item; the winner receives them (scavenger).
+ */
+export const applyFfaRewards = async (battleID: string,
+  winner: BattlePlayerInput,
+  losers: BattlePlayerInput[],): Promise<FfaOutcome> => {
+  const winnerDoc = await Player.findOne({ email: winner.email }).exec();
+  if (!winnerDoc) throw new Error(`Winner not found for email: ${winner.email}`);
+
+  // 1. Winner gold + exp + level-up check
+  const rewardPlayer = toRewardPlayer(winnerDoc);
+  await checkIfLevelUpAndUpdatePlayer(rewardPlayer, winnerDoc.experience + FFA_WINNER_EXP);
+  await Player.updateOne({ _id: winnerDoc._id }, { $inc: { gold: FFA_WINNER_GOLD } });
+
+  // 2. Unique drop at winner level + 2, then deactivated
+  const drop = await rollFfaDrop(winnerDoc.level);
+  const dropItem = drop ? toItemData(drop) : undefined;
+  if (drop) {
+    await Player.updateOne({ _id: winnerDoc._id }, { $addToSet: { [`inventory.${drop.type}s`]: drop._id } });
+  }
+
+  // 3. Steal one item from each loser → give to winner
+  const stolenItems: ItemData[] = [];
+  const losersResult: FfaLoserResult[] = [];
+  for (const loser of losers) {
+    if (loser.email === winner.email) continue;
+    const stolen = await stealOneItemFromLoser(loser.email);
+    const loserDoc = await Player.findOne({ email: loser.email }).exec();
+    const loserName = loserDoc ? (loserDoc.name || loserDoc.nickname || '') : loser.email;
+    const loserAvatar = loserDoc ? (loserDoc.avatar || '') : '';
+    if (stolen) {
+      // Add stolen item to winner inventory
+      await Player.updateOne({ _id: winnerDoc._id },
+        { $addToSet: { [`inventory.${stolen.slot}`]: stolen.itemId } },);
+      stolenItems.push(stolen.stolen);
+      losersResult.push({
+        playerId: String(loserDoc?._id ?? loser.email),
+        playerName: loserName,
+        playerAvatar: loserAvatar,
+        lostItem: stolen.stolen,
+      });
+    } else {
+      losersResult.push({
+        playerId: String(loserDoc?._id ?? loser.email),
+        playerName: loserName,
+        playerAvatar: loserAvatar,
+      });
+    }
+  }
+
+  return {
+    winner: {
+      playerId: String(winnerDoc._id),
+      playerName: winnerDoc.name || winnerDoc.nickname || '',
+      playerAvatar: winnerDoc.avatar || '',
+      gold: FFA_WINNER_GOLD,
+      experience: FFA_WINNER_EXP,
+      item: dropItem,
+      stolenItems,
+    },
+    losers: losersResult,
+  };
 };

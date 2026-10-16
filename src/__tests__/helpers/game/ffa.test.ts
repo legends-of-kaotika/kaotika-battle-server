@@ -1,7 +1,6 @@
 import { GAME_USERS, setMissionType, resetInitialGameValues } from '../../../game.ts';
 import { isValidAttackTarget, isGameEnded, getWinnerSide, returnLoyalsAndBetrayers, checkStartGameRequirement } from '../../../helpers/game.ts';
 import { GAME_USERS_MOCK } from '../../../__mocks__/players.ts';
-import { Player } from '../../../interfaces/Player.ts';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
