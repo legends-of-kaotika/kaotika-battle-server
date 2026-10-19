@@ -1,5 +1,5 @@
 import { getPlayerByEmail } from '../services/playerRetrievalService.ts';
-import { getMissions } from '../services/missionService.ts';
+import { getMissionTypeById as readMissionTypeById, getMissions } from '../services/missionService.ts';
 import { Battle } from '../interfaces/Battles.ts';
 import { Player } from '../interfaces/Player.ts';
 import { parsePlayerData } from './player.ts';
@@ -11,6 +11,15 @@ export const fetchBattles = async (): Promise<Battle[]> => {
       throw new Error('Error fetching battles.');
     }
     return battles;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getMissionTypeById = async (_id: string): Promise<'team' | 'free-for-all' | null> => {
+  try {
+    return await readMissionTypeById(_id);
   } catch (error) {
     console.error(error);
     throw error;

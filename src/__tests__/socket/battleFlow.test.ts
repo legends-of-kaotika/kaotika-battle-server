@@ -1,19 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Client from 'socket.io-client';
 
-import { BATTLES, CONNECTED_USERS, GAME_USERS, NPCS, increaseTurn, isGameCreated, resetInitialGameValues, setCurrentPlayer, setGameStarted, setSelectedBattleId, setTarget } from '../../game.ts';
+import { BATTLES, CONNECTED_USERS, GAME_USERS, NPCS, increaseTurn, isGameCreated, missionType, resetInitialGameValues, setCurrentPlayer, setGameStarted, setSelectedBattleId, setTarget } from '../../game.ts';
 import { startServer, io } from '../../../index.ts';
 import * as SOCKETS from '../../constants/sockets.ts';
 import { battles } from '../../__mocks__/battles.ts';
 import { GAME_USERS_MOCK } from '../../__mocks__/players.ts';
-import { getPlayerDataByEmail, fetchBattles } from '../../helpers/api.ts';
+import { getMissionTypeById, getPlayerDataByEmail, fetchBattles } from '../../helpers/api.ts';
 import { handleGameEnd } from '../../helpers/game.ts';
 import { Player } from '../../interfaces/Player.ts';
+import { Battle } from '../../interfaces/Battles.ts';
 import { verifyFirebaseIdToken } from '../../services/firebaseAuthService.ts';
 
 jest.mock('../../helpers/api.ts', () => ({
   fetchBattles: jest.fn(),
   getPlayerDataByEmail: jest.fn(),
+  getMissionTypeById: jest.fn(),
 }));
 
 jest.mock('../../services/battleRewardsService.ts', () => ({
@@ -93,6 +95,7 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
 
   beforeAll(async () => {
     (fetchBattles as jest.Mock).mockResolvedValue(battles);
+    (getMissionTypeById as jest.Mock).mockImplementation(async (id: string) => battles.find((battle) => battle._id === id)?.mission_type ?? null);
     (getPlayerDataByEmail as jest.Mock).mockImplementation(async (email: string) => playersByEmail[email] ? clone(playersByEmail[email]) : null);
     (verifyFirebaseIdToken as jest.Mock).mockImplementation(async (token: string) => {
       if (token === 'invalid-token') throw new Error('invalid');
@@ -170,6 +173,131 @@ describe('Battle flow integration (mobile + web against the real server)', () =>
     expect(sync.state.gameStarted).toBe(true);
     expect(sync.state.currentPlayerId).toBe(assignedId);
     expect(sync.state.players).toBeDefined();
+  });
+
+  it('keeps a free-for-all match running after start', async () => {
+    const ffaBattle: Battle = {
+      _id: 'ffa-1',
+      name: 'Ashen Arena',
+      description: 'Every competitor for themselves.',
+      enemies: [],
+      suggested_level: 10,
+      drop_item_level: 12,
+      gold: 10000,
+      exp: 1750,
+      battle_background: 'arena.webp',
+      battle_music: 'battle.ogg',
+      battle_video_background: 'videos/battle/backgrounds/arena.mp4',
+      battle_animations: [],
+      end_of_battle_background: ['victory.webp', 'defeat.webp'],
+      mission_type: 'free-for-all',
+    };
+
+    await emitAck(web, SOCKETS.WEB_SEND_SOCKET_ID);
+
+    const adminSignIn = await emitAck<{ status: string; player: Player }>(mobiles[0], SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
+    const loyalSignIn = await emitAck<{ status: string; player: Player }>(mobiles[1], SOCKETS.MOBILE_SIGN_IN, EMAILS.loyal);
+    expect(adminSignIn.status).toBe('OK');
+    expect(loyalSignIn.status).toBe('OK');
+
+    (fetchBattles as jest.Mock).mockResolvedValueOnce([...battles, ffaBattle]);
+    (getMissionTypeById as jest.Mock).mockImplementation(async (id: string) => (id === ffaBattle._id ? 'free-for-all' : null));
+    const battlesAck = await emitAck<{ status: string; battles: unknown[] }>(mobiles[0], SOCKETS.MOBILE_GET_BATTLES);
+    expect(battlesAck.status).toBe('OK');
+
+    const created = waitFor<{ name: string }>(web, SOCKETS.WEB_CREATE_BATTLE);
+    const createAck = await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_CREATE_GAME, ffaBattle._id);
+    expect(createAck.status).toBe('OK');
+    expect((await created).name).toBe(ffaBattle.name);
+    expect(missionType).toBe('free-for-all');
+    expect(NPCS).toHaveLength(0);
+
+    const joinAcks = await Promise.all([
+      emitAck<{ joinBattle: boolean }>(mobiles[0], SOCKETS.MOBILE_JOIN_BATTLE, adminSignIn.player._id),
+      emitAck<{ joinBattle: boolean }>(mobiles[1], SOCKETS.MOBILE_JOIN_BATTLE, loyalSignIn.player._id),
+    ]);
+    joinAcks.forEach((res) => expect(res.joinBattle).toBe(true));
+    expect(GAME_USERS).toHaveLength(2);
+
+    const gameEnd = jest.fn();
+    web.on(SOCKETS.GAME_END, gameEnd);
+
+    const startAck = await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_GAME_START);
+    expect(startAck.status).toBe('OK');
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(gameEnd).not.toHaveBeenCalled();
+
+    const sync = await emitAck<{ state: { gameStarted: boolean } }>(web, SOCKETS.WEB_SYNC_STATE);
+    expect(sync.state.gameStarted).toBe(true);
+
+    web.off(SOCKETS.GAME_END, gameEnd);
+  });
+
+  it('creates a free-for-all game when the database corrects a stale battle cache', async () => {
+    await emitAck(web, SOCKETS.WEB_SEND_SOCKET_ID);
+    const adminSignIn = await emitAck<{ status: string; player: Player }>(mobiles[0], SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
+    expect(adminSignIn.status).toBe('OK');
+
+    // The in-memory cache lacks mission_type (fetched before the field existed); the database has the real value.
+    const staleBattle: Battle = { ...clone(battles[1]), _id: 'stale-ffa-1', name: 'Stale Arena', enemies: [] };
+    (fetchBattles as jest.Mock).mockResolvedValueOnce([...battles, staleBattle]);
+    (getMissionTypeById as jest.Mock).mockImplementation(async (id: string) => (id === 'stale-ffa-1' ? 'free-for-all' : null));
+    const battlesAck = await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_GET_BATTLES);
+    expect(battlesAck.status).toBe('OK');
+
+    const createAck = await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_CREATE_GAME, staleBattle._id);
+    expect(createAck.status).toBe('OK');
+    expect(missionType).toBe('free-for-all');
+    expect(NPCS).toHaveLength(0);
+  });
+
+  it('rejects battle selection while a game is already created', async () => {
+    await emitAck(web, SOCKETS.WEB_SEND_SOCKET_ID);
+    const adminSignIn = await emitAck<{ status: string; player: Player }>(mobiles[0], SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
+    expect(adminSignIn.status).toBe('OK');
+    await emitAck(mobiles[0], SOCKETS.MOBILE_GET_BATTLES);
+
+    expect((await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_CREATE_GAME, battles[0]._id)).status).toBe('OK');
+    expect(missionType).toBe('team');
+
+    const selectAck = await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_SELECTED_BATTLE, battles[1]._id);
+    expect(selectAck.status).toBe('FAILED');
+    expect(missionType).toBe('team');
+  });
+
+  it('refuses to start a match that would end on the first turn', async () => {
+    await emitAck(web, SOCKETS.WEB_SEND_SOCKET_ID);
+    const adminSignIn = await emitAck<{ status: string; player: Player }>(mobiles[0], SOCKETS.MOBILE_SIGN_IN, EMAILS.admin);
+    const loyalSignIn = await emitAck<{ status: string; player: Player }>(mobiles[1], SOCKETS.MOBILE_SIGN_IN, EMAILS.loyal);
+    expect(adminSignIn.status).toBe('OK');
+    expect(loyalSignIn.status).toBe('OK');
+
+    // Team mission without enemies: starting it would end the game instantly and reward every participant.
+    const emptyTeamBattle: Battle = { ...clone(battles[1]), _id: 'empty-team-1', name: 'Hollow Keep', enemies: [] };
+    (fetchBattles as jest.Mock).mockResolvedValueOnce([...battles, emptyTeamBattle]);
+    const battlesAck = await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_GET_BATTLES);
+    expect(battlesAck.status).toBe('OK');
+
+    expect((await emitAck<{ status: string }>(mobiles[0], SOCKETS.MOBILE_CREATE_GAME, emptyTeamBattle._id)).status).toBe('OK');
+    expect(missionType).toBe('team');
+    expect(NPCS).toHaveLength(0);
+
+    const joinAck = await emitAck<{ joinBattle: boolean }>(mobiles[1], SOCKETS.MOBILE_JOIN_BATTLE, loyalSignIn.player._id);
+    expect(joinAck.joinBattle).toBe(true);
+    expect(GAME_USERS).toHaveLength(1);
+
+    const gameEnd = jest.fn();
+    web.on(SOCKETS.GAME_END, gameEnd);
+    const startAck = await emitAck<{ status: string; error?: string }>(mobiles[0], SOCKETS.MOBILE_GAME_START);
+    expect(startAck.status).toBe('FAILED');
+    expect(startAck.error).toContain('Not enough players');
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(gameEnd).not.toHaveBeenCalled();
+    const sync = await emitAck<{ state: { gameStarted: boolean } }>(web, SOCKETS.WEB_SYNC_STATE);
+    expect(sync.state.gameStarted).toBe(false);
+    web.off(SOCKETS.GAME_END, gameEnd);
   });
 
   it('runs a full combat round end-to-end (select target -> attack -> turn advances)', async () => {

@@ -11,6 +11,11 @@ const populateNpc = async (npcId: unknown): Promise<any | null> => {
   return npc;
 };
 
+export const getMissionTypeById = async (_id: string): Promise<'team' | 'free-for-all' | null> => {
+  const mission = await Mission.findById(_id).select('mission_type').lean().exec();
+  return (mission?.mission_type as 'team' | 'free-for-all' | undefined) ?? null;
+};
+
 export const getMissions = async (): Promise<Battle[]> => {
   const npcs = await Npc.find().exec();
   const npcsPopulated = await Promise.all(npcs.map((npc) => populateNpc(npc._id)));

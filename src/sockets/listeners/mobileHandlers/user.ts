@@ -1,12 +1,12 @@
 import { Socket } from 'socket.io';
 import * as SOCKETS from '../../../constants/sockets.ts';
 import {
-  BATTLES, CONNECTED_USERS, GAME_USERS, isAttackPending, isGameCreated, isGameStarted, resetInitialGameValues,
-  round, setGameStarted, setIsGameCreated, setMissionType, setSelectedBattleId, setTarget, target, webSocketId,
+  BATTLES, CONNECTED_USERS, GAME_USERS, isAttackPending, isGameCreated, isGameStarted, missionType, resetInitialGameValues,
+  round, selectedBattleId, setGameStarted, setIsGameCreated, setMissionType, setSelectedBattleId, setTarget, target, webSocketId,
 } from '../../../game.ts';
-import { fetchBattles, getPlayerDataByEmail } from '../../../helpers/api.ts';
+import { fetchBattles, getMissionTypeById, getPlayerDataByEmail } from '../../../helpers/api.ts';
 import { findResolvedBattleById, getResolvedBattles, parseWebBattleData } from '../../../helpers/battle.ts';
-import { attackFlow, changeTurn, checkStartGameRequirement, isValidAttackTarget } from '../../../helpers/game.ts';
+import { attackFlow, changeTurn, checkStartGameRequirement, isGameEnded, isValidAttackTarget } from '../../../helpers/game.ts';
 import { addBattleNPCsToGame } from '../../../helpers/npc.ts';
 import { findPlayerById, printUsers } from '../../../helpers/player.ts';
 import { getPlayersTurnSuccesses, sortTurnPlayers } from '../../../helpers/turn.ts';
@@ -28,6 +28,24 @@ type BattlesAck = (_response: { status: 'OK'; battles: unknown[] } | { status: '
 type JoinAck = (_response: { status: 'OK'; joinBattle: boolean } | { status: 'FAILED'; error: string }) => void;
 
 const optionalAck = (value: unknown): SocketAck | undefined => typeof value === 'function' ? value as SocketAck : undefined;
+
+type MissionType = 'team' | 'free-for-all';
+
+// The database is the source of truth for mission_type: a stale in-memory
+// battle cache previously caused free-for-all missions to run as team matches.
+const resolveBattleMissionType = async (_id: string, fallback: MissionType): Promise<MissionType> => {
+  try {
+    const dbMissionType = await getMissionTypeById(_id);
+    if (!dbMissionType) return fallback;
+    if (dbMissionType !== fallback) {
+      logUnlessTesting(`[Game] mission_type mismatch for battle ${_id}: cache='${fallback}', db='${dbMissionType}'. Using database value.`);
+    }
+    return dbMissionType;
+  } catch (error) {
+    console.error(`[Game] Unable to read mission_type for battle ${_id}:`, error);
+    return fallback;
+  }
+};
 
 export const mobileUserHandlers = (socket: Socket): void => {
   onAsync(socket, SOCKETS.MOBILE_SIGN_IN, async (...args: unknown[]) => {
@@ -94,10 +112,14 @@ export const mobileUserHandlers = (socket: Socket): void => {
     callback({ status: 'OK', player: activePlayer });
   });
 
-  socket.on(SOCKETS.MOBILE_GAME_START, (callback?: SocketAck) => {
+  onAsync(socket, SOCKETS.MOBILE_GAME_START, async (...args: unknown[]) => {
+    const callback = optionalAck(args[0]);
     if (!isAdminSocket(socket)) return void reject(SOCKETS.MOBILE_GAME_START, callback);
     if (!isGameCreated || isGameStarted) return void reject(SOCKETS.MOBILE_GAME_START, callback, 'Game is not ready to start.');
-    if (!checkStartGameRequirement()) {
+    if (selectedBattleId) setMissionType(await resolveBattleMissionType(selectedBattleId, missionType));
+    if (!checkStartGameRequirement() || isGameEnded()) {
+      // Refuse starts that would end the match on the first turn (e.g. a team
+      // game without opponents), instead of rewarding every participant.
       sendNotEnoughPlayers(socket.id);
       callback?.({ status: 'FAILED', error: 'Not enough players.' });
       return;
@@ -108,6 +130,7 @@ export const mobileUserHandlers = (socket: Socket): void => {
     sendConnectedUsersArrayToAll(GAME_USERS);
     gameStartToAll();
     console.log('Round: ', round);
+    logUnlessTesting(`Game started: mission_type='${missionType}', players=${GAME_USERS.length}`);
     callback?.({ status: 'OK' });
   });
 
@@ -134,20 +157,24 @@ export const mobileUserHandlers = (socket: Socket): void => {
     callback?.({ status: 'OK' });
   });
 
-  socket.on(SOCKETS.MOBILE_CREATE_GAME, (_id: unknown, callback?: SocketAck) => {
+  onAsync(socket, SOCKETS.MOBILE_CREATE_GAME, async (...args: unknown[]) => {
+    const [_id, rawCallback] = args;
+    const callback = optionalAck(rawCallback);
     if (!isAdminSocket(socket)) return void reject(SOCKETS.MOBILE_CREATE_GAME, callback);
     if (isGameCreated) return void reject(SOCKETS.MOBILE_CREATE_GAME, callback, 'A game already exists.');
     if (typeof _id !== 'string') return void reject(SOCKETS.MOBILE_CREATE_GAME, callback, 'Invalid battle ID.');
     const battleData = findResolvedBattleById(_id);
     if (!battleData) return void reject(SOCKETS.MOBILE_CREATE_GAME, callback, `Battle with id ${_id} not found.`);
+    const resolvedMissionType = await resolveBattleMissionType(_id, battleData.mission_type ?? 'team');
     setSelectedBattleId(_id);
-    setMissionType(battleData.mission_type ?? 'team');
-    if (battleData.mission_type !== 'free-for-all') {
+    setMissionType(resolvedMissionType);
+    if (resolvedMissionType !== 'free-for-all') {
       addBattleNPCsToGame(battleData.enemies);
     }
     setIsGameCreated(true);
-    sendCreatedBattleToWeb(parseWebBattleData(battleData));
+    sendCreatedBattleToWeb(parseWebBattleData({ ...battleData, mission_type: resolvedMissionType }));
     sendIsGameCreated();
+    logUnlessTesting(`Created battle ${_id} with mission_type='${resolvedMissionType}'.`);
     callback?.({ status: 'OK' });
   });
 
@@ -172,12 +199,12 @@ export const mobileUserHandlers = (socket: Socket): void => {
 
   socket.on(SOCKETS.MOBILE_SELECTED_BATTLE, (_id: unknown, callback?: SocketAck) => {
     if (!isAdminSocket(socket)) return void reject(SOCKETS.MOBILE_SELECTED_BATTLE, callback);
-    if (typeof _id !== 'string' || !findResolvedBattleById(_id)) {
-      return void reject(SOCKETS.MOBILE_SELECTED_BATTLE, callback, 'Invalid battle ID.');
-    }
-    setSelectedBattleId(_id);
+    if (isGameCreated) return void reject(SOCKETS.MOBILE_SELECTED_BATTLE, callback, 'A game already exists.');
+    if (typeof _id !== 'string') return void reject(SOCKETS.MOBILE_SELECTED_BATTLE, callback, 'Invalid battle ID.');
     const battleData = findResolvedBattleById(_id);
-    if (battleData) setMissionType(battleData.mission_type ?? 'team');
+    if (!battleData) return void reject(SOCKETS.MOBILE_SELECTED_BATTLE, callback, 'Invalid battle ID.');
+    setSelectedBattleId(_id);
+    setMissionType(battleData.mission_type ?? 'team');
     sendSelectedBattleToWeb();
     callback?.({ status: 'OK' });
   });
