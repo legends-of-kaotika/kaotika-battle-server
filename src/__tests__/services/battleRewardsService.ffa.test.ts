@@ -62,7 +62,7 @@ const dropPiece = {
   image: 'images/drop.png',
   value: 100,
   min_lvl: 12,
-  isUnique: false,
+  isUnique: true,
   isActive: true,
 };
 
@@ -153,5 +153,46 @@ describe('applyFfaRewards', () => {
 
     expect(outcome.losers).toHaveLength(0);
     expect(outcome.winner.stolenItems).toHaveLength(0);
+  });
+
+  it('only picks unique equipment for the drop', async () => {
+    const nonUniqueNearLevel = { ...dropPiece, _id: 'non-unique-id', name: 'Common Blade', isUnique: false };
+    (getAllEquipment as jest.Mock).mockResolvedValue([nonUniqueNearLevel, dropPiece]);
+
+    const outcome = await applyFfaRewards('battle-1',
+      { email: 'winner@test.com', isAlive: true },
+      [{ email: 'loser@test.com', isAlive: true }],);
+
+    expect(outcome.winner.item?.name).toBe('FFA Drop');
+    expect(deactivateEquipment).toHaveBeenCalledWith(dropPiece);
+    expect(deactivateEquipment).not.toHaveBeenCalledWith(nonUniqueNearLevel);
+  });
+
+  it('never re-drops a unique already deactivated in the database', async () => {
+    const deactivatedUnique = { ...dropPiece, isActive: false };
+    (getAllEquipment as jest.Mock).mockResolvedValue([deactivatedUnique]);
+
+    const outcome = await applyFfaRewards('battle-1',
+      { email: 'winner@test.com', isAlive: true },
+      [{ email: 'loser@test.com', isAlive: true }],);
+
+    expect(outcome.winner.item).toBeUndefined();
+    expect(deactivateEquipment).not.toHaveBeenCalled();
+  });
+
+  it('skips the drop entirely when no unique equipment is available', async () => {
+    const nonUnique = { ...dropPiece, _id: 'non-unique-id', isUnique: false };
+    (getAllEquipment as jest.Mock).mockResolvedValue([nonUnique]);
+
+    const outcome = await applyFfaRewards('battle-1',
+      { email: 'winner@test.com', isAlive: true },
+      [{ email: 'loser@test.com', isAlive: true }],);
+
+    expect(outcome.winner.item).toBeUndefined();
+    expect(deactivateEquipment).not.toHaveBeenCalled();
+    // Drop is not added to the winner inventory
+    const dropAdded = (Player.updateOne as jest.Mock).mock.calls
+      .some(([, update]) => (update as { $addToSet?: Record<string, unknown> }).$addToSet?.['inventory.weapons'] === 'drop-id');
+    expect(dropAdded).toBe(false);
   });
 });

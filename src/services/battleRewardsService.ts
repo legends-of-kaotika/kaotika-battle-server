@@ -202,14 +202,15 @@ export interface FfaOutcome {
 }
 
 /**
- * Picks a unique equipment piece for `level` (+2 levels) and deactivates it
- * so it can never be assigned to another player again.
+ * Picks a unique equipment piece (`isUnique: true`, still active) for `level`
+ * (+2 levels) and deactivates it so it can never be assigned again.
+ * Returns undefined when no unique piece is available for that level range.
  */
 const rollFfaDrop = async (level: number): Promise<DropPiece | undefined> => {
   const allEquipment = await getAllEquipment();
   const targetLevel = level + 2;
-  const nonUnique = allEquipment.filter((item) => item.isUnique === false || item.isUnique === undefined);
-  const available = selectAvailableEquipment(nonUnique, targetLevel, false);
+  const uniqueAvailable = allEquipment.filter((item) => item.isUnique === true && item.isActive !== false);
+  const available = selectAvailableEquipment(uniqueAvailable, targetLevel, false);
   const picked = pickRandom(available);
   if (!picked) return undefined;
   // Unique drop: deactivate so it cannot be assigned again
